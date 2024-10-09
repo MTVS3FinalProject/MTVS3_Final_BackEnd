@@ -1,4 +1,4 @@
-package tiketaka.mtvs3_final_backend;
+package ticketaka.mtvs3_final_backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
