@@ -47,4 +47,18 @@ public class MemberAuthController {
                 .header("Refresh-Token", responseDTO.grantType() + " " + responseDTO.refreshToken())
                 .body(ApiUtils.success(null));
     }
+
+    /*
+        Access Token 재발급 - Refresh Token 필요
+     */
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissueToken(HttpServletRequest httpServletRequest) {
+
+        MemberAuthResponseDTO.authTokenDTO responseDTO = memberAuthService.reissueToken(httpServletRequest);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, responseDTO.grantType() + " " + responseDTO.accessToken())
+                .header("Refresh-Token", responseDTO.grantType() + " " + responseDTO.refreshToken())
+                .body(ApiUtils.success(null));
+    }
 }
