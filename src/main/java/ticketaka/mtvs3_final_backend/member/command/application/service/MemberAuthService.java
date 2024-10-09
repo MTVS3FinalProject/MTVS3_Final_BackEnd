@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.member.command.application.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
+import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.AgeGroup;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
@@ -74,5 +76,22 @@ public class MemberAuthService {
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
                 .build();
+    }
+
+    public MemberAuthResponseDTO.authTokenDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
+
+        // 1. 이메일 확인
+        Member member = memberRepository.findByEmail(requestDTO.email())
+                .orElseThrow(() -> new Exception400("가입 되지 않은 이메일입니다."));
+
+        // 2. 비밀번호 확인
+        checkValidPassword(requestDTO.password(), member.getPassword());
+
+        // 3. 회원 상태 확인
+        if (!member.getStatus().equals(Status.ACTIVE)) {
+            throw new Exception400(member.getStatus() + " 회원 입니다.");
+        };
+
+        return getAuthTokenDTO(requestDTO.email(), requestDTO.password(), httpServletRequest);
     }
 }
