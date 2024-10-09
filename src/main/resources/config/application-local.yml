@@ -9,7 +9,7 @@ spring:
       enabled: true
 
   application:
-    name: todorian
+    name: ticketaka
 
   jpa:
     show-sql: true
