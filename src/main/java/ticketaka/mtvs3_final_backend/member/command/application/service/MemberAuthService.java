@@ -55,6 +55,14 @@ public class MemberAuthService {
         }
     }
 
+    // 비밀번호 확인
+    private void checkValidPassword(String rawPassword, String encodedPassword) {
+
+        if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new Exception400("비밀번호가 유효하지 않습니다.");
+        }
+    }
+
     // 회원 생성
     protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO) {
         return Member.builder()
