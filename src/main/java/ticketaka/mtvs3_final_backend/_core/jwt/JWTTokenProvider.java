@@ -35,9 +35,9 @@ public class JWTTokenProvider {
 
     // jwt 토큰 암호화를 위한 키
     private final Key secretKey;
-    // Access token의 시간 : 15분
+    // Access token 의 시간 : 15분
     private static final long ACCESS_TOKEN_LIFETIME = 15 * 60 * 1000L;
-    // Refresh token의 시간 : 3일
+    // Refresh token 의 시간 : 3일
     private static final long REFRESH_TOKEN_LIFETIME = 3 * 24 * 60 * 60 * 1000L;
 
     public JWTTokenProvider(@Value("${JWT.SECRET}") String secretKey) {
@@ -88,14 +88,10 @@ public class JWTTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException | SignatureException e) {
+        } catch (SecurityException | JwtException e) {
             log.info("올바르지 않은 서명의 JWT Token 입니다.", e);
-        } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT Token 입니다.", e);
-        } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 형식의 JWT Token 입니다.", e);
         } catch (IllegalArgumentException e) {
-            log.info("JWT Claims가 비어있습니다.", e);
+            log.info("JWT Claims 가 비어있습니다.", e);
         }
         return false;
     }
