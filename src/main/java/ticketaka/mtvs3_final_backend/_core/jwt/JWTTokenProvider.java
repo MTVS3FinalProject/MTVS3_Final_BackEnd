@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 
 import java.security.Key;
 import java.util.Arrays;
