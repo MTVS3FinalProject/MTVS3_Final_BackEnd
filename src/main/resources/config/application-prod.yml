@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: ${DB.URL}
+    driver-class-name:
+    username: ${DB.USERNAME}
+    password: ${DB.PASSWORD}
+  h2:
+    console:
+      enabled: true
+
+  application:
+    name: ticketaka
+
+  jpa:
+    show-sql: true
+    database: mysql
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: ${JWT.SECRET}
+
+logging:
+  level:
+    '[com.todorian]': debug
+    '[org.hibernate.type]': trace
+
+server:
+  port: 7878
