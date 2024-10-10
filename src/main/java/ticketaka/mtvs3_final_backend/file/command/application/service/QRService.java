@@ -21,7 +21,7 @@ public class QRService {
 
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
-    private static final String QR_FOR_SIGNUP = "";
+    private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/";
 
     public byte[] generateSignUpQR() {
 
