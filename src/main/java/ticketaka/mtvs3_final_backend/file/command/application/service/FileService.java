@@ -41,12 +41,11 @@ public class FileService {
 
         log.info("File Url : {}", fileUrl);
 
-        byte[] imageData = getImageFromUrl(fileUrl);
-
-        log.info("Image data : {}", imageData);
+        // byte[] 로 테스트할 경우 사용
+        // byte[] imageData = getImageFromUrl(fileUrl);
     }
 
-    // ImageUrl을 통해 byte[] 가져오기 (HTTP 요청 사용)
+    // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
     private byte[] getImageFromUrl(String imageUrl) throws IOException {
         URL url = new URL(imageUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
