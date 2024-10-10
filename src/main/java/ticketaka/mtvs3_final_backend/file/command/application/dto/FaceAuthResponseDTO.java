@@ -5,7 +5,7 @@ public class FaceAuthResponseDTO {
     // 얼굴 인증
     public record identifyFaceDTO(
             double similarity_score,
-            boolean match_result
+            int match_result
     ) {
     }
 }
