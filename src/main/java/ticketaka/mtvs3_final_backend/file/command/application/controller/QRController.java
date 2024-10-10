@@ -23,6 +23,8 @@ public class QRController {
 
         byte[] responseDTO = qrService.generateSignUpQR();
 
-        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(responseDTO);
     }
 }
