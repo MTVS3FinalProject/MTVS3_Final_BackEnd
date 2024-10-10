@@ -73,6 +73,10 @@ dependencies {
 
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
+
+    // QR Code - zxing
+    implementation group: 'com.google.zxing', name: 'javase', version: '3.5.0'
+    implementation group: 'com.google.zxing', name: 'core', version: '3.5.0'
 }
 
 dependencyManagement {
