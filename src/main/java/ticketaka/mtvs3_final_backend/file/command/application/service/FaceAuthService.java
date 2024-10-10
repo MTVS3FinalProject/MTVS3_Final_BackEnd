@@ -23,7 +23,7 @@ public class FaceAuthService {
     public void identifyFace(FaceAuthRequestDTO.getCurrentFaceImgDTO requestDTO) {
 
         // 유저 이미지 조회
-        String originImgUrl = "";
+        String originImgUrl = "https://i.namu.wiki/i/9v5LSk5DSnTN7S8NIy95awChsy5wtbfEoBZ5BhuN9p2q0QxHVV02sLFM6BIZvqeMZt4TQxSpvR7uhb62cU2yGEQwnFeP4Ui74JaDY0FnefiUln3aB6W4J6CU0sz21PCqvm2VZfjDln7Bx7K1Rvlidw.webp";
 
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(

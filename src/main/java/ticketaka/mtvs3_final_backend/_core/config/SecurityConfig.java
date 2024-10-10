@@ -30,6 +30,7 @@ public class SecurityConfig {
     private final JWTTokenProvider jwtTokenProvider;
 
     private static final String[] WHITE_LIST = {
+            "/**", // test 용 모든 요청 허용
             "/api/auth/**",
             "/h2-console/**"  // h2-console 경로 추가
     };
