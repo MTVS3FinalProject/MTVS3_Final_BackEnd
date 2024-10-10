@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
+import ticketaka.mtvs3_final_backend.file.command.application.service.QRService;
 
 @Slf4j
 @RequiredArgsConstructor
