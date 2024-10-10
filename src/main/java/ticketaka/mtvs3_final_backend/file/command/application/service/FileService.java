@@ -10,7 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +40,31 @@ public class FileService {
         String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
         log.info("File Url : {}", fileUrl);
+
+        byte[] imageData = getImageFromUrl(fileUrl);
+
+        log.info("Image data : {}", imageData);
+    }
+
+    // ImageUrl을 통해 byte[] 가져오기 (HTTP 요청 사용)
+    private byte[] getImageFromUrl(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoInput(true);
+        connection.connect();
+
+        try (InputStream inputStream = connection.getInputStream();
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+
+            return byteArrayOutputStream.toByteArray();
+        }
     }
 
     // 파일 삭제
