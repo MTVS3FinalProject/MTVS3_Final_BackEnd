@@ -4,6 +4,7 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
   h2:
     console:
       enabled: true
@@ -19,6 +20,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 jwt:
   secret: ${JWT.SECRET}
