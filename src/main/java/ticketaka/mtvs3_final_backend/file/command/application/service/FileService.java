@@ -23,11 +23,20 @@ public class FileService {
 
     // 파일 업로드
     public String uploadFirebaseBucket(MultipartFile multipartFile, String fileName) throws IOException {
+
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         Blob blob = bucket.create(fileName,
                 multipartFile.getInputStream(), multipartFile.getContentType());
 
         return blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+    }
+
+    // 파일 삭제
+    public void deleteFirebaseBucket(String key) {
+
+        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+        bucket.get(key).delete();
     }
 }
