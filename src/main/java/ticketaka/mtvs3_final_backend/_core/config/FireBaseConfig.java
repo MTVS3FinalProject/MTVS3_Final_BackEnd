@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +17,7 @@ import java.io.InputStream;
 public class FireBaseConfig {
 
     // Resource 타입으로 변경하여 클래스패스에서 리소스를 로드
-    @Value("classpath:key/FirebaseKey.json")
+    @Value("${FIREBASE.KEY}")
     private Resource firebaseKeyResource;
 
     @PostConstruct
