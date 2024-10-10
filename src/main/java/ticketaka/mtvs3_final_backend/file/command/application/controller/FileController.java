@@ -26,10 +26,7 @@ public class FileController {
     @PostMapping
     public ResponseEntity<?> uploadImg(MultipartFile file) throws IOException {
 
-        String fileName = file.getOriginalFilename();
-        String fileUrl = fileService.uploadFirebaseBucket(file, fileName);
-
-        log.info("File Url : {}", fileUrl);
+        fileService.uploadFirebaseBucket(file, file.getOriginalFilename());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

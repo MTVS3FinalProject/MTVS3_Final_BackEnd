@@ -22,14 +22,16 @@ public class FileService {
     private String firebaseStorageUrl;
 
     // 파일 업로드
-    public String uploadFirebaseBucket(MultipartFile multipartFile, String fileName) throws IOException {
+    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) throws IOException {
 
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         Blob blob = bucket.create(fileName,
                 multipartFile.getInputStream(), multipartFile.getContentType());
 
-        return blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+
+        log.info("File Url : {}", fileUrl);
     }
 
     // 파일 삭제
