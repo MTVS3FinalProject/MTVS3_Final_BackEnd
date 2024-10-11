@@ -67,11 +67,12 @@ public class FileService {
     // 파일 업로드 - 회원 가입 용
     public void uploadImgForSignUp(MultipartFile image, String fileName) {
 
-        uploadImg(image, fileName);
+        String imgUrl = uploadImg(image, fileName);
     }
 
     // 파일 업로드 기능
-    private void uploadImg(MultipartFile image, String fileName) {
+    private String uploadImg(MultipartFile image, String fileName) {
+
         try {
             Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
@@ -81,6 +82,9 @@ public class FileService {
             String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
             log.info("File Url : {}", fileUrl);
+
+            return fileUrl;
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
