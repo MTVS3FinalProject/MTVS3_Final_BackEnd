@@ -24,7 +24,7 @@ public class QRController {
         회원 가입 용 QR 생성
      */
     @GetMapping(value = "/signup", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.signUpQRDTO requestDTO) {
+    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         byte[] responseDTO = qrService.generateSignUpQR(requestDTO);
 

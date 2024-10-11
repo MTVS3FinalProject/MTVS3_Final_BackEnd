@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FileCategory;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 
 @Getter
@@ -28,13 +28,13 @@ public class File {
     private String fileUrl;
     @Column
     @Enumerated(EnumType.STRING)
-    private FileCategory fileCategory;
+    private FilePurpose filePurpose;
 
     @Builder
-    public File(RelationType relationType, long relationId, String fileUrl, FileCategory fileCategory) {
+    public File(RelationType relationType, long relationId, String fileUrl, FilePurpose filePurpose) {
         this.relationType = relationType;
         this.relationId = relationId;
         this.fileUrl = fileUrl;
-        this.fileCategory = fileCategory;
+        this.filePurpose = filePurpose;
     }
 }

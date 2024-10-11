@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,23 +29,15 @@ import java.nio.file.Paths;
 @Service
 public class FileService {
 
+    private final IdentificationRedisRepository identificationRedisRepository;
+
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
 
-    // 파일 업로드
-    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) throws IOException {
+    // 파일 업로드 - 테스트 용
+    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) {
 
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        Blob blob = bucket.create(fileName,
-                multipartFile.getInputStream(), multipartFile.getContentType());
-
-        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
-
-        log.info("File Url : {}", fileUrl);
-
-        // byte[] 로 테스트할 경우 사용
-        // byte[] imageData = getImageFromUrl(fileUrl);
+        uploadImg(multipartFile, fileName);
     }
 
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
@@ -72,5 +67,39 @@ public class FileService {
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         bucket.get(key).delete();
+    }
+
+    // 파일 업로드 - 회원 가입 용
+    public void uploadImgForSignUp(MultipartFile image, String fileName) {
+
+        String email = "";
+
+        String imgUrl = uploadImg(image, fileName);
+
+        Identification identification = identificationRedisRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
+
+        identification.setImgUrl(imgUrl);
+        identificationRedisRepository.save(identification);
+    }
+
+    // 파일 업로드 기능
+    private String uploadImg(MultipartFile image, String fileName) {
+
+        try {
+            Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+            Blob blob = bucket.create(fileName,
+                    image.getInputStream(), image.getContentType());
+
+            String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+
+            log.info("File Url : {}", fileUrl);
+
+            return fileUrl;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
