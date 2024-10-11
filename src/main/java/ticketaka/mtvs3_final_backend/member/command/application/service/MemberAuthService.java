@@ -20,8 +20,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Author
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Gender;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.domain.RefreshToken;
-import ticketaka.mtvs3_final_backend.redis.repository.RefreshTokenRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
+import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
 import java.util.Optional;
 

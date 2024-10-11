@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.redis.domain;
+package ticketaka.mtvs3_final_backend.redis.refreshtoken.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
