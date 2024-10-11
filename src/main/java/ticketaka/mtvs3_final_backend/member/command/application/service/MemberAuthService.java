@@ -47,6 +47,9 @@ public class MemberAuthService {
         // 이메일 중복 확인
         checkDuplicatedEmail(requestDTO.email());
 
+        // 닉네임 중복 확인
+        checkDuplicatedNickname(requestDTO.nickname());
+
         // 비밀번호 확인
         checkValidPassword(requestDTO.password(), passwordEncoder.encode(requestDTO.confirmPassword()));
 
@@ -67,6 +70,16 @@ public class MemberAuthService {
         }
     }
 
+    // 닉네임 중복 확인
+    private void checkDuplicatedNickname(String nickname) {
+
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+
+        if(member.isPresent()) {
+            throw new Exception400("이미 사용 중인 이름입니다.");
+        }
+    }
+
     // 비밀번호 확인
     private void checkValidPassword(String rawPassword, String encodedPassword) {
 
@@ -78,7 +91,7 @@ public class MemberAuthService {
     // 회원 생성
     protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO) {
         return Member.builder()
-                .nickname(requestDTO.nickName())
+                .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
                 .gender(Gender.fromString(requestDTO.gender()))
