@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,6 +28,8 @@ import java.nio.file.Paths;
 @Transactional(readOnly = true)
 @Service
 public class FileService {
+
+    private final IdentificationRedisRepository identificationRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
@@ -67,7 +72,15 @@ public class FileService {
     // 파일 업로드 - 회원 가입 용
     public void uploadImgForSignUp(MultipartFile image, String fileName) {
 
+        String email = "";
+
         String imgUrl = uploadImg(image, fileName);
+
+        Identification identification = identificationRedisRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
+
+        identification.setImgUrl(imgUrl);
+        identificationRedisRepository.save(identification);
     }
 
     // 파일 업로드 기능

@@ -1,10 +1,7 @@
 package ticketaka.mtvs3_final_backend.redis.identification.domain;
 
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
@@ -14,6 +11,7 @@ public class Identification {
 
     @Id
     private String email;
+    @Setter
     private String imgUrl;
 
     @Builder
