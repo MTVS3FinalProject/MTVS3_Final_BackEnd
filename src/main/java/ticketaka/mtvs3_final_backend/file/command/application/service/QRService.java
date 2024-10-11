@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class QRService {
     private static final int QR_HEIGHT = 200;
     private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/";
 
-    public byte[] generateSignUpQR() {
+    public byte[] generateSignUpQR(QRRequestDTO.signUpQRDTO requestDTO) {
 
         try {
             // QR Code - BitMatrix: qr 정보 생성
