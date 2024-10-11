@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 
 @Getter
 @Entity
