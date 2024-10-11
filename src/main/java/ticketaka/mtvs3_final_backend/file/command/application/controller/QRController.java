@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRService;
 
 @Slf4j
@@ -17,6 +18,9 @@ public class QRController {
 
     private final QRService qrService;
 
+    /*
+        회원 가입 용 QR 생성
+     */
     @GetMapping(value = "/signup", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<?> generateSignUpQR() {
 
@@ -25,5 +29,14 @@ public class QRController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(responseDTO);
+    }
+
+    /*
+        회원 가입 용 사진 업로드 성공 확인
+     */
+    @GetMapping("/verification")
+    public ResponseEntity<?> verifySignUpQR() {
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 }
