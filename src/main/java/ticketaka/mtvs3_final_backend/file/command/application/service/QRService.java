@@ -27,11 +27,13 @@ public class QRService {
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
     private static final String QR_FORMAT = "PNG";
-    private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/";
+    private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/camera";
 
     public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
-        ByteArrayOutputStream outputStream = getByteArrayOutputStream(QR_FOR_SIGNUP);
+        String targetUrlWithEmail = QR_FOR_SIGNUP + "?email=" + requestDTO.email();
+
+        ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 가입 용 사진 정보 저장 준비
         saveSignUpIdentification(requestDTO);

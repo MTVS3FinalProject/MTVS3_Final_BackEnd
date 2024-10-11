@@ -37,7 +37,7 @@ public class QRController {
         회원 가입 용 사진 업로드 성공 확인
      */
     @GetMapping("/verification")
-    public ResponseEntity<?> verifySignUpQR(@RequestBody QRRequestDTO.signUpQRDTO requestDTO) {
+    public ResponseEntity<?> verifySignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
