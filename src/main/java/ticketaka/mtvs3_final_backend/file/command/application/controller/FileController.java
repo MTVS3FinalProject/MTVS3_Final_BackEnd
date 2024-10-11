@@ -22,7 +22,7 @@ public class FileController {
         파일 업로드 테스트
      */
     @PostMapping
-    public ResponseEntity<?> uploadImg(@RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<?> uploadImg(@RequestParam("image") MultipartFile image) {
 
         fileService.uploadFirebaseBucket(image, image.getOriginalFilename());
 
@@ -33,7 +33,7 @@ public class FileController {
         파일 업로드 - 회원 가입 용
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image) {
 
         fileService.uploadImgForSignUp(image, image.getOriginalFilename());
 
