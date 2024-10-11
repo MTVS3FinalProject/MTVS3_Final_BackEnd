@@ -10,7 +10,7 @@ import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/log")
+@RequestMapping("/api/logs")
 public class LogController {
 
     @PostMapping
