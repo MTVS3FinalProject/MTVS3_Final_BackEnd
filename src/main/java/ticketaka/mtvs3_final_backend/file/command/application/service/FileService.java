@@ -18,10 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,7 +66,7 @@ public class FileService {
     }
 
     // 파일 업로드 - 회원 가입 용
-    public void uploadImgForSignUp(MultipartFile image, String fileName) {
+    public void uploadImgForSignUp(MultipartFile image, String fileName, String email) {
 
         String email = "";
 

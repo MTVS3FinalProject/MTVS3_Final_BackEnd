@@ -33,9 +33,11 @@ public class FileController {
         파일 업로드 - 회원 가입 용
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image,
+                                                @RequestParam("email") String email) throws IOException {
 
-        fileService.uploadImgForSignUp(image, image.getOriginalFilename());
+        // 이메일 정보와 이미지 처리
+        fileService.uploadImgForSignUp(image, image.getOriginalFilename(), email);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
