@@ -30,16 +30,9 @@ public class FileService {
     private String firebaseStorageUrl;
 
     // 파일 업로드 - 테스트 용
-    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) throws IOException {
+    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) {
 
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        Blob blob = bucket.create(fileName,
-                multipartFile.getInputStream(), multipartFile.getContentType());
-
-        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
-
-        log.info("File Url : {}", fileUrl);
+        uploadImg(multipartFile, fileName);
     }
 
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
@@ -69,5 +62,27 @@ public class FileService {
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         bucket.get(key).delete();
+    }
+
+    // 파일 업로드 - 회원 가입 용
+    public void uploadImgForSignUp(MultipartFile image, String fileName) {
+
+        uploadImg(image, fileName);
+    }
+
+    // 파일 업로드 기능
+    private void uploadImg(MultipartFile image, String fileName) {
+        try {
+            Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+            Blob blob = bucket.create(fileName,
+                    image.getInputStream(), image.getContentType());
+
+            String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+
+            log.info("File Url : {}", fileUrl);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
