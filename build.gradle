@@ -70,6 +70,9 @@ dependencies {
 
     // openfeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // Firebase
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
 }
 
 dependencyManagement {
