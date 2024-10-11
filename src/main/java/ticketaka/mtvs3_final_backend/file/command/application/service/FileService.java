@@ -29,7 +29,7 @@ public class FileService {
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
 
-    // 파일 업로드
+    // 파일 업로드 - 테스트 용
     public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) throws IOException {
 
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
@@ -40,9 +40,6 @@ public class FileService {
         String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
         log.info("File Url : {}", fileUrl);
-
-        // byte[] 로 테스트할 경우 사용
-        // byte[] imageData = getImageFromUrl(fileUrl);
     }
 
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)

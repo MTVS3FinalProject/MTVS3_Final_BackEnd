@@ -28,4 +28,15 @@ public class FileController {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
+
+    /*
+        파일 업로드 - 회원 가입 용
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image) throws IOException {
+
+        fileService.uploadImgForSignUp(image, image.getOriginalFilename());
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
 }
