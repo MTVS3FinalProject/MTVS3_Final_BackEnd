@@ -29,7 +29,7 @@ public class Mtvs3FinalBackendApplication {
     CommandLineRunner localServerStart(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             memberRepository.saveAll(Arrays.asList(
-                    newMember("Dorian", "test@test.com", "test12341", passwordEncoder)
+                    newMember("Dorian", "test@test.com", "test1234", passwordEncoder)
             ));
         };
     }

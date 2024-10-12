@@ -40,12 +40,12 @@ public class MemberAuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpServletRequest httpServletRequest, @Valid @RequestBody MemberAuthRequestDTO.authDTO requestDTO) {
 
-        MemberAuthResponseDTO.authTokenDTO responseDTO = memberAuthService.login(httpServletRequest, requestDTO);
+        MemberAuthResponseDTO.loginDTO responseDTO = memberAuthService.login(httpServletRequest, requestDTO);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, responseDTO.grantType() + " " + responseDTO.accessToken())
-                .header("Refresh-Token", responseDTO.grantType() + " " + responseDTO.refreshToken())
-                .body(ApiUtils.success(null));
+                .header(HttpHeaders.AUTHORIZATION, responseDTO.authTokenDTO().grantType() + " " + responseDTO.authTokenDTO().accessToken())
+                .header("Refresh-Token", responseDTO.authTokenDTO().grantType() + " " + responseDTO.authTokenDTO().refreshToken())
+                .body(ApiUtils.success(responseDTO.memberInfoDTO()));
     }
 
     /*

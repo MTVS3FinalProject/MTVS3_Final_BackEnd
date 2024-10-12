@@ -3,9 +3,7 @@ package ticketaka.mtvs3_final_backend.file.command.application.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileService;
@@ -24,9 +22,22 @@ public class FileController {
         파일 업로드 테스트
      */
     @PostMapping
-    public ResponseEntity<?> uploadImg(MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadImg(@RequestParam("image") MultipartFile image) {
 
-        fileService.uploadFirebaseBucket(file, file.getOriginalFilename());
+        fileService.uploadFirebaseBucket(image, image.getOriginalFilename());
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        파일 업로드 - 회원 가입 용
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image,
+                                                @RequestParam("email") String email) throws IOException {
+
+        // 이메일 정보와 이미지 처리
+        fileService.uploadImgForSignUp(image, image.getOriginalFilename(), email);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

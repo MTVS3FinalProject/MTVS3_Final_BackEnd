@@ -16,7 +16,7 @@ public enum AgeGroup {
     public static AgeGroup fromString(String age_range) {
         log.info("AgeGroup : {}", age_range);
 
-        // age_range 가 null 이거나 빈 문자열인 경우 UNKNOWN 반환
+        // ageRange 가 null 이거나 빈 문자열인 경우 UNKNOWN 반환
         if (age_range == null || age_range.isEmpty()) {
             return AgeGroup.UNKNOWN;
         }

@@ -20,8 +20,11 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Author
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Gender;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.domain.RefreshToken;
-import ticketaka.mtvs3_final_backend.redis.repository.RefreshTokenRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
+import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
 import java.util.Optional;
 
@@ -33,6 +36,7 @@ public class MemberAuthService {
 
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final IdentificationRedisRepository identificationRedisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JWTTokenProvider jwtTokenProvider;
@@ -47,8 +51,14 @@ public class MemberAuthService {
         // 이메일 중복 확인
         checkDuplicatedEmail(requestDTO.email());
 
+        // 닉네임 중복 확인
+        checkDuplicatedNickname(requestDTO.nickname());
+
         // 비밀번호 확인
         checkValidPassword(requestDTO.password(), passwordEncoder.encode(requestDTO.confirmPassword()));
+
+        // imgUrl 확인
+        checkUploadedImg(requestDTO.email());
 
         // 회원 생성
         Member member = newMember(requestDTO);
@@ -67,6 +77,16 @@ public class MemberAuthService {
         }
     }
 
+    // 닉네임 중복 확인
+    private void checkDuplicatedNickname(String nickname) {
+
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+
+        if(member.isPresent()) {
+            throw new Exception400("이미 사용 중인 이름입니다.");
+        }
+    }
+
     // 비밀번호 확인
     private void checkValidPassword(String rawPassword, String encodedPassword) {
 
@@ -75,14 +95,25 @@ public class MemberAuthService {
         }
     }
 
+    // 이미지 업로드 확인
+    private void checkUploadedImg(String email) {
+
+        Identification identification = identificationRedisRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
+
+        if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
+            throw new Exception400("이미지가 업로드 되지 않았습니다.");
+        }
+    }
+
     // 회원 생성
     protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO) {
         return Member.builder()
-                .nickname(requestDTO.nickName())
+                .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
                 .gender(Gender.fromString(requestDTO.gender()))
-                .ageGroup(AgeGroup.fromString(requestDTO.age_range()))
+                .ageGroup(AgeGroup.fromString(requestDTO.ageRange()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
                 .build();
@@ -91,7 +122,7 @@ public class MemberAuthService {
     /*
         기본 로그인
      */
-    public MemberAuthResponseDTO.authTokenDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
+    public MemberAuthResponseDTO.loginDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
 
         // 1. 이메일 확인
         Member member = memberRepository.findByEmail(requestDTO.email())
@@ -105,11 +136,26 @@ public class MemberAuthService {
             throw new Exception400(member.getStatus() + " 회원 입니다.");
         };
 
-        return getAuthTokenDTO(requestDTO.email(), requestDTO.password(), httpServletRequest);
+        MemberAuthResponseDTO.memberInfoDTO memberInfoDTO = getMemberInfo(member);
+        MemberAuthResponseDTO.authTokenDTO authTokenDTO = getAuthToken(requestDTO.email(), requestDTO.password(), httpServletRequest);
+
+        return new MemberAuthResponseDTO.loginDTO(memberInfoDTO, authTokenDTO);
+    }
+
+    private MemberAuthResponseDTO.memberInfoDTO getMemberInfo(Member member) {
+
+        // TODO: coin 조회, 아바타 data 조회 필요
+        return new MemberAuthResponseDTO.memberInfoDTO(
+                member.getNickname(),
+                member.getId().intValue(),
+                member.getAgeGroup().toString(),
+                0,
+                ""
+        );
     }
 
     // 토큰 발급
-    protected MemberAuthResponseDTO.authTokenDTO getAuthTokenDTO(String email, String password, HttpServletRequest httpServletRequest) {
+    protected MemberAuthResponseDTO.authTokenDTO getAuthToken(String email, String password, HttpServletRequest httpServletRequest) {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                 = new UsernamePasswordAuthenticationToken(email, password);
