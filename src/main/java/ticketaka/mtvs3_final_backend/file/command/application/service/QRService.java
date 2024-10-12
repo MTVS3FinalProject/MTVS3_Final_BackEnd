@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
+import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
@@ -22,6 +24,7 @@ import java.io.IOException;
 @Service
 public class QRService {
 
+    private final MemberRepository memberRepository;
     private final IdentificationRedisRepository identificationRedisRepository;
 
     private static final int QR_WIDTH = 200;
@@ -30,6 +33,10 @@ public class QRService {
     private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/camera";
 
     public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
+
+        // 이메일 중복 확인
+        memberRepository.findByEmail(requestDTO.email())
+                .orElseThrow(() -> new Exception400("이미 가입된 이메일입니다."));
 
         String targetUrlWithEmail = QR_FOR_SIGNUP + "?email=" + requestDTO.email();
 
