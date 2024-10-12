@@ -95,7 +95,7 @@ public class MemberAuthService {
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
                 .gender(Gender.fromString(requestDTO.gender()))
-                .ageGroup(AgeGroup.fromString(requestDTO.age_range()))
+                .ageGroup(AgeGroup.fromString(requestDTO.ageRange()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
                 .build();

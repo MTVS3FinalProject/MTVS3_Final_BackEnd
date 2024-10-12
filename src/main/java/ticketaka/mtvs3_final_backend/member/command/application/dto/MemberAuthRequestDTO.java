@@ -17,7 +17,7 @@ public class MemberAuthRequestDTO {
             String password,
             String confirmPassword,
             String gender,
-            String age_range
+            String ageRange
     ) {
     }
 
