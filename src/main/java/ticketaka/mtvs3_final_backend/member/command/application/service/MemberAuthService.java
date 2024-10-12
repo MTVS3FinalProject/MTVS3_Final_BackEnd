@@ -20,6 +20,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Author
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Gender;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
@@ -33,6 +36,7 @@ public class MemberAuthService {
 
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final IdentificationRedisRepository identificationRedisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JWTTokenProvider jwtTokenProvider;
@@ -52,6 +56,9 @@ public class MemberAuthService {
 
         // 비밀번호 확인
         checkValidPassword(requestDTO.password(), passwordEncoder.encode(requestDTO.confirmPassword()));
+
+        // imgUrl 확인
+        checkUploadedImg(requestDTO.email());
 
         // 회원 생성
         Member member = newMember(requestDTO);
@@ -85,6 +92,17 @@ public class MemberAuthService {
 
         if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw new Exception400("비밀번호가 유효하지 않습니다.");
+        }
+    }
+
+    // 이미지 업로드 확인
+    private void checkUploadedImg(String email) {
+
+        Identification identification = identificationRedisRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
+
+        if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
+            throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
     }
 
