@@ -14,11 +14,12 @@ public class Identification {
     @Setter
     private String imgUrl;
     @Setter
-    private IdentificationStatus status;
+    private IdentificationStatus identificationStatus;
 
     @Builder
-    public Identification(String email, String imgUrl) {
+    public Identification(String email, String imgUrl, IdentificationStatus identificationStatus) {
         this.id = email;
         this.imgUrl = imgUrl;
+        this.identificationStatus = identificationStatus;
     }
 }

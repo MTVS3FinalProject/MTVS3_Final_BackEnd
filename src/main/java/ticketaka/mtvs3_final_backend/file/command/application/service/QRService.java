@@ -13,6 +13,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
 import java.io.ByteArrayOutputStream;
@@ -49,9 +50,11 @@ public class QRService {
     }
 
     private void saveSignUpIdentification(QRRequestDTO.generateSignUpQRDTO requestDTO) {
+
         Identification identification = Identification.builder()
                 .email(requestDTO.email())
                 .imgUrl(null)
+                .identificationStatus(IdentificationStatus.PENDING)
                 .build();
 
         identificationRedisRepository.save(identification);
