@@ -68,8 +68,6 @@ public class FileService {
     // 파일 업로드 - 회원 가입 용
     public void uploadImgForSignUp(MultipartFile image, String fileName, String email) {
 
-        String email = "";
-
         String imgUrl = uploadImg(image, fileName);
 
         Identification identification = identificationRedisRepository.findByEmail(email)
