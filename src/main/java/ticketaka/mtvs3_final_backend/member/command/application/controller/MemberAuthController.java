@@ -45,7 +45,7 @@ public class MemberAuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, responseDTO.authTokenDTO().grantType() + " " + responseDTO.authTokenDTO().accessToken())
                 .header("Refresh-Token", responseDTO.authTokenDTO().grantType() + " " + responseDTO.authTokenDTO().refreshToken())
-                .body(ApiUtils.success(null));
+                .body(ApiUtils.success(responseDTO.memberInfoDTO()));
     }
 
     /*
