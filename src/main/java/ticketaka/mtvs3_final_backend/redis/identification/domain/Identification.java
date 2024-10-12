@@ -10,13 +10,13 @@ import org.springframework.data.redis.core.RedisHash;
 public class Identification {
 
     @Id
-    private String email;
+    private String id;
     @Setter
     private String imgUrl;
 
     @Builder
     public Identification(String email, String imgUrl) {
-        this.email = email;
+        this.id = email;
         this.imgUrl = imgUrl;
     }
 }
