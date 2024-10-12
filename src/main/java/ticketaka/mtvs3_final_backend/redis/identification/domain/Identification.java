@@ -13,6 +13,8 @@ public class Identification {
     private String id;
     @Setter
     private String imgUrl;
+    @Setter
+    private IdentificationStatus status;
 
     @Builder
     public Identification(String email, String imgUrl) {
