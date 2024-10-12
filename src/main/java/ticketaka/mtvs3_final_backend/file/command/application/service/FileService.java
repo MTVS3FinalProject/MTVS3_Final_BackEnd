@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
 import java.io.ByteArrayOutputStream;
@@ -70,10 +71,16 @@ public class FileService {
 
         String imgUrl = uploadImg(image, fileName);
 
+        UploadMemberUrl(email, imgUrl);
+    }
+
+    private void UploadMemberUrl(String email, String imgUrl) {
+
         Identification identification = identificationRedisRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         identification.setImgUrl(imgUrl);
+        identification.setIdentificationStatus(IdentificationStatus.COMPLETED);
         identificationRedisRepository.save(identification);
     }
 
