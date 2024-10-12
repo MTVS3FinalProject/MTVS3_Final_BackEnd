@@ -15,7 +15,7 @@ public class MemberAuthResponseDTO {
     // 회원 정보
     public record memberInfoDTO(
             String nickname,
-            String member_id,
+            int member_id,
             String ageRange,
             int coin,
             String avatarData

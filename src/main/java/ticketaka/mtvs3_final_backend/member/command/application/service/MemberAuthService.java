@@ -124,6 +124,18 @@ public class MemberAuthService {
         return new MemberAuthResponseDTO.loginDTO(memberInfoDTO, authTokenDTO);
     }
 
+    private MemberAuthResponseDTO.memberInfoDTO getMemberInfo(Member member) {
+
+        // TODO: coin 조회, 아바타 data 조회 필요
+        return new MemberAuthResponseDTO.memberInfoDTO(
+                member.getNickname(),
+                member.getId().intValue(),
+                member.getAgeGroup().toString(),
+                0,
+                ""
+        );
+    }
+
     // 토큰 발급
     protected MemberAuthResponseDTO.authTokenDTO getAuthToken(String email, String password, HttpServletRequest httpServletRequest) {
 
