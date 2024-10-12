@@ -104,7 +104,7 @@ public class MemberAuthService {
     /*
         기본 로그인
      */
-    public MemberAuthResponseDTO.authTokenDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
+    public MemberAuthResponseDTO.loginDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
 
         // 1. 이메일 확인
         Member member = memberRepository.findByEmail(requestDTO.email())
@@ -118,11 +118,14 @@ public class MemberAuthService {
             throw new Exception400(member.getStatus() + " 회원 입니다.");
         };
 
-        return getAuthTokenDTO(requestDTO.email(), requestDTO.password(), httpServletRequest);
+        MemberAuthResponseDTO.memberInfoDTO memberInfoDTO = getMemberInfo(member);
+        MemberAuthResponseDTO.authTokenDTO authTokenDTO = getAuthToken(requestDTO.email(), requestDTO.password(), httpServletRequest);
+
+        return new MemberAuthResponseDTO.loginDTO(memberInfoDTO, authTokenDTO);
     }
 
     // 토큰 발급
-    protected MemberAuthResponseDTO.authTokenDTO getAuthTokenDTO(String email, String password, HttpServletRequest httpServletRequest) {
+    protected MemberAuthResponseDTO.authTokenDTO getAuthToken(String email, String password, HttpServletRequest httpServletRequest) {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                 = new UsernamePasswordAuthenticationToken(email, password);
