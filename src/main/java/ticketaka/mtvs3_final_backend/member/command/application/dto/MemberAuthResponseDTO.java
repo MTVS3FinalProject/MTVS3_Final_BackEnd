@@ -11,4 +11,21 @@ public class MemberAuthResponseDTO {
             Long refreshTokenValidTime
     ) {
     }
+
+    // 회원 정보
+    public record memberInfoDTO(
+            String nickname,
+            String member_id,
+            String ageRange,
+            int coin,
+            String avatarData
+    ) {
+    }
+
+    // 로그인 시 반환 정보
+    public record loginDTO(
+            memberInfoDTO memberInfoDTO,
+            authTokenDTO authTokenDTO
+    ) {
+    }
 }
