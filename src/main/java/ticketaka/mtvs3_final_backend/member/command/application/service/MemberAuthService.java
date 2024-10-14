@@ -103,6 +103,8 @@ public class MemberAuthService {
         if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
+
+        identificationRedisRepository.delete(identification);
     }
 
     // 생일 포맷 변환
@@ -148,6 +150,7 @@ public class MemberAuthService {
         return new MemberAuthResponseDTO.loginDTO(memberInfoDTO, authTokenDTO);
     }
 
+    // 반환할 회원 정보 구성
     private MemberAuthResponseDTO.memberInfoDTO getMemberInfo(Member member) {
 
         // TODO: coin 조회, 아바타 data 조회 필요

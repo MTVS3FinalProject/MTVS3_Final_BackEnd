@@ -2,3 +2,12 @@ spring:
   profiles:
     active:
       - local
+
+
+server:
+  port: ${SERVER.PORT}
+  ssl:
+    key-store: ${SERVER.SSL.KEY-STORE}
+    key-store-password: ${SERVER.SSL.KEY-STORE-PASSWORD}
+    key-store-type: ${SERVER.SSL.KEY-STORE-TYPE}
+    key-alias: ${SERVER.SSL.KEY-ALIAS}
