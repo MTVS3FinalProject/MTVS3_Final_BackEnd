@@ -15,6 +15,7 @@ import ticketaka.mtvs3_final_backend._core.jwt.JWTTokenProvider;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
@@ -55,9 +56,6 @@ public class MemberAuthService {
 
         // imgUrl 확인
         checkUploadedImg(requestDTO.email());
-
-        // 생일 변환
-        LocalDate birth = getLocalDateBirth(requestDTO.birth());
 
         // 회원 생성
         Member member = newMember(requestDTO);
@@ -123,6 +121,8 @@ public class MemberAuthService {
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
+                .birth(getLocalDateBirth(requestDTO.birth()))
+                .authority(Authority.USER)
                 .status(Status.ACTIVE)
                 .build();
     }
