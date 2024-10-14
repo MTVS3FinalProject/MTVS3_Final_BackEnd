@@ -2,6 +2,7 @@ package ticketaka.mtvs3_final_backend.coin.command.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
@@ -19,5 +20,11 @@ public class CoinHistory extends BaseTimeEntity {
     @Column
     private Long memberId;
     @Column
-    private Long AcquisitionTypeId;
+    private Long coinAcquisitionId;
+
+    @Builder
+    public CoinHistory(Long memberId, Long coinAcquisitionId) {
+        this.memberId = memberId;
+        this.coinAcquisitionId = coinAcquisitionId;
+    }
 }
