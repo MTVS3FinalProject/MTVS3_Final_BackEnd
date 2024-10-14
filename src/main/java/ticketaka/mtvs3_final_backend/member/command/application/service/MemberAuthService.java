@@ -23,6 +23,8 @@ import ticketaka.mtvs3_final_backend.redis.identification.repository.Identificat
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Slf4j
@@ -53,6 +55,9 @@ public class MemberAuthService {
 
         // imgUrl 확인
         checkUploadedImg(requestDTO.email());
+
+        // 생일 변환
+        LocalDate birth = getLocalDateBirth(requestDTO.birth());
 
         // 회원 생성
         Member member = newMember(requestDTO);
@@ -98,6 +103,16 @@ public class MemberAuthService {
         if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
+    }
+
+    // 생일 포맷 변환
+    private LocalDate getLocalDateBirth(String birth) {
+
+        // 변환할 날짜 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+        // String 을 LocalDate 로 변환
+        return LocalDate.parse(birth, formatter);
     }
 
     // 회원 생성
