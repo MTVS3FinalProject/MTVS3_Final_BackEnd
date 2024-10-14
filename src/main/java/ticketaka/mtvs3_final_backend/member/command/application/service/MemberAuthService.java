@@ -51,9 +51,6 @@ public class MemberAuthService {
         // 닉네임 중복 확인
         checkDuplicatedNickname(requestDTO.nickname());
 
-        // 비밀번호 확인
-        checkValidPassword(requestDTO.password(), passwordEncoder.encode(requestDTO.confirmPassword()));
-
         // imgUrl 확인
         checkUploadedImg(requestDTO.email());
 
