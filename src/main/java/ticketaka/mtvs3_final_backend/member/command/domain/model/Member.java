@@ -10,6 +10,8 @@ import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +28,8 @@ public class Member extends BaseTimeEntity {
     private String email;
     @Column
     private String password;
+    @Column
+    private LocalDate birth;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -37,10 +41,11 @@ public class Member extends BaseTimeEntity {
     private Status status;
 
     @Builder
-    public Member(String nickname, String email, String password, Authority authority, Status status) {
+    public Member(String nickname, String email, String password, LocalDate birth, Authority authority, Status status) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.birth = birth;
         this.authority = authority;
         this.status = status;
     }
