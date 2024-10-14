@@ -9,7 +9,6 @@ import org.hibernate.annotations.ColumnDefault;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.AgeGroup;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Gender;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 
 @Getter
@@ -34,9 +33,6 @@ public class Member extends BaseTimeEntity {
     private AgeGroup ageGroup;
     @Column
     @Enumerated(EnumType.STRING)
-    private Gender gender;
-    @Column
-    @Enumerated(EnumType.STRING)
     @ColumnDefault("'USER'")
     private Authority authority;
     @Column
@@ -45,11 +41,10 @@ public class Member extends BaseTimeEntity {
     private Status status;
 
     @Builder
-    public Member(String nickname, String email, String password, Gender gender, AgeGroup ageGroup, Authority authority, Status status) {
+    public Member(String nickname, String email, String password, AgeGroup ageGroup, Authority authority, Status status) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
-        this.gender = gender;
         this.ageGroup = ageGroup;
         this.authority = authority;
         this.status = status;

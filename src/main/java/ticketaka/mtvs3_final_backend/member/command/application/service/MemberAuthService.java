@@ -17,7 +17,6 @@ import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRe
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.AgeGroup;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Gender;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
@@ -112,7 +111,6 @@ public class MemberAuthService {
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
-                .gender(Gender.fromString(requestDTO.gender()))
                 .ageGroup(AgeGroup.fromString(requestDTO.ageRange()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
