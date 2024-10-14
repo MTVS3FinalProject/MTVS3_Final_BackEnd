@@ -54,7 +54,7 @@ public class QRService {
         Identification identification = Identification.builder()
                 .email(requestDTO.email())
                 .imgUrl(null)
-                .identificationStatus(IdentificationStatus.PENDING)
+                .identificationStatus(IdentificationStatus.COMPLETED)
                 .build();
 
         identificationRedisRepository.save(identification);
