@@ -17,4 +17,12 @@ public class CoinUserService {
     private final MemberRepository memberRepository;
     private final CoinAcquisitionRepository coinAcquisitionRepository;
     private final CoinHistoryRepository coinHistoryRepository;
+
+    /*
+        Coin 구매
+     */
+    @Transactional
+    public void purchase() {
+
+    }
 }
