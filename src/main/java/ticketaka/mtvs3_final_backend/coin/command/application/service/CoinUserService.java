@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinAcquisition;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinHistory;
 import ticketaka.mtvs3_final_backend.coin.command.domain.repository.CoinAcquisitionRepository;
+import ticketaka.mtvs3_final_backend.coin.command.domain.repository.CoinHistoryRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 
 @Slf4j
