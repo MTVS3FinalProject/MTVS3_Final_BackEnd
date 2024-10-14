@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CoinAcquisitionRepository extends JpaRepository<CoinAcquisition, Long> {
 
-    Optional<Object> findByName(String coinAcquisitionName);
+    Optional<CoinAcquisition> findByName(String coinAcquisitionName);
 }

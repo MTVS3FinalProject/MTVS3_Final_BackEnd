@@ -11,6 +11,8 @@ import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinUserRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinUserService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -25,7 +27,7 @@ public class CoinUserController {
     @PostMapping("/purchase")
     public ResponseEntity<?> purchase(@RequestBody CoinUserRequestDTO.purchaseDTO requestDTO) {
 
-        coinUserService.purchase(requestDTO);
+        coinUserService.purchase(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
