@@ -40,6 +40,9 @@ public class Member extends BaseTimeEntity {
     @ColumnDefault("'ACTIVE'")
     private Status status;
 
+    @Column
+    private int coin;
+
     @Builder
     public Member(String nickname, String email, String password, LocalDate birth, Authority authority, Status status) {
         this.nickname = nickname;
@@ -48,5 +51,6 @@ public class Member extends BaseTimeEntity {
         this.birth = birth;
         this.authority = authority;
         this.status = status;
+        this.coin = 0;
     }
 }
