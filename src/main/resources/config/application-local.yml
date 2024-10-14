@@ -33,6 +33,3 @@ logging:
   level:
     '[com.todorian]': debug
     '[org.hibernate.type]': trace
-
-server:
-  port: 7878
