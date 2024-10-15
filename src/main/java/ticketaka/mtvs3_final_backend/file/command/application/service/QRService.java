@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
@@ -57,6 +58,9 @@ public class QRService {
         회원 인증 용 QR 생성
      */
     public byte[] generateVerificationQR(Long currentMemberId) {
+
+        memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception401("회원을 찾을 수 없습니다."));
 
         String targetUrlWithEmail = QR_FOR_VERIFICATION + "?id=" + currentMemberId;
 
