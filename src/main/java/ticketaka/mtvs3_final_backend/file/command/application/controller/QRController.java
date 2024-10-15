@@ -39,7 +39,7 @@ public class QRController {
         회원 가입 용 사진 업로드 성공 확인
      */
     @GetMapping("/signup/success")
-    public ResponseEntity<?> verifySignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
+    public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -49,6 +49,19 @@ public class QRController {
      */
     @GetMapping(value = "/verification", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<?> generateVerificationQR() {
+
+        byte[] responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(responseDTO);
+    }
+
+    /*
+        회원 인증 용 사진 업로드 성공 확인
+     */
+    @GetMapping(value = "/verification/success", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> checkVerificationQR() {
 
         byte[] responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
 
