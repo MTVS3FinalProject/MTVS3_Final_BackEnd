@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadStatus;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
@@ -67,16 +68,15 @@ public class QRService {
         return outputStream.toByteArray();
     }
 
-    // FileUploadStatus 생성
+    // FileUpload 생성
     private void saveSignUpIdentification(QRRequestDTO.generateQRDTO requestDTO) {
 
-        FileUploadStatus fileUploadStatus = FileUploadStatus.builder()
-                .email(requestDTO.email())
-                .imgUrl(null)
+        FileUpload fileUpload = FileUpload.builder()
+                .id(requestDTO.email())
                 .uploadStatus(UploadStatus.COMPLETED)
                 .build();
 
-        identificationRedisRepository.save(fileUploadStatus);
+        identificationRedisRepository.save(fileUpload);
     }
 
     // QR 생성

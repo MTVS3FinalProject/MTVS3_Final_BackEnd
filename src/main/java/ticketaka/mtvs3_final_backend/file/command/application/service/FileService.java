@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadStatus;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
@@ -76,12 +76,12 @@ public class FileService {
 
     private void UploadMemberUrl(String email, String imgUrl) {
 
-        FileUploadStatus fileUploadStatus = identificationRedisRepository.findByEmail(email)
+        FileUpload fileUpload = identificationRedisRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        fileUploadStatus.setImgUrl(imgUrl);
-        fileUploadStatus.setUploadStatus(UploadStatus.COMPLETED);
-        identificationRedisRepository.save(fileUploadStatus);
+        fileUpload.setImgUrl(imgUrl);
+        fileUpload.setUploadStatus(UploadStatus.COMPLETED);
+        identificationRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능
