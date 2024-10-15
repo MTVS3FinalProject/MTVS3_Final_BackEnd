@@ -11,8 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.net.URL;
 @Service
 public class FileService {
 
-    private final IdentificationRedisRepository identificationRedisRepository;
+    private final FileUploadRedisRepository fileUploadRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
@@ -76,12 +77,12 @@ public class FileService {
 
     private void UploadMemberUrl(String email, String imgUrl) {
 
-        FileUpload fileUpload = identificationRedisRepository.findByEmail(email)
+        FileUploadForSignUp fileUpload = (FileUploadForSignUp) fileUploadRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setUploadStatus(UploadStatus.COMPLETED);
-        identificationRedisRepository.save(fileUpload);
+        fileUploadRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능

@@ -14,7 +14,7 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class QRService {
 
     private final MemberRepository memberRepository;
-    private final IdentificationRedisRepository identificationRedisRepository;
+    private final FileUploadRedisRepository fileUploadRedisRepository;
 
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
@@ -73,10 +73,10 @@ public class QRService {
 
         FileUpload fileUpload = FileUpload.builder()
                 .id(Id)
-                .uploadStatus(UploadStatus.COMPLETED)
+                .uploadStatus(UploadStatus.PENDING)
                 .build();
 
-        identificationRedisRepository.save(fileUpload);
+        fileUploadRedisRepository.save(fileUpload);
     }
 
     // QR 생성

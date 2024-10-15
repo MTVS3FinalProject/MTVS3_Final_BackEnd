@@ -20,7 +20,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.identification.repository.FileUploadRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
@@ -36,7 +36,7 @@ public class MemberAuthService {
 
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final IdentificationRedisRepository identificationRedisRepository;
+    private final FileUploadRedisRepository fileUploadRedisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JWTTokenProvider jwtTokenProvider;
@@ -95,14 +95,14 @@ public class MemberAuthService {
     // 이미지 업로드 확인
     private void checkUploadedImg(String email) {
 
-        FileUpload fileUpload = identificationRedisRepository.findByEmail(email)
+        FileUpload fileUpload = fileUploadRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         if(!fileUpload.getUploadStatus().equals(UploadStatus.COMPLETED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 
-        identificationRedisRepository.delete(fileUpload);
+        fileUploadRedisRepository.delete(fileUpload);
     }
 
     // 생일 포맷 변환
