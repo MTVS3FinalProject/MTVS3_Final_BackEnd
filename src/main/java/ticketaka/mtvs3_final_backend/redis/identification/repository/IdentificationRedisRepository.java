@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface IdentificationRedisRepository extends CrudRepository<Identification, Long> {
 
-    Optional<Identification> findByEmail(String email);
+    Optional<Identification> findById(String email);
 }

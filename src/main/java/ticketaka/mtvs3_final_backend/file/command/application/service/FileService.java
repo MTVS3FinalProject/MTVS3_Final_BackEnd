@@ -76,7 +76,7 @@ public class FileService {
 
     private void UploadMemberUrl(String email, String imgUrl) {
 
-        Identification identification = identificationRedisRepository.findByEmail(email)
+        Identification identification = identificationRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         identification.setImgUrl(imgUrl);

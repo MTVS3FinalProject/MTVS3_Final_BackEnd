@@ -95,7 +95,7 @@ public class MemberAuthService {
     // 이미지 업로드 확인
     private void checkUploadedImg(String email) {
 
-        Identification identification = identificationRedisRepository.findByEmail(email)
+        Identification identification = identificationRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
