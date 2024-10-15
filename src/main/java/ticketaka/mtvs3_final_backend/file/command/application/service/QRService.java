@@ -54,24 +54,6 @@ public class QRService {
         return outputStream.toByteArray();
     }
 
-    /*
-        회원 인증 용 QR 생성
-     */
-    public byte[] generateVerificationQR(Long currentMemberId) {
-
-        memberRepository.findById(currentMemberId)
-                .orElseThrow(() -> new Exception401("회원을 찾을 수 없습니다."));
-
-        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?id=" + currentMemberId;
-
-        ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
-
-        // 회원 인증 용 상태 준비
-        saveFileUpload(currentMemberId.toString());
-
-        return outputStream.toByteArray();
-    }
-
     // FileUpload 생성
     private void saveFileUpload(String Id) {
 
@@ -81,6 +63,23 @@ public class QRService {
                 .build();
 
         fileUploadRedisRepository.save(fileUpload);
+    }
+
+    /*
+        회원 인증 용 QR 생성
+     */
+    public byte[] generateVerificationQR(Long currentMemberId) {
+
+        validateMember(currentMemberId);
+
+        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?id=" + currentMemberId;
+
+        ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
+
+        // 회원 인증 용 상태 준비
+        saveFileUpload(currentMemberId.toString());
+
+        return outputStream.toByteArray();
     }
 
     // QR 생성
@@ -100,5 +99,30 @@ public class QRService {
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /*
+        회원 인증 용 사진 업로드 성공 확인
+     */
+    public void checkVerificationQR(Long currentMemberId) {
+
+        validateMember(currentMemberId);
+
+        FileUpload fileUpload = fileUploadRedisRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
+
+        if(fileUpload.getUploadStatus().equals(UploadStatus.PENDING)) {
+            throw new Exception400("신원 인증 사진을 업로드하지 않았습니다.");
+        }
+
+        if(fileUpload.getUploadStatus().equals(UploadStatus.FAIL)) {
+            throw new Exception401("신원 인증에 실패하였습니다.");
+        }
+    }
+
+    // 회원 확인
+    private void validateMember(Long currentMemberId) {
+        memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception401("회원을 찾을 수 없습니다."));
     }
 }

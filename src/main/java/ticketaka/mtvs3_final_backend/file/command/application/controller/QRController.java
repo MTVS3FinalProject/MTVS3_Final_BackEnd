@@ -63,10 +63,8 @@ public class QRController {
     @GetMapping(value = "/verification/success", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<?> checkVerificationQR() {
 
-        byte[] responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
+        qrService.checkVerificationQR(getCurrentMemberId());
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(responseDTO);
+        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 }
