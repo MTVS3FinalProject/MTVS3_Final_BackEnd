@@ -33,7 +33,7 @@ public class QRService {
     private static final String QR_FORMAT = "PNG";
     private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/camera";
 
-    public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    public byte[] generateSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
 
         // 이메일 중복 확인
         memberRepository.findByEmail(requestDTO.email())
@@ -49,7 +49,7 @@ public class QRService {
         return outputStream.toByteArray();
     }
 
-    private void saveSignUpIdentification(QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    private void saveSignUpIdentification(QRRequestDTO.generateQRDTO requestDTO) {
 
         Identification identification = Identification.builder()
                 .email(requestDTO.email())
