@@ -7,6 +7,7 @@ spring:
 server:
   port: ${SERVER.PORT}
   ssl:
+    enabled: true
     key-store: ${SERVER.SSL.KEY-STORE}
     key-store-password: ${SERVER.SSL.KEY-STORE-PASSWORD}
     key-store-type: ${SERVER.SSL.KEY-STORE-TYPE}
