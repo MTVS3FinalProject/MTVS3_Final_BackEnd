@@ -18,7 +18,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
@@ -95,14 +95,14 @@ public class MemberAuthService {
     // 이미지 업로드 확인
     private void checkUploadedImg(String email) {
 
-        Identification identification = identificationRedisRepository.findByEmail(email)
+        FileUploadStatus fileUploadStatus = identificationRedisRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
+        if(!fileUploadStatus.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 
-        identificationRedisRepository.delete(identification);
+        identificationRedisRepository.delete(fileUploadStatus);
     }
 
     // 생일 포맷 변환

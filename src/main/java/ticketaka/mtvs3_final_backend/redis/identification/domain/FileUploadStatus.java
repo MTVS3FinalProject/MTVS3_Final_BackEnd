@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RedisHash(value = "identification", timeToLive = 900) // 60 * 15
-public class Identification {
+public class FileUploadStatus {
 
     @Id
     private String id;
@@ -17,7 +17,7 @@ public class Identification {
     private IdentificationStatus identificationStatus;
 
     @Builder
-    public Identification(String email, String imgUrl, IdentificationStatus identificationStatus) {
+    public FileUploadStatus(String email, String imgUrl, IdentificationStatus identificationStatus) {
         this.id = email;
         this.imgUrl = imgUrl;
         this.identificationStatus = identificationStatus;
