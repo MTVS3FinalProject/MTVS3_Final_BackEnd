@@ -13,7 +13,6 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 
@@ -49,7 +48,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 가입 용 사진 정보 저장 준비
-        saveSignUpIdentification(requestDTO);
+        saveFileUpload(requestDTO.email());
 
         return outputStream.toByteArray();
     }
@@ -64,15 +63,16 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 인증 용 상태 준비
+        saveFileUpload(currentMemberId.toString());
 
         return outputStream.toByteArray();
     }
 
     // FileUpload 생성
-    private void saveSignUpIdentification(QRRequestDTO.generateQRDTO requestDTO) {
+    private void saveFileUpload(String Id) {
 
         FileUpload fileUpload = FileUpload.builder()
-                .id(requestDTO.email())
+                .id(Id)
                 .uploadStatus(UploadStatus.COMPLETED)
                 .build();
 
