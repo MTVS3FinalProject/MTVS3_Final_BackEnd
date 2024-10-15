@@ -36,9 +36,22 @@ public class QRController {
     /*
         회원 가입 용 사진 업로드 성공 확인
      */
-    @GetMapping("/verification")
+    @GetMapping("/signup/success")
     public ResponseEntity<?> verifySignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        회원 인증 용 QR 생성
+     */
+    @GetMapping(value = "/verification", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> generateVerificationQR(@RequestBody QRRequestDTO.generateVerificationQRDTO requestDTO) {
+
+        byte[] responseDTO = qrService.generateVerificationQR(requestDTO);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(responseDTO);
     }
 }
