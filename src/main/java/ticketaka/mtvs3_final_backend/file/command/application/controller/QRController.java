@@ -12,6 +12,8 @@ import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -46,9 +48,9 @@ public class QRController {
         회원 인증 용 QR 생성
      */
     @GetMapping(value = "/verification", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> generateVerificationQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
+    public ResponseEntity<?> generateVerificationQR() {
 
-        byte[] responseDTO = qrService.generateVerificationQR(requestDTO);
+        byte[] responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
 
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)

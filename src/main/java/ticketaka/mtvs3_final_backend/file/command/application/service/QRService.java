@@ -32,7 +32,11 @@ public class QRService {
     private static final int QR_HEIGHT = 200;
     private static final String QR_FORMAT = "PNG";
     private static final String QR_FOR_SIGNUP = "https://192.168.0.29:5173/camera";
+    private static final String QR_FOR_VERIFICATION = "";
 
+    /*
+        회원 가입 용 QR 생성
+     */
     public byte[] generateSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
 
         // 이메일 중복 확인
@@ -49,6 +53,21 @@ public class QRService {
         return outputStream.toByteArray();
     }
 
+    /*
+        회원 인증 용 QR 생성
+     */
+    public byte[] generateVerificationQR(Long currentMemberId) {
+
+        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?id=" + currentMemberId;
+
+        ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
+
+        // 회원 인증 용 상태 준비
+
+        return outputStream.toByteArray();
+    }
+
+    // Identification 생성
     private void saveSignUpIdentification(QRRequestDTO.generateQRDTO requestDTO) {
 
         Identification identification = Identification.builder()
@@ -60,6 +79,7 @@ public class QRService {
         identificationRedisRepository.save(identification);
     }
 
+    // QR 생성
     private static ByteArrayOutputStream getByteArrayOutputStream(String targetUrl) {
 
         try {
