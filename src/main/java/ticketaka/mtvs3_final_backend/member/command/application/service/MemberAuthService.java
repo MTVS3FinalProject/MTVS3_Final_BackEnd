@@ -19,7 +19,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Author
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
+import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
@@ -98,7 +98,7 @@ public class MemberAuthService {
         FileUploadStatus fileUploadStatus = identificationRedisRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        if(!fileUploadStatus.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
+        if(!fileUploadStatus.getUploadStatus().equals(UploadStatus.COMPLETED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 

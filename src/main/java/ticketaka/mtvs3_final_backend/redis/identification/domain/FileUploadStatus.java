@@ -14,12 +14,12 @@ public class FileUploadStatus {
     @Setter
     private String imgUrl;
     @Setter
-    private IdentificationStatus identificationStatus;
+    private UploadStatus uploadStatus;
 
     @Builder
-    public FileUploadStatus(String email, String imgUrl, IdentificationStatus identificationStatus) {
+    public FileUploadStatus(String email, String imgUrl, UploadStatus uploadStatus) {
         this.id = email;
         this.imgUrl = imgUrl;
-        this.identificationStatus = identificationStatus;
+        this.uploadStatus = uploadStatus;
     }
 }
