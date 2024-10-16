@@ -41,6 +41,8 @@ public class QRController {
     @GetMapping("/signup/success")
     public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
 
+        qrService.checkSignUpQR(requestDTO);
+
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 

@@ -54,15 +54,15 @@ public class QRService {
         return outputStream.toByteArray();
     }
 
-    // FileUpload 생성
-    private void saveFileUpload(String Id) {
+    /*
+        회원 가입 용 사진 업로드 성공 확인
+     */
+    public void checkSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
 
-        FileUpload fileUpload = FileUpload.builder()
-                .id(Id)
-                .uploadStatus(UploadStatus.PENDING)
-                .build();
+        FileUpload fileUpload = fileUploadRedisRepository.findById(requestDTO.email())
+                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
 
-        fileUploadRedisRepository.save(fileUpload);
+        validateFileUpload(fileUpload);
     }
 
     /*
@@ -80,6 +80,19 @@ public class QRService {
         saveFileUpload(currentMemberId.toString());
 
         return outputStream.toByteArray();
+    }
+
+    /*
+        회원 인증 용 사진 업로드 성공 확인
+     */
+    public void checkVerificationQR(Long currentMemberId) {
+
+        validateMember(currentMemberId);
+
+        FileUpload fileUpload = fileUploadRedisRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
+
+        validateFileUpload(fileUpload);
     }
 
     // QR 생성
@@ -101,16 +114,19 @@ public class QRService {
         }
     }
 
-    /*
-        회원 인증 용 사진 업로드 성공 확인
-     */
-    public void checkVerificationQR(Long currentMemberId) {
+    // FileUpload 생성
+    private void saveFileUpload(String Id) {
 
-        validateMember(currentMemberId);
+        FileUpload fileUpload = FileUpload.builder()
+                .id(Id)
+                .uploadStatus(UploadStatus.PENDING)
+                .build();
 
-        FileUpload fileUpload = fileUploadRedisRepository.findById(currentMemberId)
-                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
+        fileUploadRedisRepository.save(fileUpload);
+    }
 
+    // 파일 유효성 확인
+    private static void validateFileUpload(FileUpload fileUpload) {
         if(fileUpload.getUploadStatus().equals(UploadStatus.PENDING)) {
             throw new Exception400("신원 인증 사진을 업로드하지 않았습니다.");
         }
