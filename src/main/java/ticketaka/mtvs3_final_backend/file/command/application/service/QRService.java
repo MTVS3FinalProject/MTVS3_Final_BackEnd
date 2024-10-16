@@ -13,9 +13,9 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.FileUploadRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -10,10 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUpload;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.FileUploadForSignUp;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.FileUploadRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

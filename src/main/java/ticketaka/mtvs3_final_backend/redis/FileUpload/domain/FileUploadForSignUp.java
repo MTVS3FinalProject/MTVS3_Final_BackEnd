@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.redis.identification.domain;
+package ticketaka.mtvs3_final_backend.redis.FileUpload.domain;
 
 import lombok.Builder;
 import lombok.Getter;
