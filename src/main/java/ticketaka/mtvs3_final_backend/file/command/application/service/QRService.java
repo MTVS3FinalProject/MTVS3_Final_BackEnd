@@ -16,6 +16,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
@@ -29,12 +30,13 @@ public class QRService {
 
     private final MemberRepository memberRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
+    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
 
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
     private static final String QR_FORMAT = "PNG";
-    private static final String QR_FOR_SIGNUP = "https://125.132.216.190:7979/camera";
-    private static final String QR_FOR_VERIFICATION = "";
+    private static final String QR_FOR_SIGNUP = "https://125.132.216.190:7979/camera/signup";
+    private static final String QR_FOR_VERIFICATION = "https://125.132.216.190:7979/camera/verfication";
 
     /*
         회원 가입 용 QR 생성
@@ -60,7 +62,7 @@ public class QRService {
      */
     public void checkSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
 
-        FileUpload fileUpload = fileUploadRedisRepository.findById(requestDTO.email())
+        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(requestDTO.email())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
 
         validateFileUpload(fileUpload);
