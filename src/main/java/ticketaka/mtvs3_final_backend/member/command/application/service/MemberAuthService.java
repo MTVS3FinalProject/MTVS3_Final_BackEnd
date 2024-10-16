@@ -19,7 +19,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Author
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
@@ -36,7 +38,7 @@ public class MemberAuthService {
 
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final FileUploadRedisRepository fileUploadRedisRepository;
+    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JWTTokenProvider jwtTokenProvider;
@@ -93,14 +95,14 @@ public class MemberAuthService {
     // 이미지 업로드 확인
     private void checkUploadedImg(String email) {
 
-        FileUpload fileUpload = fileUploadRedisRepository.findById(email)
+        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         if(!fileUpload.getUploadStatus().equals(UploadStatus.COMPLETED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 
-        fileUploadRedisRepository.delete(fileUpload);
+        fileUploadForSignUpRedisRepository.delete(fileUpload);
     }
 
     // 생일 포맷 변환

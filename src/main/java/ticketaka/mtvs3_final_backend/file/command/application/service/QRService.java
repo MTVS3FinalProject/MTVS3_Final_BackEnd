@@ -125,7 +125,7 @@ public class QRService {
                 .uploadStatus(UploadStatus.PENDING)
                 .build();
 
-        fileUploadRedisRepository.save(fileUpload);
+        fileUploadForSignUpRedisRepository.save(fileUpload);
     }
 
     // FileUpload 생성
