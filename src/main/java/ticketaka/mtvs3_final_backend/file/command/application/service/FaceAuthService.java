@@ -10,6 +10,7 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthReques
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
 
@@ -53,6 +54,7 @@ public class FaceAuthService {
     // 회원 인증 파일 이미지 조회
     private File getOriginImgUrl(Long currentMemberId) {
 
-        return fileRepository.findByMemberIdAndFilePurpose(currentMemberId, FilePurpose.SIGNUP);
+        return fileRepository.findByMemberForVerification(RelationType.MEMBER, currentMemberId, FilePurpose.SIGNUP)
+                .orElseThrow(() -> new Exception401("해당 회원에게는 인증용 사진이 없습니다."));
     }
 }
