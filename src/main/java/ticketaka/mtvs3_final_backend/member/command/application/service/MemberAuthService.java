@@ -67,11 +67,9 @@ public class MemberAuthService {
     // 이메일 중복 확인
     private void checkDuplicatedEmail(String email) {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
-
-        if(member.isPresent()) {
-            throw new Exception400("이미 가입된 이메일입니다.");
-        }
+        // 이메일 중복 확인
+        memberRepository.findByEmail(email)
+                .ifPresent(member -> { throw new Exception400("이미 가입된 이메일입니다."); });
     }
 
     // 닉네임 중복 확인

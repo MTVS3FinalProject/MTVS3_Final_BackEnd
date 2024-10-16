@@ -45,7 +45,7 @@ public class QRService {
 
         // 이메일 중복 확인
         memberRepository.findByEmail(requestDTO.email())
-                .orElseThrow(() -> new Exception400("이미 가입된 이메일입니다."));
+                .ifPresent(member -> { throw new Exception400("이미 가입된 이메일입니다."); });
 
         String targetUrlWithEmail = QR_FOR_SIGNUP + "?email=" + requestDTO.email();
 
