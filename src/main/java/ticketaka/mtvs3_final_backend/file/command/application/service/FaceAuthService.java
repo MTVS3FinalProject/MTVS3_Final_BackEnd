@@ -20,6 +20,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignCl
 @Service
 public class FaceAuthService {
 
+    private final FileService fileService;
     private final FileRepository fileRepository;
     private final FaceAuthFeignClient faceAuthFeignClient;
 
@@ -32,7 +33,7 @@ public class FaceAuthService {
         File currentMemberImgFile = getOriginImgUrl(currentMemberId);
 
         // 인증 이미지 저장
-        String faceImgUrl = "";
+        String faceImgUrl = fileService.uploadImgForVerification(image, currentMemberId);
 
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(

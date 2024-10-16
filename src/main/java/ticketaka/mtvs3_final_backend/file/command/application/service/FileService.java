@@ -76,6 +76,12 @@ public class FileService {
         UploadMemberUrl(email, imgUrl);
     }
 
+    // 파일 업로드 - 회원 인증 용
+    public String uploadImgForVerification(MultipartFile image, Long currentMemberId) {
+
+        return uploadImg(image, image.getOriginalFilename());
+    }
+
     private void UploadMemberUrl(String email, String imgUrl) {
 
         FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
