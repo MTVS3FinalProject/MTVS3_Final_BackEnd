@@ -14,6 +14,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
@@ -49,7 +50,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 가입 용 사진 정보 저장 준비
-        saveFileUpload(requestDTO.email());
+        saveFileUploadForSignUp(requestDTO.email());
 
         return outputStream.toByteArray();
     }
@@ -112,6 +113,18 @@ public class QRService {
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // FileUploadForSignUp 생성
+    private void saveFileUploadForSignUp(String Id) {
+
+        FileUploadForSignUp fileUpload = FileUploadForSignUp.builder()
+                .id(Id)
+                .uploadStatus(UploadStatus.PENDING)
+                .imgUrl(null)
+                .build();
+
+        fileUploadRedisRepository.save(fileUpload);
     }
 
     // FileUpload 생성

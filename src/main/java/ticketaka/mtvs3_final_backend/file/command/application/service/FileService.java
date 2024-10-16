@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
@@ -27,6 +28,7 @@ import java.net.URL;
 public class FileService {
 
     private final FileUploadRedisRepository fileUploadRedisRepository;
+    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
@@ -76,7 +78,7 @@ public class FileService {
 
     private void UploadMemberUrl(String email, String imgUrl) {
 
-        FileUploadForSignUp fileUpload = (FileUploadForSignUp) fileUploadRedisRepository.findById(email)
+        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         fileUpload.setImgUrl(imgUrl);
