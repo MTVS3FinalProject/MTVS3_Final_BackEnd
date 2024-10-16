@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
 
 @Slf4j
@@ -23,15 +24,15 @@ public class FaceAuthService {
      */
     public void identifyFace(MultipartFile image, String id, Long currentMemberId) {
 
-        // 유저 이미지 조회
-        String originImgUrl = getOriginImgUrl(currentMemberId);
+        // 유저 이미지 파일 조회
+        File currentMemberImgFile = getOriginImgUrl(currentMemberId);
 
         // 인증 이미지 저장
         String faceImgUrl = "";
 
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(
-                originImgUrl,
+                currentMemberImgFile.getFileUrl(),
                 faceImgUrl
         );
 
@@ -44,5 +45,11 @@ public class FaceAuthService {
         if (responseDTO.match_result() == 0) {
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
+    }
+
+    // 회원 인증 파일 이미지 조회
+    private File getOriginImgUrl(Long currentMemberId) {
+        
+        return null;
     }
 }
