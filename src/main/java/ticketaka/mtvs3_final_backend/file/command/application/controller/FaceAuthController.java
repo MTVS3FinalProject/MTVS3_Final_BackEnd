@@ -9,6 +9,8 @@ import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FaceAuthService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -24,7 +26,7 @@ public class FaceAuthController {
     public ResponseEntity<?> identifyFace(@RequestParam("image") MultipartFile image,
                                           @RequestParam("id") String id) {
 
-        faceAuthService.identifyFace(image, id);
+        faceAuthService.identifyFace(image, id, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

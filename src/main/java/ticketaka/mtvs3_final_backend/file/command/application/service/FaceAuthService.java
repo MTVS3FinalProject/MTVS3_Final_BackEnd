@@ -21,15 +21,18 @@ public class FaceAuthService {
     /*
         얼굴 인식
      */
-    public void identifyFace(MultipartFile image, String email) {
+    public void identifyFace(MultipartFile image, String id, Long currentMemberId) {
 
         // 유저 이미지 조회
-        String originImgUrl = "";
+        String originImgUrl = getOriginImgUrl(currentMemberId);
+
+        // 인증 이미지 저장
+        String faceImgUrl = "";
 
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(
                 originImgUrl,
-                requestDTO.imgUrl()
+                faceImgUrl
         );
 
         // AI 통신
