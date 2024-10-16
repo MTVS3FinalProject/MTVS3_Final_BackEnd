@@ -34,10 +34,10 @@ public class FileController {
      */
     @PostMapping("/signup")
     public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image,
-                                                @RequestParam("email") String email) throws IOException {
+                                                @RequestParam("email") String email) {
 
         // 이메일 정보와 이미지 처리
-        fileService.uploadImgForSignUp(image, image.getOriginalFilename(), email);
+        fileService.uploadImgForSignUp(image, email);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
@@ -20,7 +21,7 @@ public class FaceAuthService {
     /*
         얼굴 인식
      */
-    public void identifyFace(FaceAuthRequestDTO.getCurrentFaceImgDTO requestDTO) {
+    public void identifyFace(MultipartFile image, String email) {
 
         // 유저 이미지 조회
         String originImgUrl = "";
