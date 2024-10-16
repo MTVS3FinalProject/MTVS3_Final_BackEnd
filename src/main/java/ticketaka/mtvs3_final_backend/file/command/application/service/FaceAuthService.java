@@ -9,6 +9,8 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
 
 @Slf4j
@@ -17,6 +19,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignCl
 @Service
 public class FaceAuthService {
 
+    private final FileRepository fileRepository;
     private final FaceAuthFeignClient faceAuthFeignClient;
 
     /*
@@ -49,7 +52,7 @@ public class FaceAuthService {
 
     // 회원 인증 파일 이미지 조회
     private File getOriginImgUrl(Long currentMemberId) {
-        
-        return null;
+
+        return fileRepository.findByMemberIdAndFilePurpose(currentMemberId, FilePurpose.SIGNUP);
     }
 }
