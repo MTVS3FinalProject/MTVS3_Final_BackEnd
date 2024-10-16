@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface FileUploadForSignUpRedisRepository extends CrudRepository<FileUploadForSignUp, String> {
 
-    Optional<FileUploadForSignUp> findByEmail(String email);
+    Optional<FileUploadForSignUp> findById(String id);
 }

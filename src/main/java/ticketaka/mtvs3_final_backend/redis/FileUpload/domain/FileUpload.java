@@ -15,4 +15,9 @@ public class FileUpload {
     private String id;
     @Setter
     private UploadStatus uploadStatus;
+
+    public FileUpload(String id, UploadStatus uploadStatus) {
+        this.id = id;
+        this.uploadStatus = uploadStatus;
+    }
 }

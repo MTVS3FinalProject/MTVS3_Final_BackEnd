@@ -116,12 +116,11 @@ public class QRService {
     }
 
     // FileUploadForSignUp 생성
-    private void saveFileUploadForSignUp(String Id) {
+    private void saveFileUploadForSignUp(String email) {
 
         FileUploadForSignUp fileUpload = FileUploadForSignUp.builder()
-                .id(Id)
+                .id(email)
                 .uploadStatus(UploadStatus.PENDING)
-                .imgUrl(null)
                 .build();
 
         fileUploadRedisRepository.save(fileUpload);

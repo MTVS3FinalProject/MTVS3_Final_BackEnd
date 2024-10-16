@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.redis.FileUpload.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,4 +15,9 @@ public class FileUploadForSignUp extends FileUpload {
 
     @Setter
     private String imgUrl;
+
+    public FileUploadForSignUp(String email, UploadStatus uploadStatus) {
+        super(email, uploadStatus);
+        this.imgUrl = "";
+    }
 }
