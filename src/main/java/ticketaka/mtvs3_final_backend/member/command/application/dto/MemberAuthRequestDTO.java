@@ -15,9 +15,7 @@ public class MemberAuthRequestDTO {
             String email,
             @Pattern(regexp = "^(?=.*\\d).{6,}$", message = "패스워드는 최소 6자 이상이어야 하며, 숫자를 포함해야 합니다.")
             String password,
-            String confirmPassword,
-            String gender,
-            String ageRange
+            String birth
     ) {
     }
 

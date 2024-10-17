@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.property.AgeGroup;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Gender;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 
@@ -39,8 +37,6 @@ public class Mtvs3FinalBackendApplication {
                 .nickname(nickname)
                 .email(email)
                 .password(passwordEncoder.encode(password))
-                .gender(Gender.fromString(null))
-                .ageGroup(AgeGroup.fromString(null))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
                 .build();

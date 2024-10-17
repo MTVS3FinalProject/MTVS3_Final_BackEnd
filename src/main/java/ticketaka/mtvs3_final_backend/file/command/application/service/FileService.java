@@ -10,9 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +31,9 @@ import java.net.URL;
 @Service
 public class FileService {
 
-    private final IdentificationRedisRepository identificationRedisRepository;
+    private final FileRepository fileRepository;
+    private final FileUploadRedisRepository fileUploadRedisRepository;
+    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
@@ -67,21 +74,28 @@ public class FileService {
     }
 
     // 파일 업로드 - 회원 가입 용
-    public void uploadImgForSignUp(MultipartFile image, String fileName, String email) {
+    public void uploadImgForSignUp(MultipartFile image, String email) {
 
-        String imgUrl = uploadImg(image, fileName);
+        String imgUrl = uploadImg(image, image.getOriginalFilename());
 
         UploadMemberUrl(email, imgUrl);
     }
 
+    // 파일 업로드 - 회원 인증 용
+    public String uploadImgForVerification(MultipartFile image, Long currentMemberId) {
+
+        return uploadImg(image, image.getOriginalFilename());
+    }
+
     private void UploadMemberUrl(String email, String imgUrl) {
 
-        Identification identification = identificationRedisRepository.findByEmail(email)
+        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        identification.setImgUrl(imgUrl);
-        identification.setIdentificationStatus(IdentificationStatus.COMPLETED);
-        identificationRedisRepository.save(identification);
+        fileUpload.setImgUrl(imgUrl);
+        fileUpload.setUploadStatus(UploadStatus.COMPLETED);
+
+        fileUploadForSignUpRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능
@@ -102,5 +116,18 @@ public class FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // File 객체 생성
+    public void newFile(RelationType relationType, Long id, String imgUrl, FilePurpose filePurpose) {
+
+        File file = File.builder()
+                .relationType(relationType)
+                .relationId(id)
+                .fileUrl(imgUrl)
+                .filePurpose(filePurpose)
+                .build();
+
+        fileRepository.save(file);
     }
 }

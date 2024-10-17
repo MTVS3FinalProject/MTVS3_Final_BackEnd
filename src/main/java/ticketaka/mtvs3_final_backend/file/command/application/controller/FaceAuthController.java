@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FaceAuthService;
+
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,10 +22,11 @@ public class FaceAuthController {
     /*
         얼굴 인식
      */
-    @PostMapping
-    public ResponseEntity<?> identifyFace(@RequestBody FaceAuthRequestDTO.getCurrentFaceImgDTO requestDTO) {
+    @PostMapping("/verification")
+    public ResponseEntity<?> identifyFace(@RequestParam("image") MultipartFile image,
+                                          @RequestParam("id") String id) {
 
-        faceAuthService.identifyFace(requestDTO);
+        faceAuthService.identifyFace(image, id, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

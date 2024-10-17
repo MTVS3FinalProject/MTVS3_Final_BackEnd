@@ -12,6 +12,8 @@ import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -24,7 +26,7 @@ public class QRController {
         회원 가입 용 QR 생성
      */
     @GetMapping(value = "/signup", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
 
         byte[] responseDTO = qrService.generateSignUpQR(requestDTO);
 
@@ -36,8 +38,34 @@ public class QRController {
     /*
         회원 가입 용 사진 업로드 성공 확인
      */
-    @GetMapping("/verification")
-    public ResponseEntity<?> verifySignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    @GetMapping("/signup/success")
+    public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
+
+        qrService.checkSignUpQR(requestDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        회원 인증 용 QR 생성
+     */
+    @GetMapping(value = "/verification", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> generateVerificationQR() {
+
+        byte[] responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(responseDTO);
+    }
+
+    /*
+        회원 인증 용 사진 업로드 성공 확인
+     */
+    @GetMapping(value = "/verification/success", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> checkVerificationQR() {
+
+        qrService.checkVerificationQR(getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

@@ -16,7 +16,6 @@ public class MemberAuthResponseDTO {
     public record memberInfoDTO(
             String nickname,
             int member_id,
-            String ageRange,
             int coin,
             String avatarData
     ) {
