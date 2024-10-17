@@ -50,6 +50,8 @@ public class FaceAuthService {
         if (responseDTO.match_result() == 0) {
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
+
+        // TODO: File 생성
     }
 
     // 회원 인증 파일 이미지 조회

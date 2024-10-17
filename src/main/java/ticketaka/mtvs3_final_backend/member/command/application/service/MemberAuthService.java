@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.jwt.JWTTokenProvider;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileService;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
@@ -36,6 +39,7 @@ import java.util.Optional;
 @Service
 public class MemberAuthService {
 
+    private final FileService fileService;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
@@ -57,13 +61,16 @@ public class MemberAuthService {
         checkDuplicatedNickname(requestDTO.nickname());
 
         // imgUrl 확인
-        checkUploadedImg(requestDTO.email());
+        String imgUrl = checkUploadedImg(requestDTO.email());
 
         // 회원 생성
         Member member = newMember(requestDTO);
 
         // 회원 저장
         memberRepository.save(member);
+
+        // File 객체 생성
+        fileService.newFile(RelationType.MEMBER, member.getId(), imgUrl, FilePurpose.SIGNUP);
     }
 
     // 이메일 중복 확인
@@ -93,7 +100,7 @@ public class MemberAuthService {
     }
 
     // 이미지 업로드 확인
-    private void checkUploadedImg(String email) {
+    private String checkUploadedImg(String email) {
 
         FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
@@ -102,7 +109,11 @@ public class MemberAuthService {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 
+        String imgUrl = fileUpload.getImgUrl();
+
         fileUploadForSignUpRedisRepository.delete(fileUpload);
+
+        return imgUrl;
     }
 
     // 생일 포맷 변환

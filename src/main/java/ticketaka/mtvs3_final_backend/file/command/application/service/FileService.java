@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
@@ -27,6 +31,7 @@ import java.net.URL;
 @Service
 public class FileService {
 
+    private final FileRepository fileRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
     private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
 
@@ -89,7 +94,8 @@ public class FileService {
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setUploadStatus(UploadStatus.COMPLETED);
-        fileUploadRedisRepository.save(fileUpload);
+
+        fileUploadForSignUpRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능
@@ -110,5 +116,18 @@ public class FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // File 객체 생성
+    public void newFile(RelationType relationType, Long id, String imgUrl, FilePurpose filePurpose) {
+
+        File file = File.builder()
+                .relationType(relationType)
+                .relationId(id)
+                .fileUrl(imgUrl)
+                .filePurpose(filePurpose)
+                .build();
+
+        fileRepository.save(file);
     }
 }
