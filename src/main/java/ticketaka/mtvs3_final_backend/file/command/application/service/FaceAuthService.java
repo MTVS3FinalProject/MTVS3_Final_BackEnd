@@ -51,7 +51,8 @@ public class FaceAuthService {
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
 
-        // TODO: File 생성
+        // File 생성
+        fileService.newFile(RelationType.MEMBER, currentMemberId, faceImgUrl, FilePurpose.VERIFICATION);
     }
 
     // 회원 인증 파일 이미지 조회
