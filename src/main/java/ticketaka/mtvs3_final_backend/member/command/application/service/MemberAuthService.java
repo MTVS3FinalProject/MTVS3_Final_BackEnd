@@ -15,17 +15,16 @@ import ticketaka.mtvs3_final_backend._core.jwt.JWTTokenProvider;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileService;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
@@ -61,16 +60,16 @@ public class MemberAuthService {
         checkDuplicatedNickname(requestDTO.nickname());
 
         // imgUrl 확인
-        String imgUrl = checkUploadedImg(requestDTO.email());
+        MemberAuthDTO.FileUploadDTO fileUploadDTO = checkUploadedImg(requestDTO.email());
 
         // 회원 생성
-        Member member = newMember(requestDTO);
+        Member member = newMember(requestDTO, fileUploadDTO.secondPwd());
 
         // 회원 저장
         memberRepository.save(member);
 
         // File 객체 생성
-        fileService.newFile(RelationType.MEMBER, member.getId(), imgUrl, FilePurpose.SIGNUP);
+        fileService.newFile(RelationType.MEMBER, member.getId(), fileUploadDTO.imgUrl(), FilePurpose.SIGNUP);
     }
 
     // 이메일 중복 확인
@@ -100,7 +99,7 @@ public class MemberAuthService {
     }
 
     // 이미지 업로드 확인
-    private String checkUploadedImg(String email) {
+    private MemberAuthDTO.FileUploadDTO checkUploadedImg(String email) {
 
         FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
@@ -110,10 +109,11 @@ public class MemberAuthService {
         }
 
         String imgUrl = fileUpload.getImgUrl();
+        String secondPwd = fileUpload.getSecondPwd();
 
         fileUploadForSignUpRedisRepository.delete(fileUpload);
 
-        return imgUrl;
+        return new MemberAuthDTO.FileUploadDTO(imgUrl, secondPwd);
     }
 
     // 생일 포맷 변환
@@ -127,11 +127,12 @@ public class MemberAuthService {
     }
 
     // 회원 생성
-    protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO) {
+    protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO, String secondPwd) {
         return Member.builder()
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
+                .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(getLocalDateBirth(requestDTO.birth()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)

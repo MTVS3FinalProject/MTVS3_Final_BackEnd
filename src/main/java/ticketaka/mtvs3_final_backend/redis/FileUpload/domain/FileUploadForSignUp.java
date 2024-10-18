@@ -15,9 +15,12 @@ public class FileUploadForSignUp extends FileUpload {
 
     @Setter
     private String imgUrl;
+    @Setter
+    private String secondPwd;
 
     public FileUploadForSignUp(String email, UploadStatus uploadStatus) {
         super(email, uploadStatus);
         this.imgUrl = "";
+        this.secondPwd = "";
     }
 }

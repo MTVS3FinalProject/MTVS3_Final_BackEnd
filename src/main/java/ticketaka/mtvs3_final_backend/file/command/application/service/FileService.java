@@ -73,7 +73,9 @@ public class FileService {
         bucket.get(key).delete();
     }
 
-    // 파일 업로드 - 회원 가입 용
+    /*
+        파일 업로드 - 회원 가입 용
+    */
     public void uploadImgForSignUp(MultipartFile image, String email) {
 
         String imgUrl = uploadImg(image, image.getOriginalFilename());
@@ -81,7 +83,9 @@ public class FileService {
         UploadMemberUrl(email, imgUrl);
     }
 
-    // 파일 업로드 - 회원 인증 용
+    /*
+        파일 업로드 - 회원 인증 용
+    */
     public String uploadImgForVerification(MultipartFile image, Long currentMemberId) {
 
         return uploadImg(image, image.getOriginalFilename());
