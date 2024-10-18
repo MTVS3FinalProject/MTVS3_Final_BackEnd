@@ -4,4 +4,8 @@ import java.util.List;
 
 public class ConcertRequestDTO {
 
+    public record entranceConcertDTO (
+            String concertName
+    ) {
+    }
 }
