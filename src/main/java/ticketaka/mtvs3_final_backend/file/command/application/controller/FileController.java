@@ -31,6 +31,7 @@ public class FileController {
 
     /*
         파일 업로드 - 회원 가입 용
+        TODO: 비밀번호 추가
      */
     @PostMapping("/signup")
     public ResponseEntity<?> uploadImgForSignUp(@RequestParam("image") MultipartFile image,
