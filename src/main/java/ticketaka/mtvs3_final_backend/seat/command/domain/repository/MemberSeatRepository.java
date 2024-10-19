@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface MemberSeatRepository extends JpaRepository<MemberSeat, Long> {
 
-    Long countBySeatIdAndMemberSeatStatus(Long seatId, MemberSeatStatus status);
+    Long countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
 
     @Query("SELECT s FROM Seat s " +
             "JOIN MemberSeat ms ON ms.seatId = s.id " +
