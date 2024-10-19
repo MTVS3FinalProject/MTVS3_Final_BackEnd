@@ -31,7 +31,7 @@ public class SeatController {
     /*
         좌석 접수
      */
-    @PostMapping
+    @PostMapping("/reception")
     public ResponseEntity<?> seatReception(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.seatReceptionDTO responseDTO = null;
@@ -42,7 +42,7 @@ public class SeatController {
     /*
         현재 회원이 접수한 좌석 조회
      */
-    @GetMapping
+    @GetMapping("/reception")
     public ResponseEntity<?> getReceptionSeats() {
 
         SeatResponseDTO.getReceptionSeatsDTO responseDTO = null;
@@ -53,7 +53,7 @@ public class SeatController {
     /*
         좌석 접수 취소
      */
-    @DeleteMapping
+    @DeleteMapping("/reception")
     public ResponseEntity<?> cancelReceptionSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.cancelReceptionSeatDTO responseDTO = null;
@@ -64,9 +64,20 @@ public class SeatController {
     /*
         좌석 게임 결과 반영
      */
-    @PostMapping
+    @PostMapping("/pre-reserve")
     public ResponseEntity<?> getPreReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        좌석 결제
+     */
+    @PostMapping("/payment")
+    public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        SeatResponseDTO.reserveSeatDTO responseDTO = null;
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 }
