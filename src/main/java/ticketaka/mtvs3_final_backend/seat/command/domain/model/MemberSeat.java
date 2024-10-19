@@ -22,9 +22,14 @@ public class MemberSeat extends BaseTimeEntity {
     @Column(nullable = false)
     private Long seatId;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private MemberSeatStatus memberSeatStatus;
+
     @Builder
-    public MemberSeat(Long memberId, Long seatId) {
+    public MemberSeat(Long memberId, Long seatId, MemberSeatStatus memberSeatStatus) {
         this.memberId = memberId;
         this.seatId = seatId;
+        this.memberSeatStatus = memberSeatStatus;
     }
 }
