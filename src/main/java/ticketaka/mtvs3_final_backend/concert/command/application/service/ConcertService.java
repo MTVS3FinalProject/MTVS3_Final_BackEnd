@@ -9,8 +9,11 @@ import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertRequ
 import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertResponseDTO;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
+import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeat;
+import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
+import ticketaka.mtvs3_final_backend.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
 import java.time.format.DateTimeFormatter;
@@ -24,6 +27,7 @@ public class ConcertService {
 
     private final ConcertRepository concertRepository;
     private final SeatRepository seatRepository;
+    private final MemberSeatRepository memberSeatRepository;
 
     /*
         공연장 입장
@@ -44,7 +48,9 @@ public class ConcertService {
                 .toList();
 
         // 내가 접수한 좌석 조회
-        List<Seat> receptionSeatList = null;
+        List<MemberSeat> receptionSeatList = memberSeatRepository.findByMemberIdAndConcertIdAndMemberSeatStatus(
+                currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
+        );
         List<ConcertResponseDTO.SeatIdDTO> receptionSeats = null;
 
         int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();
