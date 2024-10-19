@@ -20,6 +20,8 @@ public class MemberSeat extends BaseTimeEntity {
     @Column(nullable = false)
     private Long memberId;
     @Column(nullable = false)
+    private Long concertId;
+    @Column(nullable = false)
     private Long seatId;
 
     @Column
@@ -27,8 +29,9 @@ public class MemberSeat extends BaseTimeEntity {
     private MemberSeatStatus memberSeatStatus;
 
     @Builder
-    public MemberSeat(Long memberId, Long seatId, MemberSeatStatus memberSeatStatus) {
+    public MemberSeat(Long memberId, Long concertId, Long seatId, MemberSeatStatus memberSeatStatus) {
         this.memberId = memberId;
+        this.concertId = concertId;
         this.seatId = seatId;
         this.memberSeatStatus = memberSeatStatus;
     }

@@ -9,7 +9,9 @@ import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatRequestDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
+import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
+import ticketaka.mtvs3_final_backend.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
 @Slf4j
@@ -18,8 +20,9 @@ import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatReposito
 @Service
 public class SeatService {
 
-    private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
+    private final SeatRepository seatRepository;
+    private final MemberSeatRepository memberSeatRepository;
 
     /*
         좌석 조회
@@ -36,17 +39,14 @@ public class SeatService {
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
 
         // 현재 좌석에 접수한 총 인원 조회
-        long count = 1;
-        // count 값을 int로 변환
-        int receptionCount = (int) count;
-        // 경쟁률 계산 (1 / 현재 접수한 인원)
-        int competitionRate = receptionCount > 0 ? 1 / receptionCount : 0;
+        int receptionCount = memberSeatRepository.countBySeatIdAndMemberSeatStatus(seat.getId(), MemberSeatStatus.RECEIVED).intValue();
+        // double competitionRate = receptionCount > 0 ? ((double) 1 / receptionCount) * 100 : 0;
 
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
                 section + number,
                 seat.getDrawingTime().toString(),
-                competitionRate
+                receptionCount
         );
     }
 }
