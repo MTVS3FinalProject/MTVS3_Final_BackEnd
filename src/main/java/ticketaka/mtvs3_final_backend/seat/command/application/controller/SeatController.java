@@ -24,9 +24,20 @@ public class SeatController {
         좌석 조회
      */
     @PostMapping
-    public ResponseEntity<?> getSeatDTO(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> getSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.getSeatDTO responseDTO = null;
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        좌석 접수
+     */
+    @PostMapping
+    public ResponseEntity<?> seatReception(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        SeatResponseDTO.seatReceptionDTO responseDTO = null;
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
