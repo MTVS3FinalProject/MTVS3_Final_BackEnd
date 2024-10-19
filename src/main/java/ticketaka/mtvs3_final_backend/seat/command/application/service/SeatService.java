@@ -32,7 +32,8 @@ public class SeatService {
         String section = requestDTO.seatId().substring(4, 5);
         String number = requestDTO.seatId().substring(5);
 
-        Seat seat = seatRepository.findByConcertNameAndSectionAndNumber(concert.getName(), section, number);
+        Seat seat = seatRepository.findByConcertAndSectionAndNumber(concert, section, number)
+                .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
 
         // 현재 좌석에 접수한 총 인원 조회
         long count = 1;
