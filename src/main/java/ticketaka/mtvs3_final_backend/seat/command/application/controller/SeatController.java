@@ -23,7 +23,7 @@ public class SeatController {
     @PostMapping
     public ResponseEntity<?> getSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        SeatResponseDTO.getSeatDTO responseDTO = null;
+        SeatResponseDTO.getSeatDTO responseDTO = seatService.getSeat(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
