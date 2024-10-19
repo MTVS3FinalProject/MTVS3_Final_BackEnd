@@ -32,4 +32,11 @@ public class SeatResponseDTO {
 
         }
     }
+
+    public record cancelReceptionSeatDTO(
+            int remainingTicket
+    ) {
+    }
+
+
 }
