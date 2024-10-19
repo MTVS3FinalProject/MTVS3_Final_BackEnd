@@ -40,4 +40,14 @@ public class SeatResponseDTO {
             int remainingTicket
     ) {
     }
+
+    // 좌석 결제
+    public record reserveSeatDTO(
+            String seatInfo,
+            int seatPrice,
+            int userCoin,
+            String userName,
+            String userAddress
+    ) {
+    }
 }

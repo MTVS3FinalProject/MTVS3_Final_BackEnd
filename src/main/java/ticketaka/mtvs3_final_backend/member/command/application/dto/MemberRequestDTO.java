@@ -5,7 +5,7 @@ public class MemberRequestDTO {
     // 배송지 입력
     public record enterDeliveryAddressDTO(
             String userName,
-            int phoneNumber,
+            int userPhoneNumber,
             String userAddress
     ) {
     }
