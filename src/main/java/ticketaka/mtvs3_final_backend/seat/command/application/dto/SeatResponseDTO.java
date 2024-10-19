@@ -4,6 +4,7 @@ import java.util.List;
 
 public class SeatResponseDTO {
 
+    // 좌석 조회
     public record getSeatDTO(
             String seatId,
             String seatInfo,
@@ -12,6 +13,7 @@ public class SeatResponseDTO {
     ) {
     }
 
+    // 좌석 접수
     public record seatReceptionDTO(
             int competitionRate,
             int seatPrice,
@@ -19,6 +21,7 @@ public class SeatResponseDTO {
     ) {
     }
 
+    // 현재 회원이 접수한 좌석 조회
     public record getReceptionSeatsDTO(
             List<ReceptionSeatDTO> receptionSeatDTOList
     ) {
@@ -29,14 +32,12 @@ public class SeatResponseDTO {
                 String drawingTime,
                 int competitionRate
         ) {
-
         }
     }
 
+    // 좌석 접수 취소
     public record cancelReceptionSeatDTO(
             int remainingTicket
     ) {
     }
-
-
 }
