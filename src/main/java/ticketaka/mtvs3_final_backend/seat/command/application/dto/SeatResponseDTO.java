@@ -9,4 +9,11 @@ public class SeatResponseDTO {
             int competitionRate
     ) {
     }
+
+    public record seatReceptionDTO(
+            int competitionRate,
+            int seatPrice,
+            int remainingTicket
+    ) {
+    }
 }

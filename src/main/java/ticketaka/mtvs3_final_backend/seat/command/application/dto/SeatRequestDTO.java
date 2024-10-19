@@ -2,7 +2,7 @@ package ticketaka.mtvs3_final_backend.seat.command.application.dto;
 
 public class SeatRequestDTO {
 
-    public record getSeatInfoDTO(
+    public record seatInfoDTO(
             String seatId
     ) {
     }
