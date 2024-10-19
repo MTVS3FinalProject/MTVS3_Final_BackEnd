@@ -60,4 +60,13 @@ public class SeatController {
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
+
+    /*
+        좌석 게임 결과 반영
+     */
+    @PostMapping
+    public ResponseEntity<?> getPreReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
 }
