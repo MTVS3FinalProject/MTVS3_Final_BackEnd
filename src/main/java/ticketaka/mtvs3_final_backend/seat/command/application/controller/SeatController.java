@@ -9,6 +9,8 @@ import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatRequestDTO
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.service.SeatService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -34,7 +36,7 @@ public class SeatController {
     @PostMapping("/reception")
     public ResponseEntity<?> seatReception(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        SeatResponseDTO.seatReceptionDTO responseDTO = null;
+        SeatResponseDTO.seatReceptionDTO responseDTO = seatService.seatReception(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
