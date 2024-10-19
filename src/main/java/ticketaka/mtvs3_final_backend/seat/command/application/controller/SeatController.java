@@ -49,4 +49,15 @@ public class SeatController {
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
+
+    /*
+        좌석 접수 취소
+     */
+    @DeleteMapping
+    public ResponseEntity<?> cancelReceptionSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        SeatResponseDTO.cancelReceptionSeatDTO responseDTO = null;
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
 }
