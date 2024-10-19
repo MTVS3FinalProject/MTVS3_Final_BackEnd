@@ -38,20 +38,13 @@ public class ConcertService {
                 .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
 
         List<Seat> availableSeatList = seatRepository.findByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
-        List<ConcertResponseDTO.SeatIdDTO> availableSeats = availableSeatList.stream()
-                .map(seat -> {
-                    String year = String.valueOf(concert.getConcertDate().getYear());
-                    String seatId = year + seat.getSection() + seat.getNumber();
-
-                    return new ConcertResponseDTO.SeatIdDTO(seatId);
-                })
-                .toList();
+        List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
 
         // 내가 접수한 좌석 조회
-        List<MemberSeat> receptionSeatList = memberSeatRepository.findByMemberIdAndConcertIdAndMemberSeatStatus(
+        List<Seat> receptionSeatList = memberSeatRepository.findSeatsByMemberIdAndConcertIdAndStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
-        List<ConcertResponseDTO.SeatIdDTO> receptionSeats = null;
+        List<ConcertResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
 
         int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();
 
@@ -65,5 +58,16 @@ public class ConcertService {
                 receptionSeats,
                 remainingTickets
         );
+    }
+
+    private static List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> availableSeatList, Concert concert) {
+        return availableSeatList.stream()
+                .map(seat -> {
+                    String year = String.valueOf(concert.getConcertDate().getYear());
+                    String seatId = year + seat.getSection() + seat.getNumber();
+
+                    return new ConcertResponseDTO.SeatIdDTO(seatId);
+                })
+                .toList();
     }
 }
