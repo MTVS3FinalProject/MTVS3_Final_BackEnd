@@ -35,14 +35,15 @@ public class Seat extends BaseTimeEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private SeatStatus seatStatus;
 
     @Builder
-    public Seat(String section, String number, int price, LocalDateTime drawingTime, Concert concert) {
+    public Seat(String section, String number, int price, LocalDateTime drawingTime, Concert concert, SeatStatus seatStatus) {
         this.section = section;
         this.number = number;
         this.price = price;
         this.drawingTime = drawingTime;
         this.concert = concert;
+        this.seatStatus = seatStatus;
     }
 }

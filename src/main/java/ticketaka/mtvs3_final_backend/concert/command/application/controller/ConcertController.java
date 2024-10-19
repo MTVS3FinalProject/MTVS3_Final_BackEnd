@@ -12,6 +12,8 @@ import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertRequ
 import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertResponseDTO;
 import ticketaka.mtvs3_final_backend.concert.command.application.service.ConcertService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -24,9 +26,9 @@ public class ConcertController {
         공연장 입장
      */
     @PostMapping
-    public ResponseEntity<?> entranceConcertDTO(@RequestBody ConcertRequestDTO.entranceConcertDTO requestDTO) {
+    public ResponseEntity<?> entranceConcert(@RequestBody ConcertRequestDTO.entranceConcertDTO requestDTO) {
         
-        ConcertResponseDTO.entranceConcertDTO responseDTO = null;
+        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert(requestDTO, getCurrentMemberId());
         
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

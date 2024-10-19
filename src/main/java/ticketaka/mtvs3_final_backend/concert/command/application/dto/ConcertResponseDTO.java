@@ -23,20 +23,4 @@ public class ConcertResponseDTO {
             String seatId
     ) {
     }
-
-    public record ConcertDateTimeDTO(
-            String year,
-            String month,
-            String day,
-            String time
-    ) {
-        public ConcertDateTimeDTO(Concert concert) {
-            this(
-                    concert.getConcertDate().format(DateTimeFormatter.ofPattern("yyyy")),  // yyyy 형식의 연도
-                    concert.getConcertDate().format(DateTimeFormatter.ofPattern("MM")),  // MM 형식의 월
-                    concert.getConcertDate().format(DateTimeFormatter.ofPattern("dd")),  // dd 형식의 일
-                    concert.getConcertDate().toLocalTime().toString()  // 시간 부분
-            );
-        }
-    }
 }
