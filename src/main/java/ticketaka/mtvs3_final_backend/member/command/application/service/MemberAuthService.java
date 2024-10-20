@@ -119,6 +119,8 @@ public class MemberAuthService {
     // 생일 포맷 변환
     private LocalDate getLocalDateBirth(String birth) {
 
+        System.out.println("birth = " + birth);
+
         // 변환할 날짜 포맷 지정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
@@ -132,7 +134,7 @@ public class MemberAuthService {
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
-                .secondPwd(passwordEncoder.encode(secondPwd))
+                .secondPwd(passwordEncoder.encode("secondPwd"))
                 .birth(getLocalDateBirth(requestDTO.birth()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
