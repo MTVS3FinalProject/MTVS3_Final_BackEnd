@@ -44,10 +44,10 @@ public class SeatController {
     /*
         현재 회원이 접수한 좌석 조회
      */
-    @GetMapping("/reception")
-    public ResponseEntity<?> getReceptionSeats() {
+    @PostMapping("/my/reception")
+    public ResponseEntity<?> getReceptionSeats(@RequestBody SeatRequestDTO.getReceptionSeatsDTO requestDTO) {
 
-        SeatResponseDTO.getReceptionSeatsDTO responseDTO = null;
+        SeatResponseDTO.getReceptionSeatsDTO responseDTO = seatService.getReceptionSeats(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

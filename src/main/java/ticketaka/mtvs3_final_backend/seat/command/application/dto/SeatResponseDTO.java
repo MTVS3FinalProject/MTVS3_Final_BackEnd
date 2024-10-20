@@ -25,7 +25,7 @@ public class SeatResponseDTO {
     public record getReceptionSeatsDTO(
             List<ReceptionSeatDTO> receptionSeatDTOList
     ) {
-        protected record ReceptionSeatDTO(
+        public record ReceptionSeatDTO(
                 String seatId,
                 String concertDate,
                 String seatInfo,

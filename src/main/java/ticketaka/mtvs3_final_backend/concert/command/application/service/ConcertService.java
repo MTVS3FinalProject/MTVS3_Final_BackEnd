@@ -9,14 +9,12 @@ import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertRequ
 import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertResponseDTO;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
-import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +25,6 @@ public class ConcertService {
 
     private final ConcertRepository concertRepository;
     private final SeatRepository seatRepository;
-    private final MemberSeatRepository memberSeatRepository;
 
     /*
         공연장 입장
@@ -37,11 +34,11 @@ public class ConcertService {
         Concert concert = concertRepository.findByName(requestDTO.concertName())
                 .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
 
-        List<Seat> availableSeatList = seatRepository.findByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
+        List<Seat> availableSeatList = seatRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
         List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
 
         // 내가 접수한 좌석 조회
-        List<Seat> receptionSeatList = memberSeatRepository.findSeatsByMemberIdAndConcertIdAndStatus(
+        List<Seat> receptionSeatList = seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
         List<ConcertResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
