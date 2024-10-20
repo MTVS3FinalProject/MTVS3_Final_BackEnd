@@ -9,6 +9,7 @@ import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MemberSeatRepository extends JpaRepository<MemberSeat, Long> {
@@ -16,4 +17,6 @@ public interface MemberSeatRepository extends JpaRepository<MemberSeat, Long> {
     Long countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
 
     int countByMemberIdAndConcertId(Long currentMemberId, Long concertId);
+
+    Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatId(Long currentMemberId, Long concertId, Long seatId);
 }
