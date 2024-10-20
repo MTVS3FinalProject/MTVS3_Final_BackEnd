@@ -7,4 +7,9 @@ public class SeatRequestDTO {
             String seatId
     ) {
     }
+
+    public record getReceptionSeatsDTO(
+            String concertName
+    ) {
+    }
 }
