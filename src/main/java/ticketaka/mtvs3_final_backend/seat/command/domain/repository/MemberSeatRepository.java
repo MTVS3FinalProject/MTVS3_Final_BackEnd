@@ -16,7 +16,7 @@ public interface MemberSeatRepository extends JpaRepository<MemberSeat, Long> {
 
     Long countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
 
-    int countByMemberIdAndConcertId(Long currentMemberId, Long concertId);
+    int countByMemberIdAndConcertId(Long memberId, Long concertId);
 
-    Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatId(Long currentMemberId, Long concertId, Long seatId);
+    Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatId(Long memberId, Long concertId, Long seatId);
 }

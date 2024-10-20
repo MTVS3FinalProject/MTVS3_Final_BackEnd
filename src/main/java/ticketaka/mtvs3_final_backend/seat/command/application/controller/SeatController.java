@@ -58,7 +58,7 @@ public class SeatController {
     @DeleteMapping("/reception")
     public ResponseEntity<?> cancelReceptionSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        SeatResponseDTO.cancelReceptionSeatDTO responseDTO = null;
+        SeatResponseDTO.cancelReceptionSeatDTO responseDTO = seatService.cancelReceptionSeat(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

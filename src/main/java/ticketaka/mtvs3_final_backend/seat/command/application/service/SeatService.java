@@ -55,6 +55,7 @@ public class SeatService {
     /*
         좌석 접수
      */
+    @Transactional
     public SeatResponseDTO.seatReceptionDTO seatReception(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
 
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -83,15 +84,15 @@ public class SeatService {
     */
     public SeatResponseDTO.getReceptionSeatsDTO getReceptionSeats(SeatRequestDTO.getReceptionSeatsDTO requestDTO, Long currentMemberId) {
 
-        // 1. 공연 조회
+        // 공연 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
 
-        // 2. 현재 회원이 접수한 좌석 목록 조회
+        // 현재 회원이 접수한 좌석 목록 조회
         List<Seat> receptionSeatList = seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
 
-        // 3. 좌석 정보를 DTO로 변환
+        // 좌석 정보를 DTO 로 변환
         List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> receptionSeatsDTOList = receptionSeatList.stream()
                 .map(seat -> {
                     String concertDate = String.valueOf(concert.getConcertDate().getYear());  // 연도 문자열로 변환
@@ -112,8 +113,33 @@ public class SeatService {
                 })
                 .toList();
 
-        // 4. 최종 DTO 생성 및 반환
+        // 최종 DTO 생성 및 반환
         return new SeatResponseDTO.getReceptionSeatsDTO(receptionSeatsDTOList);
+    }
+
+    /*
+        좌석 접수 취소
+     */
+    @Transactional
+    public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+
+        // 공연 조회
+        Concert concert = getConcertByConcertName(requestDTO.concertName());
+
+        String section = requestDTO.seatId().substring(4, 5);
+        String number = requestDTO.seatId().substring(5);
+
+        Seat seat = getSeat(concert, section, number);
+
+        MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId());
+
+        memberSeatRepository.delete(memberSeat);
+
+        int receptionSeatCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
+
+        return new SeatResponseDTO.cancelReceptionSeatDTO(
+                concert.getReceptionLimit() - receptionSeatCount
+        );
     }
 
     private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
@@ -133,5 +159,10 @@ public class SeatService {
     private Seat getSeat(Concert concert, String section, String number) {
         return seatRepository.findByConcertAndSectionAndNumber(concert, section, number)
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
+    }
+
+    private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
+        return memberSeatRepository.findByMemberIdAndConcertIdAndSeatId(currentMemberId, concertId, seatId)
+                .orElseThrow(() -> new Exception400("해당 좌석을 접수한 내역을 찾을 수 없습니다."));
     }
 }
