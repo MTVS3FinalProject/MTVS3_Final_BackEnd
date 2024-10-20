@@ -144,9 +144,26 @@ public class SeatService {
     /*
         좌석 추첨 결과 반영
      */
-    public void getPreReserveSeat(SeatRequestDTO.seatIdDTO requestDTO) {
+    public void getPreReserveSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
 
         // 임시 결제 권한 획득
+    }
+
+    /*
+        좌석 결제
+     */
+    @Transactional
+    public SeatResponseDTO.reserveSeatDTO reserveSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+
+        // 좌석 결제 권한 확인
+
+        // 배송지 정보 조회
+
+        // 좌석 결제
+
+        // 티켓 생성
+
+        return null;
     }
 
     private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {

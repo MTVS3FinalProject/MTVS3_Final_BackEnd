@@ -69,7 +69,7 @@ public class SeatController {
     @PostMapping("/pre-reserve")
     public ResponseEntity<?> getPreReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        seatService.getPreReserveSeat(requestDTO);
+        seatService.getPreReserveSeat(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -80,7 +80,7 @@ public class SeatController {
     @PostMapping("/payment")
     public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        SeatResponseDTO.reserveSeatDTO responseDTO = null;
+        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
