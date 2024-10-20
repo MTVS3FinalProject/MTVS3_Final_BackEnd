@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatRequestDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeat;
@@ -140,6 +139,14 @@ public class SeatService {
         return new SeatResponseDTO.cancelReceptionSeatDTO(
                 concert.getReceptionLimit() - receptionSeatCount
         );
+    }
+
+    /*
+        좌석 추첨 결과 반영
+     */
+    public void getPreReserveSeat(SeatRequestDTO.seatIdDTO requestDTO) {
+
+        // 임시 결제 권한 획득
     }
 
     private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {

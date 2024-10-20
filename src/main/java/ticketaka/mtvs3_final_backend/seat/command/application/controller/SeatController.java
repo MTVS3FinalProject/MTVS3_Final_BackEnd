@@ -64,10 +64,12 @@ public class SeatController {
     }
 
     /*
-        좌석 게임 결과 반영
+        좌석 추첨 결과 반영
      */
     @PostMapping("/pre-reserve")
     public ResponseEntity<?> getPreReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        seatService.getPreReserveSeat(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
