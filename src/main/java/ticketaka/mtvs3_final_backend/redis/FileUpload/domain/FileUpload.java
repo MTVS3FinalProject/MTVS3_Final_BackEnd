@@ -15,9 +15,12 @@ public class FileUpload {
     private String id;
     @Setter
     private UploadStatus uploadStatus;
+    @Setter
+    private String imgUrl;
 
     public FileUpload(String id, UploadStatus uploadStatus) {
         this.id = id;
         this.uploadStatus = uploadStatus;
+        this.imgUrl = "";
     }
 }

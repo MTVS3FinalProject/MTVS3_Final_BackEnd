@@ -12,15 +12,11 @@ import org.springframework.data.redis.core.RedisHash;
 @SuperBuilder
 @RedisHash(value = "fileupload_for_signup", timeToLive = 900) // 60 * 15
 public class FileUploadForSignUp extends FileUpload {
-
-    @Setter
-    private String imgUrl;
     @Setter
     private String secondPwd;
 
     public FileUploadForSignUp(String email, UploadStatus uploadStatus) {
         super(email, uploadStatus);
-        this.imgUrl = "";
         this.secondPwd = "";
     }
 }
