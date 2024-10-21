@@ -61,6 +61,7 @@ public class FaceAuthService {
 
         // 결과 확인
         if (responseDTO.match_result() == 0) {
+
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
 

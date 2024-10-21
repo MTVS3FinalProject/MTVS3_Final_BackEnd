@@ -104,7 +104,7 @@ public class MemberAuthService {
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        if(!fileUpload.getUploadStatus().equals(UploadStatus.COMPLETED)) {
+        if(!fileUpload.getUploadStatus().equals(UploadStatus.UPLOADED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 

@@ -61,14 +61,14 @@ public class FileService {
         return imgUrl;
     }
 
-    // 회원 인증 용 FileUploadForAuth 수정
+    // 회원 가입 용 FileUploadForAuth 수정
     private void setFileUploadForSignUp(String email, String secondPwd, String imgUrl) {
 
         FileUploadForAuth fileUpload = getFileUploadForAuth(email);
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setCode(secondPwd);
-        fileUpload.setUploadStatus(UploadStatus.COMPLETED);
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
 
         fileUploadForAuthRedisRepository.save(fileUpload);
     }
@@ -79,7 +79,7 @@ public class FileService {
         FileUploadForAuth fileUpload = getFileUploadForAuth(String.valueOf(currentMemberId));
 
         fileUpload.setImgUrl(imgUrl);
-        fileUpload.setUploadStatus(UploadStatus.COMPLETED);
+        fileUpload.setUploadStatus(UploadStatus.UPLOADED);
 
         fileUploadForAuthRedisRepository.save(fileUpload);
     }
