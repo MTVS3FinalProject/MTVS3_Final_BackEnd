@@ -32,7 +32,12 @@ public class FaceAuthService {
     /*
         얼굴 인식
      */
-    public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO, Long currentMemberId) {
+    public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
+
+        // FileUploadForAuth 확인
+        FileUploadForAuth fileUpload = fileService.uploadImgForVerification(requestDTO);
+
+        Long currentMemberId = Long.parseLong(fileUpload.getCode());
 
         // 유저 확인
         Member member = memberRepository.findById(currentMemberId)
@@ -42,9 +47,6 @@ public class FaceAuthService {
         if(!member.getSecondPwd().equals(requestDTO.secondPwd())) {
             throw new Exception401("회원 인증에 실패하였습니다.");
         }
-
-        // 인증 이미지 저장
-        FileUploadForAuth fileUpload = fileService.uploadImgForVerification(requestDTO.image(), currentMemberId);
 
         // 유저 이미지 파일 조회
         File currentMemberImgFile = getOriginImgUrl(currentMemberId);

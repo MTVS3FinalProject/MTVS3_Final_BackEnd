@@ -25,7 +25,7 @@ public class FaceAuthController {
     @PostMapping("/verification")
     public ResponseEntity<?> verificationMember(@RequestBody FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
-        faceAuthService.verificationMember(requestDTO, getCurrentMemberId());
+        faceAuthService.verificationMember(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

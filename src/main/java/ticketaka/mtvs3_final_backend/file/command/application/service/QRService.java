@@ -96,11 +96,11 @@ public class QRService {
 
         validateMember(currentMemberId);
 
-        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(String.valueOf(currentMemberId))
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
 
-        if(!fileUpload.getCode().equals(requestDTO.userCode())) {
-            throw new Exception401("userCode 가 일치하지 않습니다.");
+        if(!fileUpload.getCode().equals(String.valueOf(currentMemberId))) {
+            throw new Exception401("인증 요청 대상과 일치하지 않습니다.");
         }
 
         validateFileUpload(fileUpload);
