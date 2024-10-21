@@ -34,8 +34,12 @@ public class SeatService {
 
         Concert concert = getConcertByConcertName(requestDTO.concertName());
 
-        String section = requestDTO.seatId().substring(4, 5);
-        String number = requestDTO.seatId().substring(5);
+        String section = requestDTO.seatId().substring(4, 6);
+        String number = requestDTO.seatId().substring(6);
+
+        System.out.println("concert = " + concert.getId());
+        System.out.println("section = " + section);
+        System.out.println("number = " + number);
 
         Seat seat = getSeat(concert, section, number);
 
