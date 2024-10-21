@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.FileResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
@@ -41,11 +42,11 @@ public class FileService {
     /*
         파일 업로드 - 회원 가입 용
     */
-    public void uploadImgForSignUp(MultipartFile image, String email) {
+    public void uploadImgForSignUp(FileResponseDTO.uploadImgForSignUpDTO requestDTO) {
 
-        String imgUrl = uploadImg(image, image.getOriginalFilename());
+        String imgUrl = uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
 
-        UploadMemberUrl(email, imgUrl);
+        UploadMemberUrl(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
     }
 
     /*
@@ -56,12 +57,13 @@ public class FileService {
         return uploadImg(image, image.getOriginalFilename());
     }
 
-    private void UploadMemberUrl(String email, String imgUrl) {
+    private void UploadMemberUrl(String email, String secondPwd, String imgUrl) {
 
         FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         fileUpload.setImgUrl(imgUrl);
+        fileUpload.setSecondPwd(secondPwd);
         fileUpload.setUploadStatus(UploadStatus.COMPLETED);
 
         fileUploadForSignUpRedisRepository.save(fileUpload);
