@@ -170,7 +170,7 @@ public class MemberAuthService {
         // TODO: coin 조회, 아바타 data 조회 필요
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
-                member.getId().intValue(),
+                member.getBirth().toString(),
                 0,
                 ""
         );
