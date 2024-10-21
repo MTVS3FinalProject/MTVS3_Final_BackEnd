@@ -14,8 +14,8 @@ public class FileUploadForAuth extends FileUpload {
     @Setter
     private String code;
 
-    public FileUploadForAuth(String email, UploadStatus uploadStatus) {
+    public FileUploadForAuth(String email, UploadStatus uploadStatus, String code) {
         super(email, uploadStatus);
-        this.code = "";
+        this.code = code;
     }
 }

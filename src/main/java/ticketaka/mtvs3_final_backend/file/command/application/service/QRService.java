@@ -53,7 +53,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 가입 용 사진 정보 저장 준비
-        saveFileUploadForSignUp(requestDTO.email());
+        saveFileUploadForAuth(requestDTO.email(), "");
 
         return outputStream.toByteArray();
     }
@@ -83,7 +83,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 인증 용 상태 준비
-        saveFileUpload(currentMemberId.toString());
+        saveFileUploadForAuth(currentMemberId.toString(), userCode);
 
         return outputStream.toByteArray();
     }
@@ -121,25 +121,15 @@ public class QRService {
     }
 
     // FileUploadForAuth 생성
-    private void saveFileUploadForSignUp(String email) {
+    private void saveFileUploadForAuth(String id, String code) {
 
         FileUploadForAuth fileUpload = FileUploadForAuth.builder()
-                .id(email)
+                .id(id)
                 .uploadStatus(UploadStatus.PENDING)
+                .code(code)
                 .build();
 
         fileUploadForSignUpRedisRepository.save(fileUpload);
-    }
-
-    // FileUpload 생성
-    private void saveFileUpload(String Id) {
-
-        FileUpload fileUpload = FileUpload.builder()
-                .id(Id)
-                .uploadStatus(UploadStatus.PENDING)
-                .build();
-
-        fileUploadRedisRepository.save(fileUpload);
     }
 
     // 파일 유효성 확인
