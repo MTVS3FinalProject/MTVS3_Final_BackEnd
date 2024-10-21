@@ -38,41 +38,6 @@ public class FileService {
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
 
-    // 파일 업로드 - 테스트 용
-    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) {
-
-        uploadImg(multipartFile, fileName);
-    }
-
-    // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
-    private byte[] getImageFromUrl(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setDoInput(true);
-        connection.connect();
-
-        try (InputStream inputStream = connection.getInputStream();
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, len);
-            }
-
-            return byteArrayOutputStream.toByteArray();
-        }
-    }
-
-    // 파일 삭제
-    public void deleteFirebaseBucket(String key) {
-
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        bucket.get(key).delete();
-    }
-
     /*
         파일 업로드 - 회원 가입 용
     */
@@ -133,5 +98,34 @@ public class FileService {
                 .build();
 
         fileRepository.save(file);
+    }
+
+    // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
+    private byte[] getImageFromUrl(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoInput(true);
+        connection.connect();
+
+        try (InputStream inputStream = connection.getInputStream();
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+
+            return byteArrayOutputStream.toByteArray();
+        }
+    }
+
+    // 파일 삭제
+    public void deleteFirebaseBucket(String key) {
+
+        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+        bucket.get(key).delete();
     }
 }

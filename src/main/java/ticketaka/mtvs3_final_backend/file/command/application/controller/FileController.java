@@ -19,17 +19,6 @@ public class FileController {
     private final FileService fileService;
 
     /*
-        파일 업로드 테스트
-     */
-    @PostMapping
-    public ResponseEntity<?> uploadImg(@RequestParam("image") MultipartFile image) {
-
-        fileService.uploadFirebaseBucket(image, image.getOriginalFilename());
-
-        return ResponseEntity.ok().body(ApiUtils.success(null));
-    }
-
-    /*
         파일 업로드 - 회원 가입 용
         TODO: 비밀번호 추가
      */
