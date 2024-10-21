@@ -27,13 +27,13 @@ public class FaceAuthService {
     /*
         얼굴 인식
      */
-    public void identifyFace(MultipartFile image, String id, Long currentMemberId) {
+    public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO, Long currentMemberId) {
 
         // 유저 이미지 파일 조회
         File currentMemberImgFile = getOriginImgUrl(currentMemberId);
 
         // 인증 이미지 저장
-        String faceImgUrl = fileService.uploadImgForVerification(image, currentMemberId);
+        String faceImgUrl = fileService.uploadImgForVerification(requestDTO.image(), currentMemberId);
 
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(
