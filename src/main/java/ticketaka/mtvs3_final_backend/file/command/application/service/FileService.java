@@ -15,7 +15,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
@@ -59,11 +59,11 @@ public class FileService {
 
     private void UploadMemberUrl(String email, String secondPwd, String imgUrl) {
 
-        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
+        FileUploadForAuth fileUpload = fileUploadForSignUpRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         fileUpload.setImgUrl(imgUrl);
-        fileUpload.setSecondPwd(secondPwd);
+        fileUpload.setCode(secondPwd);
         fileUpload.setUploadStatus(UploadStatus.COMPLETED);
 
         fileUploadForSignUpRedisRepository.save(fileUpload);

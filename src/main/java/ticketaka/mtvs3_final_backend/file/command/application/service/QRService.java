@@ -14,7 +14,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
@@ -63,7 +63,7 @@ public class QRService {
      */
     public void checkSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
 
-        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(requestDTO.email())
+        FileUploadForAuth fileUpload = fileUploadForSignUpRedisRepository.findById(requestDTO.email())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
 
         validateFileUpload(fileUpload);
@@ -120,10 +120,10 @@ public class QRService {
         }
     }
 
-    // FileUploadForSignUp 생성
+    // FileUploadForAuth 생성
     private void saveFileUploadForSignUp(String email) {
 
-        FileUploadForSignUp fileUpload = FileUploadForSignUp.builder()
+        FileUploadForAuth fileUpload = FileUploadForAuth.builder()
                 .id(email)
                 .uploadStatus(UploadStatus.PENDING)
                 .build();
