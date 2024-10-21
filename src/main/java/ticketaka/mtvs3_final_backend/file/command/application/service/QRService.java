@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
@@ -72,7 +73,7 @@ public class QRService {
     /*
         회원 인증 용 QR 생성
      */
-    public byte[] generateVerificationQR(Long currentMemberId) {
+    public QRResponseDTO.generateVerificationQRDTO generateVerificationQR(Long currentMemberId) {
 
         validateMember(currentMemberId);
 
@@ -85,7 +86,7 @@ public class QRService {
         // 회원 인증 용 상태 준비
         saveFileUploadForAuth(currentMemberId.toString(), userCode);
 
-        return outputStream.toByteArray();
+        return new QRResponseDTO.generateVerificationQRDTO(outputStream.toByteArray(), userCode);
     }
 
     /*
