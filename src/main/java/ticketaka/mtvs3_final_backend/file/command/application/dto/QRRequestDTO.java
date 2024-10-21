@@ -7,7 +7,7 @@ public class QRRequestDTO {
     ) {
     }
 
-    public record checkVerificationQR(
+    public record checkVerificationQRDTO(
             String userCode
     ) {
     }

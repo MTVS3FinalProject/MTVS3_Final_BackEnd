@@ -5,7 +5,7 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 
 import java.util.Optional;
 
-public interface FileUploadForSignUpRedisRepository extends CrudRepository<FileUploadForAuth, String> {
+public interface FileUploadForAuthRedisRepository extends CrudRepository<FileUploadForAuth, String> {
 
     Optional<FileUploadForAuth> findById(String id);
 }

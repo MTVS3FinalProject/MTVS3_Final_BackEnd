@@ -24,7 +24,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
@@ -41,7 +41,7 @@ public class MemberAuthService {
     private final FileService fileService;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
+    private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JWTTokenProvider jwtTokenProvider;
@@ -101,7 +101,7 @@ public class MemberAuthService {
     // 이미지 업로드 확인
     private MemberAuthDTO.FileUploadDTO checkUploadedImg(String email) {
 
-        FileUploadForAuth fileUpload = fileUploadForSignUpRedisRepository.findById(email)
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         if(!fileUpload.getUploadStatus().equals(UploadStatus.COMPLETED)) {
@@ -111,7 +111,7 @@ public class MemberAuthService {
         String imgUrl = fileUpload.getImgUrl();
         String secondPwd = fileUpload.getCode();
 
-        fileUploadForSignUpRedisRepository.delete(fileUpload);
+        fileUploadForAuthRedisRepository.delete(fileUpload);
 
         return new MemberAuthDTO.FileUploadDTO(imgUrl, secondPwd);
     }

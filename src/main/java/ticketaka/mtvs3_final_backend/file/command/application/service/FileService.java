@@ -17,7 +17,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.Relation
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
@@ -34,7 +34,7 @@ public class FileService {
 
     private final FileRepository fileRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
-    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
+    private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
@@ -59,14 +59,14 @@ public class FileService {
 
     private void UploadMemberUrl(String email, String secondPwd, String imgUrl) {
 
-        FileUploadForAuth fileUpload = fileUploadForSignUpRedisRepository.findById(email)
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setCode(secondPwd);
         fileUpload.setUploadStatus(UploadStatus.COMPLETED);
 
-        fileUploadForSignUpRedisRepository.save(fileUpload);
+        fileUploadForAuthRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능
