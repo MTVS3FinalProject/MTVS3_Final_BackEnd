@@ -172,7 +172,7 @@ public class MemberAuthService {
                 member.getNickname(),
                 member.getBirth().toString(),
                 0,
-                ""
+                1
         );
     }
 
