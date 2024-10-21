@@ -7,7 +7,7 @@ public class FaceAuthRequestDTO {
     // 파일 업로드
     public record verificationMemberDTO(
             MultipartFile image,
-            String userCode
+            String secondPwd
     ) {
     }
 

@@ -46,7 +46,7 @@ public class FileService {
 
         String imgUrl = uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
 
-        UploadMemberUrl(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
+        setFileUploadForSignUp(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
     }
 
     /*
@@ -54,16 +54,31 @@ public class FileService {
     */
     public String uploadImgForVerification(MultipartFile image, Long currentMemberId) {
 
-        return uploadImg(image, image.getOriginalFilename());
+        String imgUrl = uploadImg(image, image.getOriginalFilename());
+        
+        setFileUploadForAuth(currentMemberId, imgUrl);
+        
+        return imgUrl;
     }
 
-    private void UploadMemberUrl(String email, String secondPwd, String imgUrl) {
+    // 회원 인증 용 FileUploadForAuth 수정
+    private void setFileUploadForSignUp(String email, String secondPwd, String imgUrl) {
 
-        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(email)
-                .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
+        FileUploadForAuth fileUpload = getFileUploadForAuth(email);
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setCode(secondPwd);
+        fileUpload.setUploadStatus(UploadStatus.COMPLETED);
+
+        fileUploadForAuthRedisRepository.save(fileUpload);
+    }
+
+    // 회원 인증 용 FileUploadForAuth 수정
+    private void setFileUploadForAuth(Long currentMemberId, String imgUrl) {
+
+        FileUploadForAuth fileUpload = getFileUploadForAuth(String.valueOf(currentMemberId));
+
+        fileUpload.setImgUrl(imgUrl);
         fileUpload.setUploadStatus(UploadStatus.COMPLETED);
 
         fileUploadForAuthRedisRepository.save(fileUpload);
@@ -129,5 +144,10 @@ public class FileService {
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         bucket.get(key).delete();
+    }
+
+    private FileUploadForAuth getFileUploadForAuth(String id) {
+        return fileUploadForAuthRedisRepository.findById(id)
+                .orElseThrow(() -> new Exception400("파일 업로드 대기 상태가 아닙니다."));
     }
 }
