@@ -21,6 +21,7 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedis
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,7 +76,9 @@ public class QRService {
 
         validateMember(currentMemberId);
 
-        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?id=" + currentMemberId;
+        String userCode = createRandomUUID();
+
+        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?userCode=" + userCode;
 
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
@@ -154,5 +157,10 @@ public class QRService {
     private void validateMember(Long currentMemberId) {
         memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new Exception401("회원을 찾을 수 없습니다."));
+    }
+
+    // 랜덤 UUID 생성
+    private String createRandomUUID() {
+        return UUID.randomUUID().toString();
     }
 }
