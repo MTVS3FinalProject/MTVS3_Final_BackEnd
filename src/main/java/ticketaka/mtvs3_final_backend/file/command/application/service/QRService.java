@@ -139,8 +139,13 @@ public class QRService {
 
     // 파일 유효성 확인
     private static void validateFileUpload(FileUpload fileUpload) {
+
         if(fileUpload.getUploadStatus().equals(UploadStatus.PENDING)) {
             throw new Exception400("신원 인증 사진을 업로드하지 않았습니다.");
+        }
+
+        if(fileUpload.getUploadStatus().equals(UploadStatus.UPLOADED)) {
+            throw new Exception400("신원 인증에 실패하였습니다.");
         }
 
         if(fileUpload.getUploadStatus().equals(UploadStatus.FAIL)) {
