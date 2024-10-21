@@ -4,7 +4,7 @@ public class SeatDTO {
 
     public record getSeatId(
             String section,
-            String seatId
+            String number
     ) {
     }
 }

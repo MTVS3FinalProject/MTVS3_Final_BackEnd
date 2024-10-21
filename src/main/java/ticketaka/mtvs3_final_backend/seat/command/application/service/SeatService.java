@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
+import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatRequestDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeat;
@@ -34,14 +35,9 @@ public class SeatService {
 
         Concert concert = getConcertByConcertName(requestDTO.concertName());
 
-        String section = requestDTO.seatId().substring(4, 6);
-        String number = requestDTO.seatId().substring(6);
+        SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
 
-        System.out.println("concert = " + concert.getId());
-        System.out.println("section = " + section);
-        System.out.println("number = " + number);
-
-        Seat seat = getSeat(concert, section, number);
+        Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
         // 현재 좌석에 접수한 총 인원 조회
         int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
@@ -49,7 +45,7 @@ public class SeatService {
 
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
-                section + number,
+                seatId.section() + seatId.number(),
                 seat.getDrawingTime().toString(),
                 receptionMemberCount
         );
@@ -63,10 +59,9 @@ public class SeatService {
 
         Concert concert = getConcertByConcertName(requestDTO.concertName());
 
-        String section = requestDTO.seatId().substring(4, 5);
-        String number = requestDTO.seatId().substring(5);
+        SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
 
-        Seat seat = getSeat(concert, section, number);
+        Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
         MemberSeat memberSeat = newMemberSeat(currentMemberId, concert.getId(), seat.getId());
 
@@ -129,10 +124,9 @@ public class SeatService {
         // 공연 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
 
-        String section = requestDTO.seatId().substring(4, 5);
-        String number = requestDTO.seatId().substring(5);
+        SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
 
-        Seat seat = getSeat(concert, section, number);
+        Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
         MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId());
 
@@ -192,5 +186,12 @@ public class SeatService {
     private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
         return memberSeatRepository.findByMemberIdAndConcertIdAndSeatId(currentMemberId, concertId, seatId)
                 .orElseThrow(() -> new Exception400("해당 좌석을 접수한 내역을 찾을 수 없습니다."));
+    }
+
+    private SeatDTO.getSeatId getSeatId(String seatId) {
+        return new SeatDTO.getSeatId(
+                seatId.substring(4, 6),
+                seatId.substring(6)
+        );
     }
 }
