@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FileResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
@@ -52,13 +53,11 @@ public class FileService {
     /*
         파일 업로드 - 회원 인증 용
     */
-    public FileUploadForAuth uploadImgForVerification(MultipartFile image, Long currentMemberId) {
+    public FileUploadForAuth uploadImgForVerification(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
-        String imgUrl = uploadImg(image, image.getOriginalFilename());
-        
-        FileUploadForAuth fileUpload = setFileUploadForAuth(currentMemberId, imgUrl);
-        
-        return fileUpload;
+        String imgUrl = uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
+
+        return setFileUploadForAuth(requestDTO.code(), imgUrl);
     }
 
     // 회원 가입 용 FileUploadForAuth 수정
@@ -74,9 +73,9 @@ public class FileService {
     }
 
     // 회원 인증 용 FileUploadForAuth 수정
-    private FileUploadForAuth setFileUploadForAuth(Long currentMemberId, String imgUrl) {
+    private FileUploadForAuth setFileUploadForAuth(String code, String imgUrl) {
 
-        FileUploadForAuth fileUpload = getFileUploadForAuth(String.valueOf(currentMemberId));
+        FileUploadForAuth fileUpload = getFileUploadForAuth(code);
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setUploadStatus(UploadStatus.UPLOADED);

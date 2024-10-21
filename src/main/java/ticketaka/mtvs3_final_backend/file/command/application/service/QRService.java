@@ -84,7 +84,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 인증 용 상태 준비
-        saveFileUploadForAuth(currentMemberId.toString(), userCode);
+        saveFileUploadForAuth(userCode, currentMemberId.toString());
 
         return new QRResponseDTO.generateVerificationQRDTO(outputStream.toByteArray(), userCode);
     }
@@ -96,11 +96,11 @@ public class QRService {
 
         validateMember(currentMemberId);
 
-        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(String.valueOf(currentMemberId))
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
 
-        if(!fileUpload.getCode().equals(requestDTO.userCode())) {
-            throw new Exception401("userCode 가 일치하지 않습니다.");
+        if(!fileUpload.getCode().equals(String.valueOf(currentMemberId))) {
+            throw new Exception401("인증 요청 대상과 일치하지 않습니다.");
         }
 
         validateFileUpload(fileUpload);
@@ -139,8 +139,13 @@ public class QRService {
 
     // 파일 유효성 확인
     private static void validateFileUpload(FileUpload fileUpload) {
+
         if(fileUpload.getUploadStatus().equals(UploadStatus.PENDING)) {
             throw new Exception400("신원 인증 사진을 업로드하지 않았습니다.");
+        }
+
+        if(fileUpload.getUploadStatus().equals(UploadStatus.UPLOADED)) {
+            throw new Exception400("신원 인증에 실패하였습니다.");
         }
 
         if(fileUpload.getUploadStatus().equals(UploadStatus.FAIL)) {
