@@ -92,7 +92,7 @@ public class QRService {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
-    public void checkVerificationQR(Long currentMemberId) {
+    public void checkVerificationQR(QRRequestDTO.checkVerificationQR requestDTO, Long currentMemberId) {
 
         validateMember(currentMemberId);
 
