@@ -12,15 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class QRService {
 
     private final MemberRepository memberRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
-    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
+    private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
@@ -52,7 +54,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 가입 용 사진 정보 저장 준비
-        saveFileUploadForSignUp(requestDTO.email());
+        saveFileUploadForAuth(requestDTO.email(), "");
 
         return outputStream.toByteArray();
     }
@@ -62,7 +64,7 @@ public class QRService {
      */
     public void checkSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
 
-        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(requestDTO.email())
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.email())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
 
         validateFileUpload(fileUpload);
@@ -71,29 +73,35 @@ public class QRService {
     /*
         회원 인증 용 QR 생성
      */
-    public byte[] generateVerificationQR(Long currentMemberId) {
+    public QRResponseDTO.generateVerificationQRDTO generateVerificationQR(Long currentMemberId) {
 
         validateMember(currentMemberId);
 
-        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?id=" + currentMemberId;
+        String userCode = createRandomUUID();
+
+        String targetUrlWithEmail = QR_FOR_VERIFICATION + "?userCode=" + userCode;
 
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 인증 용 상태 준비
-        saveFileUpload(currentMemberId.toString());
+        saveFileUploadForAuth(currentMemberId.toString(), userCode);
 
-        return outputStream.toByteArray();
+        return new QRResponseDTO.generateVerificationQRDTO(outputStream.toByteArray(), userCode);
     }
 
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
-    public void checkVerificationQR(Long currentMemberId) {
+    public void checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
 
         validateMember(currentMemberId);
 
-        FileUpload fileUpload = fileUploadRedisRepository.findById(currentMemberId)
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(String.valueOf(currentMemberId))
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
+
+        if(!fileUpload.getCode().equals(requestDTO.userCode())) {
+            throw new Exception401("userCode 가 일치하지 않습니다.");
+        }
 
         validateFileUpload(fileUpload);
     }
@@ -117,26 +125,16 @@ public class QRService {
         }
     }
 
-    // FileUploadForSignUp 생성
-    private void saveFileUploadForSignUp(String email) {
+    // FileUploadForAuth 생성
+    private void saveFileUploadForAuth(String id, String code) {
 
-        FileUploadForSignUp fileUpload = FileUploadForSignUp.builder()
-                .id(email)
+        FileUploadForAuth fileUpload = FileUploadForAuth.builder()
+                .id(id)
                 .uploadStatus(UploadStatus.PENDING)
+                .code(code)
                 .build();
 
-        fileUploadForSignUpRedisRepository.save(fileUpload);
-    }
-
-    // FileUpload 생성
-    private void saveFileUpload(String Id) {
-
-        FileUpload fileUpload = FileUpload.builder()
-                .id(Id)
-                .uploadStatus(UploadStatus.PENDING)
-                .build();
-
-        fileUploadRedisRepository.save(fileUpload);
+        fileUploadForAuthRedisRepository.save(fileUpload);
     }
 
     // 파일 유효성 확인
@@ -154,5 +152,10 @@ public class QRService {
     private void validateMember(Long currentMemberId) {
         memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new Exception401("회원을 찾을 수 없습니다."));
+    }
+
+    // 랜덤 UUID 생성
+    private String createRandomUUID() {
+        return UUID.randomUUID().toString();
     }
 }

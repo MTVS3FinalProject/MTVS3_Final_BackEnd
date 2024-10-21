@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.FileResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForSignUp;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForSignUpRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 
 import java.io.ByteArrayOutputStream;
@@ -33,69 +34,54 @@ public class FileService {
 
     private final FileRepository fileRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
-    private final FileUploadForSignUpRedisRepository fileUploadForSignUpRedisRepository;
+    private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
 
-    // 파일 업로드 - 테스트 용
-    public void uploadFirebaseBucket(MultipartFile multipartFile, String fileName) {
+    /*
+        파일 업로드 - 회원 가입 용
+    */
+    public void uploadImgForSignUp(FileResponseDTO.uploadImgForSignUpDTO requestDTO) {
 
-        uploadImg(multipartFile, fileName);
+        String imgUrl = uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
+
+        setFileUploadForSignUp(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
     }
 
-    // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
-    private byte[] getImageFromUrl(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setDoInput(true);
-        connection.connect();
-
-        try (InputStream inputStream = connection.getInputStream();
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, len);
-            }
-
-            return byteArrayOutputStream.toByteArray();
-        }
-    }
-
-    // 파일 삭제
-    public void deleteFirebaseBucket(String key) {
-
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        bucket.get(key).delete();
-    }
-
-    // 파일 업로드 - 회원 가입 용
-    public void uploadImgForSignUp(MultipartFile image, String email) {
+    /*
+        파일 업로드 - 회원 인증 용
+    */
+    public FileUploadForAuth uploadImgForVerification(MultipartFile image, Long currentMemberId) {
 
         String imgUrl = uploadImg(image, image.getOriginalFilename());
-
-        UploadMemberUrl(email, imgUrl);
+        
+        FileUploadForAuth fileUpload = setFileUploadForAuth(currentMemberId, imgUrl);
+        
+        return fileUpload;
     }
 
-    // 파일 업로드 - 회원 인증 용
-    public String uploadImgForVerification(MultipartFile image, Long currentMemberId) {
+    // 회원 가입 용 FileUploadForAuth 수정
+    private void setFileUploadForSignUp(String email, String secondPwd, String imgUrl) {
 
-        return uploadImg(image, image.getOriginalFilename());
-    }
-
-    private void UploadMemberUrl(String email, String imgUrl) {
-
-        FileUploadForSignUp fileUpload = fileUploadForSignUpRedisRepository.findById(email)
-                .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
+        FileUploadForAuth fileUpload = getFileUploadForAuth(email);
 
         fileUpload.setImgUrl(imgUrl);
-        fileUpload.setUploadStatus(UploadStatus.COMPLETED);
+        fileUpload.setCode(secondPwd);
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
 
-        fileUploadForSignUpRedisRepository.save(fileUpload);
+        fileUploadForAuthRedisRepository.save(fileUpload);
+    }
+
+    // 회원 인증 용 FileUploadForAuth 수정
+    private FileUploadForAuth setFileUploadForAuth(Long currentMemberId, String imgUrl) {
+
+        FileUploadForAuth fileUpload = getFileUploadForAuth(String.valueOf(currentMemberId));
+
+        fileUpload.setImgUrl(imgUrl);
+        fileUpload.setUploadStatus(UploadStatus.UPLOADED);
+
+        return fileUploadForAuthRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능
@@ -129,5 +115,39 @@ public class FileService {
                 .build();
 
         fileRepository.save(file);
+    }
+
+    // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
+    private byte[] getImageFromUrl(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoInput(true);
+        connection.connect();
+
+        try (InputStream inputStream = connection.getInputStream();
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+
+            return byteArrayOutputStream.toByteArray();
+        }
+    }
+
+    // 파일 삭제
+    public void deleteFirebaseBucket(String key) {
+
+        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+        bucket.get(key).delete();
+    }
+
+    private FileUploadForAuth getFileUploadForAuth(String id) {
+        return fileUploadForAuthRedisRepository.findById(id)
+                .orElseThrow(() -> new Exception400("파일 업로드 대기 상태가 아닙니다."));
     }
 }

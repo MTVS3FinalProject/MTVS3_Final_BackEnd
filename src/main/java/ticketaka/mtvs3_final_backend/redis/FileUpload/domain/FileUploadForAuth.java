@@ -1,6 +1,5 @@
 package ticketaka.mtvs3_final_backend.redis.FileUpload.domain;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,13 +10,12 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 @SuperBuilder
 @RedisHash(value = "fileupload_for_signup", timeToLive = 900) // 60 * 15
-public class FileUploadForSignUp extends FileUpload {
-
+public class FileUploadForAuth extends FileUpload {
     @Setter
-    private String imgUrl;
+    private String code;
 
-    public FileUploadForSignUp(String email, UploadStatus uploadStatus) {
+    public FileUploadForAuth(String email, UploadStatus uploadStatus, String code) {
         super(email, uploadStatus);
-        this.imgUrl = "";
+        this.code = code;
     }
 }
