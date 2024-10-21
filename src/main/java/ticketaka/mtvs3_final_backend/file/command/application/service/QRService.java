@@ -84,7 +84,7 @@ public class QRService {
         ByteArrayOutputStream outputStream = getByteArrayOutputStream(targetUrlWithEmail);
 
         // 회원 인증 용 상태 준비
-        saveFileUploadForAuth(currentMemberId.toString(), userCode);
+        saveFileUploadForAuth(userCode, currentMemberId.toString());
 
         return new QRResponseDTO.generateVerificationQRDTO(outputStream.toByteArray(), userCode);
     }
