@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
@@ -15,6 +14,8 @@ import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileReposito
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class FaceAuthService {
         }
 
         // 인증 이미지 저장
-        String faceImgUrl = fileService.uploadImgForVerification(requestDTO.image(), currentMemberId);
+        FileUploadForAuth fileUpload = fileService.uploadImgForVerification(requestDTO.image(), currentMemberId);
 
         // 유저 이미지 파일 조회
         File currentMemberImgFile = getOriginImgUrl(currentMemberId);
@@ -51,7 +52,7 @@ public class FaceAuthService {
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(
                 currentMemberImgFile.getFileUrl(),
-                faceImgUrl
+                fileUpload.getImgUrl()
         );
 
         // AI 통신
@@ -62,11 +63,16 @@ public class FaceAuthService {
         // 결과 확인
         if (responseDTO.match_result() == 0) {
 
+            fileUpload.setUploadStatus(UploadStatus.FAIL);
+            fileService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
+
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
 
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
+
         // File 생성
-        fileService.newFile(RelationType.MEMBER, currentMemberId, faceImgUrl, FilePurpose.VERIFICATION);
+        fileService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
     }
 
     // 회원 인증 파일 이미지 조회

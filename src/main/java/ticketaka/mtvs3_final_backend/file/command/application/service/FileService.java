@@ -52,13 +52,13 @@ public class FileService {
     /*
         파일 업로드 - 회원 인증 용
     */
-    public String uploadImgForVerification(MultipartFile image, Long currentMemberId) {
+    public FileUploadForAuth uploadImgForVerification(MultipartFile image, Long currentMemberId) {
 
         String imgUrl = uploadImg(image, image.getOriginalFilename());
         
-        setFileUploadForAuth(currentMemberId, imgUrl);
+        FileUploadForAuth fileUpload = setFileUploadForAuth(currentMemberId, imgUrl);
         
-        return imgUrl;
+        return fileUpload;
     }
 
     // 회원 가입 용 FileUploadForAuth 수정
@@ -74,14 +74,14 @@ public class FileService {
     }
 
     // 회원 인증 용 FileUploadForAuth 수정
-    private void setFileUploadForAuth(Long currentMemberId, String imgUrl) {
+    private FileUploadForAuth setFileUploadForAuth(Long currentMemberId, String imgUrl) {
 
         FileUploadForAuth fileUpload = getFileUploadForAuth(String.valueOf(currentMemberId));
 
         fileUpload.setImgUrl(imgUrl);
         fileUpload.setUploadStatus(UploadStatus.UPLOADED);
 
-        fileUploadForAuthRedisRepository.save(fileUpload);
+        return fileUploadForAuthRedisRepository.save(fileUpload);
     }
 
     // 파일 업로드 기능
