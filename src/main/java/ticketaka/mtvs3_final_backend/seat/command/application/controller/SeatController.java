@@ -64,6 +64,17 @@ public class SeatController {
     }
 
     /*
+        추첨 시작 알림
+     */
+    @PostMapping("/drawing")
+    public ResponseEntity<?> drawingNotification(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        SeatResponseDTO.drawingNotificationDTO responseDTO = seatService.drawingNotification(requestDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
         좌석 추첨 결과 반영
      */
     @PostMapping("/pre-reserve")
