@@ -6,4 +6,9 @@ public class QRRequestDTO {
             String email
     ) {
     }
+
+    public record checkVerificationQRDTO(
+            String userCode
+    ) {
+    }
 }

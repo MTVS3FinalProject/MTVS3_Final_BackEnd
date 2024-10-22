@@ -21,13 +21,11 @@ public class FaceAuthController {
 
     /*
         얼굴 인식
-        TODO: 비밀번호 확인
      */
     @PostMapping("/verification")
-    public ResponseEntity<?> identifyFace(@RequestParam("image") MultipartFile image,
-                                          @RequestParam("id") String id) {
+    public ResponseEntity<?> verificationMember(@RequestBody FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
-        faceAuthService.identifyFace(image, id, getCurrentMemberId());
+        faceAuthService.verificationMember(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

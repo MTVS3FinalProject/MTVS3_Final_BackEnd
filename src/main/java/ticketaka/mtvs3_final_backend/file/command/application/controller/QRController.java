@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
@@ -50,23 +51,21 @@ public class QRController {
     /*
         회원 인증 용 QR 생성
      */
-    @GetMapping(value = "/verification", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping( "/verification")
     public ResponseEntity<?> generateVerificationQR() {
 
-        byte[] responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
+        QRResponseDTO.generateVerificationQRDTO responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(responseDTO);
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
     @GetMapping(value = "/verification/success", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> checkVerificationQR() {
+    public ResponseEntity<?> checkVerificationQR(@RequestBody QRRequestDTO.checkVerificationQRDTO requestDTO) {
 
-        qrService.checkVerificationQR(getCurrentMemberId());
+        qrService.checkVerificationQR(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

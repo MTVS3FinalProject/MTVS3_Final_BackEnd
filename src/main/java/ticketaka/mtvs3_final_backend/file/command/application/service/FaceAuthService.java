@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
@@ -13,6 +12,10 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurp
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,24 +24,37 @@ import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignCl
 public class FaceAuthService {
 
     private final FileService fileService;
+
+    private final MemberRepository memberRepository;
     private final FileRepository fileRepository;
     private final FaceAuthFeignClient faceAuthFeignClient;
 
     /*
         얼굴 인식
      */
-    public void identifyFace(MultipartFile image, String id, Long currentMemberId) {
+    public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
+
+        // FileUploadForAuth 확인
+        FileUploadForAuth fileUpload = fileService.uploadImgForVerification(requestDTO);
+
+        Long currentMemberId = Long.parseLong(fileUpload.getCode());
+
+        // 유저 확인
+        Member member = memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception401("해당하는 회원을 찾을 수 없습니다."));
+
+        // 2차 비밀번호 확인
+        if(!member.getSecondPwd().equals(requestDTO.secondPwd())) {
+            throw new Exception401("회원 인증에 실패하였습니다.");
+        }
 
         // 유저 이미지 파일 조회
         File currentMemberImgFile = getOriginImgUrl(currentMemberId);
 
-        // 인증 이미지 저장
-        String faceImgUrl = fileService.uploadImgForVerification(image, currentMemberId);
-
         // FeignRequestDTO 생성
         FaceAuthRequestDTO.identifyFaceDTO feignRequestDTO = new FaceAuthRequestDTO.identifyFaceDTO(
                 currentMemberImgFile.getFileUrl(),
-                faceImgUrl
+                fileUpload.getImgUrl()
         );
 
         // AI 통신
@@ -48,11 +64,17 @@ public class FaceAuthService {
 
         // 결과 확인
         if (responseDTO.match_result() == 0) {
+
+            fileUpload.setUploadStatus(UploadStatus.FAIL);
+            fileService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
+
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
 
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
+
         // File 생성
-        fileService.newFile(RelationType.MEMBER, currentMemberId, faceImgUrl, FilePurpose.VERIFICATION);
+        fileService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
     }
 
     // 회원 인증 파일 이미지 조회
