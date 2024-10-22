@@ -50,4 +50,10 @@ public class SeatResponseDTO {
             String userAddress
     ) {
     }
+
+    // 좌석 추첨 알림
+    public record drawingNotificationDTO(
+            List<String> nicknameList
+    ) {
+    }
 }
