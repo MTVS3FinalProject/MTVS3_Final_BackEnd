@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatRequestDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
@@ -27,6 +29,7 @@ public class SeatService {
     private final ConcertRepository concertRepository;
     private final SeatRepository seatRepository;
     private final MemberSeatRepository memberSeatRepository;
+    private final MemberRepository memberRepository;
 
     /*
         좌석 조회
@@ -137,6 +140,29 @@ public class SeatService {
         return new SeatResponseDTO.cancelReceptionSeatDTO(
                 concert.getReceptionLimit() - receptionSeatCount
         );
+    }
+
+    /*
+        추첨 시작 알림
+     */
+    public SeatResponseDTO.drawingNotificationDTO drawingNotification(SeatRequestDTO.seatIdDTO requestDTO) {
+
+        // 공연 조회
+        Concert concert = getConcertByConcertName(requestDTO.concertName());
+
+        SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
+
+        Seat seat = getSeat(concert, seatId.section(), seatId.number());
+
+        List<Member> memberList = memberRepository.findByConcertIdAndSeatId(
+                concert.getId(), seat.getId(), MemberSeatStatus.RESERVED
+        );
+
+        List<String> nicknameList = memberList.stream()
+                .map(Member::getNickname)
+                .toList();
+
+        return new SeatResponseDTO.drawingNotificationDTO(nicknameList);
     }
 
     /*
