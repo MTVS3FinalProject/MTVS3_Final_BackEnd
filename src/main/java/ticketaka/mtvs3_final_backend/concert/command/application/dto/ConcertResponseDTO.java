@@ -37,4 +37,12 @@ public class ConcertResponseDTO {
             String seatId
     ) {
     }
+
+    public record enterDeliveryAddressDTO(
+            String seatId,
+            int seatPrice,
+            int coin,
+            int neededCoin
+    ) {
+    }
 }

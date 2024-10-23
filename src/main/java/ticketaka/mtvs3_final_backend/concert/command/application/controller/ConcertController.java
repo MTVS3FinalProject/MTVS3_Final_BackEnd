@@ -45,7 +45,9 @@ public class ConcertController {
         예매자 정보 입력
      */
     @PostMapping("/member/delivery-address")
-    public ResponseEntity<?> concert(@RequestBody ConcertRequestDTO concertRequestDTO) {
+    public ResponseEntity<?> concert(@RequestBody ConcertRequestDTO.enterDeliveryAddressDTO requestDTO) {
+
+
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
