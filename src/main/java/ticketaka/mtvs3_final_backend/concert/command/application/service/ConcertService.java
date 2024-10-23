@@ -111,13 +111,13 @@ public class ConcertService {
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
 
         String seatInfo = getSeatInfo(seat);
+        int neededCoin = seat.getPrice() > member.getCoin() ? seat.getPrice() - member.getCoin() : 0;
 
-        // TODO: Coin 관련 수정
         return new ConcertResponseDTO.enterDeliveryAddressDTO(
                 seatInfo,
                 seat.getPrice(),
-                10000,
-                2500
+                member.getCoin(),
+                neededCoin
         );
     }
 

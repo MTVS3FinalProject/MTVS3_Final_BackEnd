@@ -1,8 +1,5 @@
 package ticketaka.mtvs3_final_backend.concert.command.application.dto;
 
-import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
-
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ConcertResponseDTO {
@@ -42,7 +39,7 @@ public class ConcertResponseDTO {
     public record enterDeliveryAddressDTO(
             String seatId,
             int seatPrice,
-            int coin,
+            int userCoin,
             int neededCoin
     ) {
     }

@@ -263,7 +263,7 @@ public class SeatService {
                 requestDTO.seatId(),
                 seatInfo,
                 seat.getPrice(),
-                coin,
+                member.getCoin(),
                 address.getUserName(),
                 address.getAddress() + " " + address.getDetail()
         );

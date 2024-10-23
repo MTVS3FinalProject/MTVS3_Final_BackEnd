@@ -167,7 +167,7 @@ public class MemberAuthService {
     // 반환할 회원 정보 구성
     private MemberAuthResponseDTO.memberInfoDTO getMemberInfo(Member member) {
 
-        // TODO: coin 조회, 아바타 data 조회 필요
+        // TODO: userCoin 조회, 아바타 data 조회 필요
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
                 member.getBirth().toString(),
