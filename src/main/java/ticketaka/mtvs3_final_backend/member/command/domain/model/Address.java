@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 
 @Getter
@@ -20,18 +21,19 @@ public class Address extends BaseTimeEntity {
     @Column(nullable = false)
     private Long memberId;
     @Column(nullable = false)
-    private String memberName;
+    private String userName;
     @Column(nullable = false)
-    private int phoneNumber;
+    private String phoneNumber;
     @Column(nullable = false)
     private String address;
     @Column
+    @ColumnDefault(" ")
     private String detail;
 
     @Builder
-    public Address(Long memberId, String memberName, int phoneNumber, String address, String detail) {
+    public Address(Long memberId, String userName, String phoneNumber, String address, String detail) {
         this.memberId = memberId;
-        this.memberName = memberName;
+        this.userName = userName;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.detail = detail;

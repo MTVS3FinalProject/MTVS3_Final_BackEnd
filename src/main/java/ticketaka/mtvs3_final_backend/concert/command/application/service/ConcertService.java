@@ -10,12 +10,12 @@ import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertRequ
 import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertResponseDTO;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
-import ticketaka.mtvs3_final_backend.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
 import java.util.List;
@@ -87,12 +87,24 @@ public class ConcertService {
 
         Member member = getMember(currentMemberId);
 
+        Address address = newAddress(requestDTO, currentMemberId);
+
         return null;
     }
 
     private Member getMember(Long currentMemberId) {
         return memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
+    }
+
+    private Address newAddress(ConcertRequestDTO.enterDeliveryAddressDTO requestDTO, Long memberId) {
+        return Address.builder()
+                .memberId(memberId)
+                .userName(requestDTO.userName())
+                .phoneNumber(requestDTO.userPhoneNumber())
+                .address(requestDTO.userAddress1())
+                .detail(requestDTO.userAddress2())
+                .build();
     }
 
     private static List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> availableSeatList, Concert concert) {
