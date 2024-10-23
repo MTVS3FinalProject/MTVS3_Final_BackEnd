@@ -46,8 +46,8 @@ public class Mtvs3FinalBackendApplication {
                     concert01
             ));
             seatRepository.saveAll(Arrays.asList(
-                    newSeat("A1", "13", 19999, LocalDateTime.of(2024, 10, 22, 17, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat("A1", "15", 29999, LocalDateTime.of(2024, 10, 22, 17, 45), concert01, SeatStatus.UNAVAILABLE)
+                    newSeat(2, "A1", "13", 19999, LocalDateTime.of(2024, 10, 22, 17, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(2, "A1", "15", 29999, LocalDateTime.of(2024, 10, 22, 17, 45), concert01, SeatStatus.UNAVAILABLE)
             ));
         };
     }
@@ -72,8 +72,9 @@ public class Mtvs3FinalBackendApplication {
                 .build();
     }
 
-    private Seat newSeat(String section, String number, int price, LocalDateTime drawingTime, Concert concert, SeatStatus seatStatus) {
+    private Seat newSeat(int floor, String section, String number, int price, LocalDateTime drawingTime, Concert concert, SeatStatus seatStatus) {
         return Seat.builder()
+                .floor(floor)
                 .section(section)
                 .number(number)
                 .price(price)

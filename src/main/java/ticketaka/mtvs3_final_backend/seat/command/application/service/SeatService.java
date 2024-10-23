@@ -26,6 +26,7 @@ import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -53,15 +54,21 @@ public class SeatService {
 
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
+        String seatInfo = getSeatInfo(seat);
+        SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
+        SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
+
         // 현재 좌석에 접수한 총 인원 조회
         int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
-        // double competitionRate = receptionMemberCount > 0 ? ((double) 1 / receptionMemberCount) * 100 : 0;
+        int competitionRate = getCompetitionRate(receptionMemberCount);
 
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
-                seatId.section() + seatId.number(),
-                seat.getDrawingTime().toString(),
-                receptionMemberCount
+                seat.getFloor(),
+                seatInfo,
+                concertTime,
+                drawingTime,
+                competitionRate
         );
     }
 
@@ -82,11 +89,14 @@ public class SeatService {
         memberSeatRepository.save(memberSeat);
 
         int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
+        int competitionRate = getCompetitionRate(receptionMemberCount);
+
         int receptionCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
 
         return new SeatResponseDTO.seatReceptionDTO(
-                receptionMemberCount,
+                requestDTO.seatId(),
                 seat.getPrice(),
+                competitionRate,
                 concert.getReceptionLimit() - receptionCount
         );
     }
@@ -107,20 +117,20 @@ public class SeatService {
         // 좌석 정보를 DTO 로 변환
         List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> receptionSeatsDTOList = receptionSeatList.stream()
                 .map(seat -> {
-                    String concertDate = String.valueOf(concert.getConcertDate().getYear());  // 연도 문자열로 변환
-                    String seatInfo = seat.getSection() + seat.getNumber();  // 좌석 정보 생성
-                    String drawingTime = seat.getDrawingTime().toString();
+                    String seatInfo = getSeatInfo(seat);
+                    SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
+                    SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
                     int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
                             concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED
                     ).intValue();  // 접수된 회원 수
+                    int competitionRate = getCompetitionRate(receptionMemberCount);
 
                     // ReceptionSeatDTO 객체 생성
                     return new SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO(
-                            concertDate + seatInfo,
-                            concertDate,
                             seatInfo,
+                            concertTime,
                             drawingTime,
-                            receptionMemberCount
+                            competitionRate
                     );
                 })
                 .toList();
@@ -173,7 +183,12 @@ public class SeatService {
                 .map(Member::getNickname)
                 .toList();
 
-        return new SeatResponseDTO.drawingNotificationDTO(nicknameList);
+        int competitionRate = getCompetitionRate(nicknameList.size());
+
+        return new SeatResponseDTO.drawingNotificationDTO(
+                nicknameList,
+                competitionRate
+        );
     }
 
     /*
@@ -224,6 +239,8 @@ public class SeatService {
         SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
+        String seatInfo = getSeatInfo(seat);
+
         // 좌석 결제
         // TODO: 코인 정보 조회, 예약 정보 생성
         int coin = 100000;
@@ -241,7 +258,8 @@ public class SeatService {
         drawResultRedisRepository.delete(drawResult);
 
         return new SeatResponseDTO.reserveSeatDTO(
-                seat.getSection() + seat.getNumber(),
+                requestDTO.seatId(),
+                seatInfo,
                 seat.getPrice(),
                 coin,
                 address.getUserName(),
@@ -278,6 +296,24 @@ public class SeatService {
                 seatId.substring(4, 6),
                 seatId.substring(6)
         );
+    }
+
+    private String getSeatInfo(Seat seat) {
+        return seat.getSection() + "구역 " + seat.getNumber() + "번";
+    }
+
+    private SeatResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
+        return new SeatResponseDTO.timeDTO(
+                localDateTime.getYear(),
+                localDateTime.getMonthValue(),
+                localDateTime.getDayOfMonth(),
+                localDateTime.toLocalTime().toString()
+        );
+    }
+
+    private static int getCompetitionRate(int receptionMemberCount) {
+        double competitionRate = receptionMemberCount > 0 ? ((double) 1 / receptionMemberCount) * 100 : 0;
+        return (int) Math.round(competitionRate);
     }
 
     private void validateDrawResult(DrawResult drawResult) {
