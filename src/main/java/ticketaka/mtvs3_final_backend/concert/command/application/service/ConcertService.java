@@ -27,6 +27,25 @@ public class ConcertService {
     private final SeatRepository seatRepository;
 
     /*
+        공연장 정보 조회
+     */
+    public ConcertResponseDTO.getConcertListDTO getConcertList() {
+
+        List<Concert> concertList = concertRepository.findAll();
+        List<ConcertResponseDTO.getConcertDTO> concertDTOList = concertList.stream()
+                .map(concert -> new ConcertResponseDTO.getConcertDTO(
+                        concert.getName(),
+                        concert.getConcertDate().getYear(),
+                        concert.getConcertDate().getMonthValue(),
+                        concert.getConcertDate().getDayOfMonth(),
+                        concert.getConcertDate().toLocalTime().toString()
+                ))
+                .toList();
+
+        return new ConcertResponseDTO.getConcertListDTO(concertDTOList);
+    }
+
+    /*
         공연장 입장
      */
     public ConcertResponseDTO.entranceConcertDTO entranceConcert(ConcertRequestDTO.entranceConcertDTO requestDTO, Long currentMemberId) {
