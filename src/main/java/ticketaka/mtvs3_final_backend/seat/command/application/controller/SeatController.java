@@ -77,10 +77,10 @@ public class SeatController {
     /*
         좌석 추첨 결과 반영
      */
-    @PostMapping("/pre-reserve")
-    public ResponseEntity<?> getPreReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    @PostMapping("/draw-result")
+    public ResponseEntity<?> createDrawResult(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        seatService.getPreReserveSeat(requestDTO, getCurrentMemberId());
+        seatService.createDrawResult(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 public class DrawResult {
 
     @Id
-    private Long id;
+    private String id;
     @Setter
     private Long concertId;
     @Setter
@@ -19,8 +19,8 @@ public class DrawResult {
     private PaymentStatus paymentStatus;
 
     @Builder
-    public DrawResult(Long memberId, Long concertId, Long seatId, PaymentStatus paymentStatus) {
-        this.id = memberId;
+    public DrawResult(String id, Long concertId, Long seatId, PaymentStatus paymentStatus) {
+        this.id = id;
         this.concertId = concertId;
         this.seatId = seatId;
         this.paymentStatus = paymentStatus;

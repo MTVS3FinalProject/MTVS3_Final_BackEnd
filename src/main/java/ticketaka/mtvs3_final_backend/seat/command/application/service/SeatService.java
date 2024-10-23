@@ -9,6 +9,9 @@ import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
+import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
+import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
+import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatRequestDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
@@ -31,7 +34,7 @@ public class SeatService {
     private final MemberSeatRepository memberSeatRepository;
     private final MemberRepository memberRepository;
 
-
+    private final DrawResultRedisRepository drawResultRedisRepository;
 
     /*
         좌석 조회
@@ -170,9 +173,24 @@ public class SeatService {
     /*
         좌석 추첨 결과 반영
      */
-    public void getPreReserveSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+    public void createDrawResult(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+
+        // 공연 조회
+        Concert concert = getConcertByConcertName(requestDTO.concertName());
+
+        SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
+
+        Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
         // 임시 결제 권한 획득
+        DrawResult drawResult = DrawResult.builder()
+                .id(String.valueOf(currentMemberId))
+                .concertId(concert.getId())
+                .seatId(seat.getId())
+                .paymentStatus(PaymentStatus.PENDING)
+                .build();
+
+        drawResultRedisRepository.save(drawResult);
     }
 
     /*
