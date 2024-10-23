@@ -42,10 +42,9 @@ public class MemberAuthController {
 
         MemberAuthResponseDTO.loginDTO responseDTO = memberAuthService.login(httpServletRequest, requestDTO);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, responseDTO.authTokenDTO().grantType() + " " + responseDTO.authTokenDTO().accessToken())
-                .header("Refresh-Token", responseDTO.authTokenDTO().grantType() + " " + responseDTO.authTokenDTO().refreshToken())
-                .body(ApiUtils.success(responseDTO.memberInfoDTO()));
+        System.out.println("responseDTO = " + responseDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
     /*
@@ -56,10 +55,7 @@ public class MemberAuthController {
 
         MemberAuthResponseDTO.authTokenDTO responseDTO = memberAuthService.reissueToken(httpServletRequest);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, responseDTO.grantType() + " " + responseDTO.accessToken())
-                .header("Refresh-Token", responseDTO.grantType() + " " + responseDTO.refreshToken())
-                .body(ApiUtils.success(null));
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
     /*

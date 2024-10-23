@@ -16,7 +16,7 @@ spring:
     show-sql: true
     database: mysql
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -31,5 +31,5 @@ jwt:
 
 logging:
   level:
-    '[com.todorian]': debug
+    '[ticketaka]': debug
     '[org.hibernate.type]': trace

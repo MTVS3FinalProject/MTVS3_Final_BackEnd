@@ -146,6 +146,9 @@ public class FileService {
     }
 
     private FileUploadForAuth getFileUploadForAuth(String id) {
+
+        System.out.println("id = " + id);
+
         return fileUploadForAuthRedisRepository.findById(id)
                 .orElseThrow(() -> new Exception400("파일 업로드 대기 상태가 아닙니다."));
     }

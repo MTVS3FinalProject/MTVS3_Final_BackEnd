@@ -22,6 +22,8 @@ public class FileController {
     @PostMapping("/signup")
     public ResponseEntity<?> uploadImgForSignUp(@ModelAttribute FileResponseDTO.uploadImgForSignUpDTO requestDTO) {
 
+        System.out.println("requestDTO = " + requestDTO);
+
         // 이메일 정보와 이미지 처리
         fileService.uploadImgForSignUp(requestDTO);
 

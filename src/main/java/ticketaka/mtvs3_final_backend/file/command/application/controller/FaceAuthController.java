@@ -23,7 +23,9 @@ public class FaceAuthController {
         얼굴 인식
      */
     @PostMapping("/verification")
-    public ResponseEntity<?> verificationMember(@RequestBody FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
+    public ResponseEntity<?> verificationMember(@ModelAttribute FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
+
+        System.out.println("requestDTO = " + requestDTO);
 
         faceAuthService.verificationMember(requestDTO);
 
