@@ -16,6 +16,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
+import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
@@ -100,6 +101,9 @@ public class ConcertService {
         Address address = newAddress(requestDTO, currentMemberId);
 
         addressRepository.save(address);
+
+        drawResult.setPaymentStatus(PaymentStatus.IN_PROGRESS);
+        drawResultRedisRepository.save(drawResult);
 
         Concert concert = concertRepository.findById(drawResult.getConcertId())
                 .orElseThrow(() -> new Exception400("해당 콘서트를 찾을 수 없습니다."));

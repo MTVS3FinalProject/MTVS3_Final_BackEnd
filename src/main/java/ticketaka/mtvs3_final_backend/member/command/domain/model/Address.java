@@ -27,7 +27,7 @@ public class Address extends BaseTimeEntity {
     @Column(nullable = false)
     private String address;
     @Column
-    @ColumnDefault(" ")
+    @ColumnDefault("''")
     private String detail;
 
     @Builder

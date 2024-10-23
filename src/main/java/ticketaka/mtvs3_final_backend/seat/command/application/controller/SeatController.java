@@ -44,7 +44,7 @@ public class SeatController {
     /*
         현재 회원이 접수한 좌석 조회
      */
-    @PostMapping("/my/reception")
+    @PostMapping("/my-reception")
     public ResponseEntity<?> getReceptionSeats(@RequestBody SeatRequestDTO.getReceptionSeatsDTO requestDTO) {
 
         SeatResponseDTO.getReceptionSeatsDTO responseDTO = seatService.getReceptionSeats(requestDTO, getCurrentMemberId());
@@ -88,7 +88,7 @@ public class SeatController {
     /*
         좌석 결제
      */
-    @PostMapping("/payment")
+    @PostMapping("/reservation")
     public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat(requestDTO, getCurrentMemberId());
