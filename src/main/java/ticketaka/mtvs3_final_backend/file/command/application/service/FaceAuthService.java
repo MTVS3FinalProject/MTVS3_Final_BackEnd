@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
@@ -31,6 +32,22 @@ public class FaceAuthService {
 
     /*
         얼굴 인식
+     */
+    public void recognizeMember(FaceAuthRequestDTO.recognizeMemberDTO requestDTO) {
+
+        String imgUrl = fileService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
+
+        FaceAuthResponseDTO.recognizeFaceDTO responseDTO = faceAuthFeignClient.recognizeFace(new FaceAuthRequestDTO.recognizeFaceDTO(imgUrl));
+
+        if(responseDTO.result() == 0) {
+            throw new Exception400(responseDTO.message());
+        }
+
+        fileService.setFileUploadForSignUp(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
+    }
+    
+    /*
+        얼굴 인증
      */
     public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 

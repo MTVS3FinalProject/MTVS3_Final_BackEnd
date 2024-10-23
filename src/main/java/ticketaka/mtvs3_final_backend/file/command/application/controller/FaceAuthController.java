@@ -22,6 +22,17 @@ public class FaceAuthController {
     /*
         얼굴 인식
      */
+    @PostMapping("/recognition")
+    public ResponseEntity<?> recognizeMember(@ModelAttribute FaceAuthRequestDTO.recognizeMemberDTO requestDTO) {
+
+        faceAuthService.recognizeMember(requestDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        얼굴 인증
+     */
     @PostMapping("/verification")
     public ResponseEntity<?> verificationMember(@ModelAttribute FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
