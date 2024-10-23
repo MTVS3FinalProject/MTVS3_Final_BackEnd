@@ -88,11 +88,13 @@ public class SeatService {
         memberSeatRepository.save(memberSeat);
 
         int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
+        int competitionRate = getCompetitionRate(receptionMemberCount);
+
         int receptionCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
 
         return new SeatResponseDTO.seatReceptionDTO(
-                receptionMemberCount,
                 seat.getPrice(),
+                competitionRate,
                 concert.getReceptionLimit() - receptionCount
         );
     }
