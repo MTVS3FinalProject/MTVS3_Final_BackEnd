@@ -1,10 +1,7 @@
 package ticketaka.mtvs3_final_backend.seat.command.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 
@@ -33,6 +30,7 @@ public class Seat extends BaseTimeEntity {
     @JoinColumn(name = "concert_id")
     private Concert concert;
 
+    @Setter
     @Column
     @Enumerated(EnumType.STRING)
     private SeatStatus seatStatus;

@@ -7,6 +7,20 @@ import java.util.List;
 
 public class ConcertResponseDTO {
 
+    public record getConcertListDTO(
+            List<getConcertDTO> concertDTOList
+    ) {
+    }
+
+    public record getConcertDTO(
+            String concertName,
+            int year,
+            int month,
+            int day,
+            String time
+    ) {
+    }
+
     public record entranceConcertDTO(
             String concertName,
             int year,
@@ -20,7 +34,16 @@ public class ConcertResponseDTO {
     }
 
     public record SeatIdDTO(
-            String seatId
+            String seatId,
+            String drawingTime
+    ) {
+    }
+
+    public record enterDeliveryAddressDTO(
+            String seatId,
+            int seatPrice,
+            int coin,
+            int neededCoin
     ) {
     }
 }
