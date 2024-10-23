@@ -15,9 +15,9 @@ public class SeatResponseDTO {
 
     // 좌석 조회
     public record getSeatDTO(
-            timeDTO concertTime,
             int floor,
             String seatInfo,
+            timeDTO concertTime,
             timeDTO drawingTime,
             int competitionRate
     ) {
@@ -36,9 +36,8 @@ public class SeatResponseDTO {
             List<ReceptionSeatDTO> receptionSeatDTOList
     ) {
         public record ReceptionSeatDTO(
-                String seatId,
-                timeDTO concertTime,
                 String seatInfo,
+                timeDTO concertTime,
                 timeDTO drawingTime,
                 int competitionRate
         ) {
