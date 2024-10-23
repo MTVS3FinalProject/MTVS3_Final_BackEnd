@@ -47,8 +47,8 @@ public class ConcertController {
     @PostMapping("/member/delivery-address")
     public ResponseEntity<?> concert(@RequestBody ConcertRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
+        ConcertResponseDTO.enterDeliveryAddressDTO responseDTO = concertService.enterDeliveryAddress(requestDTO, getCurrentMemberId());
 
-
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 }
