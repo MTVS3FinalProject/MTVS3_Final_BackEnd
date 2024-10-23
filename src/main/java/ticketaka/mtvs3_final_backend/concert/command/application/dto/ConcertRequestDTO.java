@@ -6,4 +6,12 @@ public class ConcertRequestDTO {
             String concertName
     ) {
     }
+
+    public record enterDeliveryAddress(
+            String userName,
+            int userPhoneNumber,
+            String userAddress1,
+            String userAddress2
+    ) {
+    }
 }

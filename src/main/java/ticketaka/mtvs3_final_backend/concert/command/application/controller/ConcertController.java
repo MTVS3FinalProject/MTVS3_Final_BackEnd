@@ -40,4 +40,13 @@ public class ConcertController {
         
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
+
+    /*
+        예매자 정보 입력
+     */
+    @PostMapping("/member/delivery-address")
+    public ResponseEntity<?> concert(@RequestBody ConcertRequestDTO concertRequestDTO) {
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
 }
