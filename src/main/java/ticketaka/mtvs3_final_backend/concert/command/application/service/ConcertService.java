@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertRequestDTO;
 import ticketaka.mtvs3_final_backend.concert.command.application.dto.ConcertResponseDTO;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
@@ -14,6 +15,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
+import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
+import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
@@ -31,6 +34,8 @@ public class ConcertService {
     private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
     private final SeatRepository seatRepository;
+
+    private final DrawResultRedisRepository drawResultRedisRepository;
 
     /*
         공연장 정보 조회
@@ -89,13 +94,25 @@ public class ConcertService {
 
         Member member = getMember(currentMemberId);
 
+        DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(currentMemberId))
+                .orElseThrow(() -> new Exception403("해당 좌석에 대한 결제 권한이 없습니다."));
+
         Address address = newAddress(requestDTO, currentMemberId);
 
         addressRepository.save(address);
 
+        Concert concert = concertRepository.findById(drawResult.getConcertId())
+                .orElseThrow(() -> new Exception400("해당 콘서트를 찾을 수 없습니다."));
+        Seat seat = seatRepository.findByIdAndConcert(drawResult.getSeatId(), concert)
+                .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
 
-
-        return null;
+        // TODO: Coin 관련 수정
+        return new ConcertResponseDTO.enterDeliveryAddressDTO(
+                seat.getSection() + seat.getNumber(),
+                seat.getPrice(),
+                10000,
+                2500
+        );
     }
 
     private Member getMember(Long currentMemberId) {

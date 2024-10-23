@@ -8,7 +8,6 @@ public class ConcertRequestDTO {
     }
 
     public record enterDeliveryAddressDTO(
-            String seatId,
             String userName,
             String userPhoneNumber,
             String userAddress1,
