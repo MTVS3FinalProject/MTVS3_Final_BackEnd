@@ -23,11 +23,11 @@ public class ConcertController {
         공연장 정보 조회
      */
     @GetMapping
-    public ResponseEntity<?> getConcert() {
+    public ResponseEntity<?> getConcertList() {
 
+        ConcertResponseDTO.getConcertListDTO responseDTO = concertService.getConcertList();
 
-
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
     /*
