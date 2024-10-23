@@ -63,6 +63,7 @@ public class SeatResponseDTO {
     public record reserveSeatDTO(
             String seatId,
             String seatInfo,
+            int seatNum,
             int seatPrice,
             int userCoin,
             String userName,

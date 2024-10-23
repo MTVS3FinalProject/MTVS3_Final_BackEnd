@@ -4,6 +4,7 @@ import java.util.List;
 
 public class ConcertResponseDTO {
 
+    // 공연 정보 조회
     public record getConcertListDTO(
             List<getConcertDTO> concertDTOList
     ) {
@@ -18,6 +19,7 @@ public class ConcertResponseDTO {
     ) {
     }
 
+    // 공연장 입장
     public record entranceConcertDTO(
             String concertName,
             int year,
@@ -36,8 +38,10 @@ public class ConcertResponseDTO {
     ) {
     }
 
+    // 예매자 정보 입력
     public record enterDeliveryAddressDTO(
-            String seatId,
+            String seatInfo,
+            int seatNum,
             int seatPrice,
             int userCoin,
             int neededCoin

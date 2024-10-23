@@ -115,6 +115,7 @@ public class ConcertService {
 
         return new ConcertResponseDTO.enterDeliveryAddressDTO(
                 seatInfo,
+                1,
                 seat.getPrice(),
                 member.getCoin(),
                 neededCoin

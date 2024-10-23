@@ -259,9 +259,11 @@ public class SeatService {
 
         drawResultRedisRepository.delete(drawResult);
 
+        // TODO: seatNum
         return new SeatResponseDTO.reserveSeatDTO(
                 requestDTO.seatId(),
                 seatInfo,
+                1,
                 seat.getPrice(),
                 member.getCoin(),
                 address.getUserName(),
