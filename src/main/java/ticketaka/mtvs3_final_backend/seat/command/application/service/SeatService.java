@@ -226,12 +226,14 @@ public class SeatService {
 
         // 좌석 결제
         // TODO: 코인 정보 조회, 예약 정보 생성
-        int coin = 100000;
+        int coin = member.getCoin();
         if(coin < seat.getPrice()) {
             throw new Exception400("코인이 부족합니다.");
         }
 
-        coin -= seat.getPrice();
+        member.setCoin(coin - seat.getPrice());
+
+        memberRepository.save(member);
 
         seat.setSeatStatus(SeatStatus.RESERVED);
         seatRepository.save(seat);

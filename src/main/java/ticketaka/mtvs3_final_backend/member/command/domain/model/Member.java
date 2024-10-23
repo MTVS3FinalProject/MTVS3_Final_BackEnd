@@ -1,10 +1,7 @@
 package ticketaka.mtvs3_final_backend.member.command.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
@@ -42,6 +39,7 @@ public class Member extends BaseTimeEntity {
     @ColumnDefault("'ACTIVE'")
     private Status status;
 
+    @Setter
     @Column
     private int coin;
 
