@@ -2,6 +2,7 @@ package ticketaka.mtvs3_final_backend._core.utils;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 
 public class SecurityUtils {
 

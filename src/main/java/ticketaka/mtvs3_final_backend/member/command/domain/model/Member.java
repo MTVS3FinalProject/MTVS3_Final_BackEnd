@@ -22,12 +22,14 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String nickname;
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
-    @Column
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private String secondPwd;
     @Column
     private LocalDate birth;
 
@@ -44,10 +46,11 @@ public class Member extends BaseTimeEntity {
     private int coin;
 
     @Builder
-    public Member(String nickname, String email, String password, LocalDate birth, Authority authority, Status status) {
+    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Authority authority, Status status) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.secondPwd = secondPwd;
         this.birth = birth;
         this.authority = authority;
         this.status = status;

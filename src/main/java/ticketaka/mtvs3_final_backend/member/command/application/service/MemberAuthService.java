@@ -12,15 +12,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.jwt.JWTTokenProvider;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileService;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.Identification;
-import ticketaka.mtvs3_final_backend.redis.identification.domain.IdentificationStatus;
-import ticketaka.mtvs3_final_backend.redis.identification.repository.IdentificationRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 
@@ -34,9 +38,10 @@ import java.util.Optional;
 @Service
 public class MemberAuthService {
 
+    private final FileService fileService;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final IdentificationRedisRepository identificationRedisRepository;
+    private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JWTTokenProvider jwtTokenProvider;
@@ -55,23 +60,24 @@ public class MemberAuthService {
         checkDuplicatedNickname(requestDTO.nickname());
 
         // imgUrl 확인
-        checkUploadedImg(requestDTO.email());
+        MemberAuthDTO.FileUploadDTO fileUploadDTO = checkUploadedImg(requestDTO.email());
 
         // 회원 생성
-        Member member = newMember(requestDTO);
+        Member member = newMember(requestDTO, fileUploadDTO.secondPwd());
 
         // 회원 저장
         memberRepository.save(member);
+
+        // File 객체 생성
+        fileService.newFile(RelationType.MEMBER, member.getId(), fileUploadDTO.imgUrl(), FilePurpose.SIGNUP);
     }
 
     // 이메일 중복 확인
     private void checkDuplicatedEmail(String email) {
 
-        Optional<Member> member = memberRepository.findByEmail(email);
-
-        if(member.isPresent()) {
-            throw new Exception400("이미 가입된 이메일입니다.");
-        }
+        // 이메일 중복 확인
+        memberRepository.findByEmail(email)
+                .ifPresent(member -> { throw new Exception400("이미 가입된 이메일입니다."); });
     }
 
     // 닉네임 중복 확인
@@ -93,20 +99,27 @@ public class MemberAuthService {
     }
 
     // 이미지 업로드 확인
-    private void checkUploadedImg(String email) {
+    private MemberAuthDTO.FileUploadDTO checkUploadedImg(String email) {
 
-        Identification identification = identificationRedisRepository.findById(email)
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        if(!identification.getIdentificationStatus().equals(IdentificationStatus.COMPLETED)) {
+        if(!fileUpload.getUploadStatus().equals(UploadStatus.UPLOADED)) {
             throw new Exception400("이미지가 업로드 되지 않았습니다.");
         }
 
-        identificationRedisRepository.delete(identification);
+        String imgUrl = fileUpload.getImgUrl();
+        String secondPwd = fileUpload.getCode();
+
+        fileUploadForAuthRedisRepository.delete(fileUpload);
+
+        return new MemberAuthDTO.FileUploadDTO(imgUrl, secondPwd);
     }
 
     // 생일 포맷 변환
     private LocalDate getLocalDateBirth(String birth) {
+
+        System.out.println("birth = " + birth);
 
         // 변환할 날짜 포맷 지정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -116,11 +129,12 @@ public class MemberAuthService {
     }
 
     // 회원 생성
-    protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO) {
+    protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO, String secondPwd) {
         return Member.builder()
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
+                .secondPwd(passwordEncoder.encode("secondPwd"))
                 .birth(getLocalDateBirth(requestDTO.birth()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)
@@ -156,9 +170,9 @@ public class MemberAuthService {
         // TODO: coin 조회, 아바타 data 조회 필요
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
-                member.getId().intValue(),
+                member.getBirth().toString(),
                 0,
-                ""
+                1
         );
     }
 
