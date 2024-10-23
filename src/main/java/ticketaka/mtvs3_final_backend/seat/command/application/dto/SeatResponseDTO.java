@@ -13,6 +13,15 @@ public class SeatResponseDTO {
     ) {
     }
 
+    // 추첨 시작 시간
+    public record drawingTimeDTO(
+            int year,
+            int month,
+            int day,
+            String time
+    ) {
+    }
+
     // 좌석 조회
     public record getSeatDTO(
             int year,
