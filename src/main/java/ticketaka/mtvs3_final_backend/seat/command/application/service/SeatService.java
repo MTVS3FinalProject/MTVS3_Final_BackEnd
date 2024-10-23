@@ -115,19 +115,20 @@ public class SeatService {
         // 좌석 정보를 DTO 로 변환
         List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> receptionSeatsDTOList = receptionSeatList.stream()
                 .map(seat -> {
-                    SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
                     String seatInfo = getSeatInfo(seat);
+                    SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
                     SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
                     int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
                             concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED
                     ).intValue();  // 접수된 회원 수
+                    int competitionRate = getCompetitionRate(receptionMemberCount);
 
                     // ReceptionSeatDTO 객체 생성
                     return new SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO(
                             seatInfo,
                             concertTime,
                             drawingTime,
-                            receptionMemberCount
+                            competitionRate
                     );
                 })
                 .toList();
@@ -180,7 +181,12 @@ public class SeatService {
                 .map(Member::getNickname)
                 .toList();
 
-        return new SeatResponseDTO.drawingNotificationDTO(nicknameList);
+        int competitionRate = getCompetitionRate(nicknameList.size());
+
+        return new SeatResponseDTO.drawingNotificationDTO(
+                nicknameList,
+                competitionRate
+        );
     }
 
     /*

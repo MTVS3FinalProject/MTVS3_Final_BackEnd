@@ -110,9 +110,11 @@ public class ConcertService {
         Seat seat = seatRepository.findByIdAndConcert(drawResult.getSeatId(), concert)
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
 
+        String seatInfo = getSeatInfo(seat);
+
         // TODO: Coin 관련 수정
         return new ConcertResponseDTO.enterDeliveryAddressDTO(
-                seat.getSection() + seat.getNumber(),
+                seatInfo,
                 seat.getPrice(),
                 10000,
                 2500
@@ -143,5 +145,9 @@ public class ConcertService {
                     return new ConcertResponseDTO.SeatIdDTO(seatId, seat.getDrawingTime().toString());
                 })
                 .toList();
+    }
+
+    private String getSeatInfo(Seat seat) {
+        return seat.getSection() + "구역 " + seat.getNumber() + "번";
     }
 }

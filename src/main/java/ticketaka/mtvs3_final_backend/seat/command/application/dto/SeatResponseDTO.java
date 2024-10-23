@@ -62,7 +62,8 @@ public class SeatResponseDTO {
 
     // 좌석 추첨 알림
     public record drawingNotificationDTO(
-            List<String> nicknameList
+            List<String> nicknameList,
+            int competitionRate
     ) {
     }
 }
