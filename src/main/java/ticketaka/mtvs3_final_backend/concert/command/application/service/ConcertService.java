@@ -130,13 +130,13 @@ public class ConcertService {
                 .build();
     }
 
-    private static List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> availableSeatList, Concert concert) {
-        return availableSeatList.stream()
+    private static List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> seatList, Concert concert) {
+        return seatList.stream()
                 .map(seat -> {
                     String year = String.valueOf(concert.getConcertDate().getYear());
                     String seatId = year + seat.getSection() + seat.getNumber();
 
-                    return new ConcertResponseDTO.SeatIdDTO(seatId);
+                    return new ConcertResponseDTO.SeatIdDTO(seatId, seat.getDrawingTime().toString());
                 })
                 .toList();
     }

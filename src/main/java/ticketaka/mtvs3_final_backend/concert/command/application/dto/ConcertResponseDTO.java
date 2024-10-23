@@ -34,7 +34,8 @@ public class ConcertResponseDTO {
     }
 
     public record SeatIdDTO(
-            String seatId
+            String seatId,
+            String drawingTime
     ) {
     }
 
