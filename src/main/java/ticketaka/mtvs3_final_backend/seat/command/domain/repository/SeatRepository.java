@@ -27,4 +27,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findAllSeatsByMemberIdAndConcertIdAndStatus(@Param("memberId") Long memberId,
                                                            @Param("concertId") Long concertId,
                                                            @Param("status") MemberSeatStatus status);
+
+    Optional<Seat> findByIdAndConcert(Long seatId, Concert concert);
 }
