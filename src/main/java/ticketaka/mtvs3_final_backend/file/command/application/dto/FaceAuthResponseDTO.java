@@ -4,8 +4,10 @@ public class FaceAuthResponseDTO {
 
     // 얼굴 인식
     public record recognizeFaceDTO(
-
-    )
+            int result,
+            String message
+    ) {
+    }
 
     // 얼굴 인증
     public record identifyFaceDTO(
