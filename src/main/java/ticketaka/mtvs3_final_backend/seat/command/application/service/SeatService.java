@@ -26,6 +26,7 @@ import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -53,15 +54,20 @@ public class SeatService {
 
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
+        String seatInfo = getSeatInfo(seat);
+        SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
+        SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
+
         // 현재 좌석에 접수한 총 인원 조회
         int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
-        // double competitionRate = receptionMemberCount > 0 ? ((double) 1 / receptionMemberCount) * 100 : 0;
+        int competitionRate = getCompetitionRate(receptionMemberCount);
 
         return new SeatResponseDTO.getSeatDTO(
-                requestDTO.seatId(),
-                seatId.section() + seatId.number(),
-                seat.getDrawingTime().toString(),
-                receptionMemberCount
+                concertTime,
+                seat.getFloor(),
+                seatInfo,
+                drawingTime,
+                competitionRate
         );
     }
 
@@ -278,6 +284,24 @@ public class SeatService {
                 seatId.substring(4, 6),
                 seatId.substring(6)
         );
+    }
+
+    private String getSeatInfo(Seat seat) {
+        return seat.getSection() + "구역 " + seat.getNumber() + "번";
+    }
+
+    private SeatResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
+        return new SeatResponseDTO.timeDTO(
+                localDateTime.getYear(),
+                localDateTime.getMonthValue(),
+                localDateTime.getDayOfMonth(),
+                localDateTime.toLocalTime().toString()
+        );
+    }
+
+    private static int getCompetitionRate(int receptionMemberCount) {
+        double competitionRate = receptionMemberCount > 0 ? ((double) 1 / receptionMemberCount) * 100 : 0;
+        return (int) Math.round(competitionRate);
     }
 
     private void validateDrawResult(DrawResult drawResult) {
