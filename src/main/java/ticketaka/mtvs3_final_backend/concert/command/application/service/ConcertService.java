@@ -12,6 +12,7 @@ import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
@@ -27,6 +28,7 @@ import java.util.List;
 public class ConcertService {
 
     private final MemberRepository memberRepository;
+    private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
     private final SeatRepository seatRepository;
 
@@ -88,6 +90,10 @@ public class ConcertService {
         Member member = getMember(currentMemberId);
 
         Address address = newAddress(requestDTO, currentMemberId);
+
+        addressRepository.save(address);
+
+
 
         return null;
     }
