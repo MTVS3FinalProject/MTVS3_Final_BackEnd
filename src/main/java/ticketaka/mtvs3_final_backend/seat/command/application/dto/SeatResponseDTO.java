@@ -15,6 +15,7 @@ public class SeatResponseDTO {
 
     // 좌석 조회
     public record getSeatDTO(
+            String seatId,
             int floor,
             String seatInfo,
             timeDTO concertTime,
@@ -25,6 +26,7 @@ public class SeatResponseDTO {
 
     // 좌석 접수
     public record seatReceptionDTO(
+            String seatId,
             int seatPrice,
             int competitionRate,
             int remainingTicket
@@ -50,20 +52,21 @@ public class SeatResponseDTO {
     ) {
     }
 
+    // 좌석 추첨 알림
+    public record drawingNotificationDTO(
+            List<String> nicknameList,
+            int competitionRate
+    ) {
+    }
+
     // 좌석 결제
     public record reserveSeatDTO(
+            String seatId,
             String seatInfo,
             int seatPrice,
             int userCoin,
             String userName,
             String userAddress
-    ) {
-    }
-
-    // 좌석 추첨 알림
-    public record drawingNotificationDTO(
-            List<String> nicknameList,
-            int competitionRate
     ) {
     }
 }

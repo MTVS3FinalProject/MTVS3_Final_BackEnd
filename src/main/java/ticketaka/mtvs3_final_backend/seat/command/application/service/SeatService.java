@@ -63,6 +63,7 @@ public class SeatService {
         int competitionRate = getCompetitionRate(receptionMemberCount);
 
         return new SeatResponseDTO.getSeatDTO(
+                requestDTO.seatId(),
                 seat.getFloor(),
                 seatInfo,
                 concertTime,
@@ -93,6 +94,7 @@ public class SeatService {
         int receptionCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
 
         return new SeatResponseDTO.seatReceptionDTO(
+                requestDTO.seatId(),
                 seat.getPrice(),
                 competitionRate,
                 concert.getReceptionLimit() - receptionCount
@@ -256,6 +258,7 @@ public class SeatService {
         drawResultRedisRepository.delete(drawResult);
 
         return new SeatResponseDTO.reserveSeatDTO(
+                requestDTO.seatId(),
                 seatInfo,
                 seat.getPrice(),
                 coin,
