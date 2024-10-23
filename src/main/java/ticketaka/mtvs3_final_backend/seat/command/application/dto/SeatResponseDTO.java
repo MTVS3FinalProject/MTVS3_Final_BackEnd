@@ -4,19 +4,31 @@ import java.util.List;
 
 public class SeatResponseDTO {
 
+    // 공연 날짜
+    public record timeDTO(
+            int year,
+            int month,
+            int day,
+            String time
+    ) {
+    }
+
     // 좌석 조회
     public record getSeatDTO(
             String seatId,
+            int floor,
             String seatInfo,
-            String drawingTime,
+            timeDTO concertTime,
+            timeDTO drawingTime,
             int competitionRate
     ) {
     }
 
     // 좌석 접수
     public record seatReceptionDTO(
-            int competitionRate,
+            String seatId,
             int seatPrice,
+            int competitionRate,
             int remainingTicket
     ) {
     }
@@ -26,10 +38,9 @@ public class SeatResponseDTO {
             List<ReceptionSeatDTO> receptionSeatDTOList
     ) {
         public record ReceptionSeatDTO(
-                String seatId,
-                String concertDate,
                 String seatInfo,
-                String drawingTime,
+                timeDTO concertTime,
+                timeDTO drawingTime,
                 int competitionRate
         ) {
         }
@@ -41,19 +52,21 @@ public class SeatResponseDTO {
     ) {
     }
 
+    // 좌석 추첨 알림
+    public record drawingNotificationDTO(
+            List<String> nicknameList,
+            int competitionRate
+    ) {
+    }
+
     // 좌석 결제
     public record reserveSeatDTO(
+            String seatId,
             String seatInfo,
             int seatPrice,
             int userCoin,
             String userName,
             String userAddress
-    ) {
-    }
-
-    // 좌석 추첨 알림
-    public record drawingNotificationDTO(
-            List<String> nicknameList
     ) {
     }
 }

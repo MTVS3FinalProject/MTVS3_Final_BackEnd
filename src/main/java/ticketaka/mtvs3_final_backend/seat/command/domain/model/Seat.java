@@ -18,6 +18,8 @@ public class Seat extends BaseTimeEntity {
     private Long id;
 
     @Column
+    private int floor;
+    @Column
     private String section;
     @Column
     private String number;
@@ -36,7 +38,8 @@ public class Seat extends BaseTimeEntity {
     private SeatStatus seatStatus;
 
     @Builder
-    public Seat(String section, String number, int price, LocalDateTime drawingTime, Concert concert, SeatStatus seatStatus) {
+    public Seat(int floor, String section, String number, int price, LocalDateTime drawingTime, Concert concert, SeatStatus seatStatus) {
+        this.floor = floor;
         this.section = section;
         this.number = number;
         this.price = price;
