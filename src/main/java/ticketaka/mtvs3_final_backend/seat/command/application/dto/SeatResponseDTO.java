@@ -4,8 +4,21 @@ import java.util.List;
 
 public class SeatResponseDTO {
 
+    // 공연 날짜
+    public record concertTimeDTO(
+            int year,
+            int month,
+            int day,
+            String time
+    ) {
+    }
+
     // 좌석 조회
     public record getSeatDTO(
+            int year,
+            int month,
+            int day,
+            String time,
             String seatId,
             String seatInfo,
             String drawingTime,
