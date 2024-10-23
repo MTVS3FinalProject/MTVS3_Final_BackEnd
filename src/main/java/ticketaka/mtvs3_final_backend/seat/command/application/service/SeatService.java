@@ -231,6 +231,8 @@ public class SeatService {
         SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
+        String seatInfo = getSeatInfo(seat);
+
         // 좌석 결제
         // TODO: 코인 정보 조회, 예약 정보 생성
         int coin = 100000;
@@ -248,7 +250,7 @@ public class SeatService {
         drawResultRedisRepository.delete(drawResult);
 
         return new SeatResponseDTO.reserveSeatDTO(
-                seat.getSection() + seat.getNumber(),
+                seatInfo,
                 seat.getPrice(),
                 coin,
                 address.getUserName(),
