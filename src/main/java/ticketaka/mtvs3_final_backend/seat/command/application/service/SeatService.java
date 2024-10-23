@@ -31,6 +31,8 @@ public class SeatService {
     private final MemberSeatRepository memberSeatRepository;
     private final MemberRepository memberRepository;
 
+
+
     /*
         좌석 조회
      */
