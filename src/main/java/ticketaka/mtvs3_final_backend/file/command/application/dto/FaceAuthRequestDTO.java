@@ -12,6 +12,12 @@ public class FaceAuthRequestDTO {
     ) {
     }
 
+    // 얼굴 인식
+    public record recognizeFaceDTO(
+            String faceImg
+    ) {
+    }
+
     // 얼굴 인증
     public record identifyFaceDTO(
             String originImg,

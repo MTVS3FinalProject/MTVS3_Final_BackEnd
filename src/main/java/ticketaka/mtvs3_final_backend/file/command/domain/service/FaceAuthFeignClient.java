@@ -9,6 +9,8 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRespon
 @FeignClient(name = "face-auth-service", url = "https://adapted-charmed-panda.ngrok-free.app")
 public interface FaceAuthFeignClient {
 
+    @PostMapping("/verificationimage")
+
     @PostMapping("/verification")
     FaceAuthResponseDTO.identifyFaceDTO identifyFace(@RequestBody FaceAuthRequestDTO.identifyFaceDTO requestDTO);
 }
