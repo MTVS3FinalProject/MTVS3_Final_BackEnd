@@ -152,7 +152,7 @@ public class SeatService {
 
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
-        MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId());
+        MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED);
 
         memberSeatRepository.delete(memberSeat);
 
@@ -290,8 +290,8 @@ public class SeatService {
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
     }
 
-    private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
-        return memberSeatRepository.findByMemberIdAndConcertIdAndSeatId(currentMemberId, concertId, seatId)
+    private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId, MemberSeatStatus memberSeatStatus) {
+        return memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concertId, seatId, memberSeatStatus)
                 .orElseThrow(() -> new Exception400("해당 좌석을 접수한 내역을 찾을 수 없습니다."));
     }
 
