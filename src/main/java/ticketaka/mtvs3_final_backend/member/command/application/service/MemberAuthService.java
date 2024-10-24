@@ -134,7 +134,7 @@ public class MemberAuthService {
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
-                .secondPwd(passwordEncoder.encode("secondPwd"))
+                .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(getLocalDateBirth(requestDTO.birth()))
                 .authority(Authority.USER)
                 .status(Status.ACTIVE)

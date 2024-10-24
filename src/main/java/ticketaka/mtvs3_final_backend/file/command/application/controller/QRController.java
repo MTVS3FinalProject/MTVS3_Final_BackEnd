@@ -62,7 +62,7 @@ public class QRController {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
-    @GetMapping(value = "/verification/success", produces = MediaType.IMAGE_PNG_VALUE)
+    @PostMapping(value = "/verification/success")
     public ResponseEntity<?> checkVerificationQR(@RequestBody QRRequestDTO.checkVerificationQRDTO requestDTO) {
 
         qrService.checkVerificationQR(requestDTO, getCurrentMemberId());
