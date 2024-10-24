@@ -222,6 +222,28 @@ public class SeatService {
     }
 
     /*
+        추첨 결과 치트
+     */
+    public void cheatDrawResult(SeatRequestDTO.cheatDTO requestDTO, Long currentMemberId) {
+
+        Member member = memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
+        Concert concert = getConcertByConcertName(requestDTO.concertName());
+
+        MemberSeat memberSeat = memberSeatRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
+                .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
+
+        DrawResult drawResult = DrawResult.builder()
+                .id(String.valueOf(currentMemberId))
+                .concertId(concert.getId())
+                .seatId(memberSeat.getSeatId())
+                .paymentStatus(PaymentStatus.PENDING)
+                .build();
+
+        drawResultRedisRepository.save(drawResult);
+    }
+
+    /*
         좌석 결제
      */
     @Transactional

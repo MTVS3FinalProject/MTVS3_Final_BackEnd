@@ -86,6 +86,17 @@ public class SeatController {
     }
 
     /*
+        좌석 추첨 결과 치트
+     */
+    @PostMapping("/draw-cheat")
+    public ResponseEntity<?> cheatDrawResult(@RequestBody SeatRequestDTO.cheatDTO requestDTO) {
+
+        seatService.cheatDrawResult(requestDTO, getCurrentMemberId());
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
         좌석 결제
      */
     @PostMapping("/reservation")

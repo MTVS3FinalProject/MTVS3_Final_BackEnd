@@ -12,4 +12,9 @@ public class SeatRequestDTO {
             String concertName
     ) {
     }
+
+    public record cheatDTO(
+            String concertName
+    ) {
+    }
 }
