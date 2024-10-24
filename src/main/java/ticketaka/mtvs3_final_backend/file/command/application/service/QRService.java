@@ -104,6 +104,9 @@ public class QRService {
         }
 
         validateFileUpload(fileUpload);
+
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
+        fileUploadRedisRepository.save(fileUpload);
     }
 
     // QR 생성
@@ -142,10 +145,6 @@ public class QRService {
 
         if(fileUpload.getUploadStatus().equals(UploadStatus.PENDING)) {
             throw new Exception400("신원 인증 사진을 업로드하지 않았습니다.");
-        }
-
-        if(fileUpload.getUploadStatus().equals(UploadStatus.UPLOADED)) {
-            throw new Exception400("신원 인증에 실패하였습니다.");
         }
 
         if(fileUpload.getUploadStatus().equals(UploadStatus.FAIL)) {

@@ -39,7 +39,8 @@ public class Mtvs3FinalBackendApplication {
                                        SeatRepository seatRepository) {
         return args -> {
             memberRepository.saveAll(Arrays.asList(
-                    newMember("Dorian", "test@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), passwordEncoder)
+                    newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), passwordEncoder),
+                    newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), passwordEncoder)
             ));
             Concert concert01 = newConcert("Concert01", 2, LocalDateTime.of(2024, 11, 1, 19, 0));
             concertRepository.saveAll(Arrays.asList(
