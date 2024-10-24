@@ -43,7 +43,7 @@ public class QRService {
     /*
         회원 가입 용 QR 생성
      */
-    public byte[] generateSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
+    public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         // 이메일 중복 확인
         memberRepository.findByEmail(requestDTO.email())
@@ -62,7 +62,7 @@ public class QRService {
     /*
         회원 가입 용 사진 업로드 성공 확인
      */
-    public void checkSignUpQR(QRRequestDTO.generateQRDTO requestDTO) {
+    public void checkSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.email())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
