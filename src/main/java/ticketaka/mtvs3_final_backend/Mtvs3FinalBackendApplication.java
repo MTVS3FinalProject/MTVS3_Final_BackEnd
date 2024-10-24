@@ -44,11 +44,11 @@ public class Mtvs3FinalBackendApplication {
                                        SeatRepository seatRepository) {
         return args -> {
             memberRepository.saveAll(Arrays.asList(
-                    newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), passwordEncoder),
-                    newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), passwordEncoder),
-                    newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), passwordEncoder),
-                    newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), passwordEncoder),
-                    newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), passwordEncoder)
+                    newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder),
+                    newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), 0, passwordEncoder),
+                    newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder),
+                    newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 0, passwordEncoder),
+                    newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 0, passwordEncoder)
             ));
             fileRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
@@ -66,14 +66,14 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, PasswordEncoder passwordEncoder) {
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, int authority, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(birth)
-                .authority(Authority.USER)
+                .authority(Authority.fromInt(authority))
                 .status(Status.ACTIVE)
                 .build();
     }

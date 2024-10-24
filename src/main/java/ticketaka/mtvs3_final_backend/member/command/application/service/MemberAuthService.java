@@ -136,7 +136,7 @@ public class MemberAuthService {
                 .password(passwordEncoder.encode(requestDTO.password()))
                 .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(getLocalDateBirth(requestDTO.birth()))
-                .authority(Authority.USER)
+                .authority(Authority.fromInt(requestDTO.isHost()))
                 .status(Status.ACTIVE)
                 .build();
     }
