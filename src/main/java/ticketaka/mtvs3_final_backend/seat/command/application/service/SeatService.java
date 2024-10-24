@@ -84,6 +84,9 @@ public class SeatService {
 
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
+        memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED)
+                .orElseThrow(() -> new Exception400("이미 접수한 좌석입니다."));
+
         MemberSeat memberSeat = newMemberSeat(currentMemberId, concert.getId(), seat.getId());
 
         memberSeatRepository.save(memberSeat);
