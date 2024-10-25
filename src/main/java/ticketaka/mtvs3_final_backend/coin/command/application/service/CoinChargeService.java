@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinChargeRequestDTO;
+import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinCharge;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinHistory;
@@ -22,8 +23,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 @Service
 public class CoinChargeService {
 
+    private final CoinHistoryService coinHistoryService;
+
     private final MemberRepository memberRepository;
-    private final CoinHistoryRepository coinHistoryRepository;
     private final CoinChargeRepository coinChargeRepository;
 
     /*
@@ -42,11 +44,15 @@ public class CoinChargeService {
         member.setCoin(member.getCoin() + coinCharge.getAmount());
 
         // 코인 히스토리 생성
-        CoinHistory coinHistory = newCoinHistory(member, coinCharge);
+        coinHistoryService.saveCoinHistory(new CoinHistoryRequestDTO.saveCoinHistoryDTO(
+                member.getId(),
+                AcquisitionType.CHARGE,
+                coinCharge.getId(),
+                CoinUsageType.USAGE
+        ));
 
         // 변경 사항 저장
         memberRepository.save(member);
-        coinHistoryRepository.save(coinHistory);
     }
 
     // 회원 확인
@@ -59,15 +65,5 @@ public class CoinChargeService {
     private CoinCharge getCoinCharge(String coinChargeName) {
         return coinChargeRepository.findByName(coinChargeName)
                 .orElseThrow(() -> new Exception400("해당 상품은 존재하지 않습니다."));
-    }
-
-    // 코인 히스토리 생성
-    private CoinHistory newCoinHistory(Member member, CoinCharge coinCharge) {
-        return CoinHistory.builder()
-                .memberId(member.getId())
-                .acquisitionType(AcquisitionType.CHARGE)
-                .coinAcquisitionId(coinCharge.getId())
-                .coinUsageType(CoinUsageType.USAGE)
-                .build();
     }
 }
