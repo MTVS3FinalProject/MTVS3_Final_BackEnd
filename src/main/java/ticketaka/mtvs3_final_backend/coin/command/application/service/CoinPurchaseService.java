@@ -8,7 +8,6 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinPurchaseRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
-import ticketaka.mtvs3_final_backend.coin.command.domain.repository.CoinAcquisitionRepository;
 import ticketaka.mtvs3_final_backend.coin.command.domain.repository.CoinHistoryRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
@@ -20,7 +19,6 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 public class CoinPurchaseService {
 
     private final MemberRepository memberRepository;
-    private final CoinAcquisitionRepository coinAcquisitionRepository;
     private final CoinHistoryRepository coinHistoryRepository;
 
     /*
@@ -32,9 +30,5 @@ public class CoinPurchaseService {
         // 회원 확인
         Member member = memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new Exception401("회원 인식이 되지 않습니다."));
-
-        // Coin 획득 정보 조회
-        CoinUsageType coinAcquisition = coinAcquisitionRepository.findByName(requestDTO.purchaseName())
-                .orElseThrow(() -> new Exception400("잘못된 구매 접근입니다."));
     }
 }
