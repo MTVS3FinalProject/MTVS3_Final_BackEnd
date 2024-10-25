@@ -300,6 +300,41 @@ public class SeatService {
         );
     }
 
+    /*
+        좌석 결제 - 치트
+     */
+    public SeatResponseDTO.reserveSeatDTO cheatReserveSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+
+        // Member 확인
+        Member member = memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
+
+        // 배송지 정보 조회
+        Address address = addressRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new Exception400("배송지 정보를 조회할 수 없습니다."));
+
+        // 좌석 조회
+        Concert concert = getConcertByConcertName(requestDTO.concertName());
+        SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
+        Seat seat = getSeat(concert, seatId.section(), seatId.number());
+
+        String seatInfo = getSeatInfo(seat);
+
+        seat.setSeatStatus(SeatStatus.RESERVED);
+        seatRepository.save(seat);
+
+        // TODO: seatNum
+        return new SeatResponseDTO.reserveSeatDTO(
+                requestDTO.seatId(),
+                seatInfo,
+                1,
+                seat.getPrice(),
+                member.getCoin(),
+                address.getUserName(),
+                address.getAddress() + " " + address.getDetail()
+        );
+    }
+
     private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
         return MemberSeat.builder()
                 .memberId(currentMemberId)
