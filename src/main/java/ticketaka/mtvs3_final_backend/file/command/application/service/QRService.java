@@ -62,7 +62,7 @@ public class QRService {
     /*
         회원 가입 용 사진 업로드 성공 확인
      */
-    public void checkSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    public void checkSignUpQR(QRRequestDTO.checkSignUpQRDTO requestDTO) {
 
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.email())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));

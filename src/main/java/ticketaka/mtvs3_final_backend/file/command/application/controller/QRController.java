@@ -39,7 +39,7 @@ public class QRController {
         회원 가입 용 사진 업로드 성공 확인
      */
     @PostMapping("/signup/success")
-    public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.checkSignUpQRDTO requestDTO) {
 
         System.out.println("requestDTO = " + requestDTO);
 

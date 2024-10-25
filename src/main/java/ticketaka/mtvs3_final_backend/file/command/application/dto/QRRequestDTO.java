@@ -15,6 +15,11 @@ public class QRRequestDTO {
     ) {
     }
 
+    public record checkSignUpQRDTO(
+            String email
+    ) {
+    }
+
     public record checkVerificationQRDTO(
             String userCode
     ) {

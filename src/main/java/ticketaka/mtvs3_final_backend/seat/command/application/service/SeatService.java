@@ -296,6 +296,7 @@ public class SeatService {
                 seat.getPrice(),
                 member.getCoin(),
                 address.getUserName(),
+                address.getPhoneNumber(),
                 address.getAddress() + " " + address.getDetail()
         );
     }
@@ -331,6 +332,7 @@ public class SeatService {
                 seat.getPrice(),
                 member.getCoin(),
                 address.getUserName(),
+                address.getPhoneNumber(),
                 address.getAddress() + " " + address.getDetail()
         );
     }

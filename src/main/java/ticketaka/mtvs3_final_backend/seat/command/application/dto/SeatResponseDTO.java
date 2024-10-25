@@ -67,6 +67,7 @@ public class SeatResponseDTO {
             int seatPrice,
             int userCoin,
             String userName,
+            String userPhoneNumber,
             String userAddress
     ) {
     }
