@@ -171,8 +171,8 @@ public class MemberAuthService {
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
                 member.getBirth().toString(),
-                0,
-                1
+                member.getCoin(),
+                "1"
         );
     }
 

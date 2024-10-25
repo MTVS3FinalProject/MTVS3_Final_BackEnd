@@ -110,7 +110,7 @@ public class SeatController {
     /*
         좌석 결제 - 치트
      */
-    @PostMapping("/reservation")
+    @PostMapping("/reservation-cheat")
     public ResponseEntity<?> cheatReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.reserveSeatDTO responseDTO = seatService.cheatReserveSeat(requestDTO, getCurrentMemberId());
