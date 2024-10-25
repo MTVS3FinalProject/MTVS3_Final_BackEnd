@@ -25,7 +25,7 @@ public class CoinChargeController {
         Coin 구매
      */
     @PostMapping("/purchase")
-    public ResponseEntity<?> purchase(@RequestBody CoinChargeRequestDTO.purchaseDTO requestDTO) {
+    public ResponseEntity<?> purchase(@RequestBody CoinChargeRequestDTO.coinChargeDTO requestDTO) {
 
         coinChargeService.purchase(requestDTO, getCurrentMemberId());
 
