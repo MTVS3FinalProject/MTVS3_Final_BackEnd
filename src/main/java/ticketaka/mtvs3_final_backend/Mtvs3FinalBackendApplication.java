@@ -43,12 +43,18 @@ public class Mtvs3FinalBackendApplication {
                                        ConcertRepository concertRepository,
                                        SeatRepository seatRepository) {
         return args -> {
+            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
+            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
+            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder);
+            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 0, passwordEncoder);
+            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 0, passwordEncoder);
+            member1.setCoin(100000);
+            member2.setCoin(100000);
+            member3.setCoin(100000);
+            member4.setCoin(100000);
+            member5.setCoin(100000);
             memberRepository.saveAll(Arrays.asList(
-                    newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder),
-                    newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), 0, passwordEncoder),
-                    newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder),
-                    newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 0, passwordEncoder),
-                    newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 0, passwordEncoder)
+                    member1, member2, member3, member4, member5
             ));
             fileRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
