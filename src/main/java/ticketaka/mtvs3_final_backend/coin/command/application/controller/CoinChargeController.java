@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
-import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinPurchaseRequestDTO;
-import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinPurchaseService;
+import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinChargeRequestDTO;
+import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinChargeService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
 
@@ -17,17 +17,17 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/coin")
-public class CoinPurchaseController {
+public class CoinChargeController {
 
-    private final CoinPurchaseService coinPurchaseService;
+    private final CoinChargeService coinChargeService;
 
     /*
         Coin 구매
      */
     @PostMapping("/purchase")
-    public ResponseEntity<?> purchase(@RequestBody CoinPurchaseRequestDTO.purchaseDTO requestDTO) {
+    public ResponseEntity<?> purchase(@RequestBody CoinChargeRequestDTO.purchaseDTO requestDTO) {
 
-        coinPurchaseService.purchase(requestDTO, getCurrentMemberId());
+        coinChargeService.purchase(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
