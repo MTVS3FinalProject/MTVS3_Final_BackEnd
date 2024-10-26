@@ -291,6 +291,7 @@ public class SeatService {
         seatRepository.save(seat);
 
         MemberSeat memberSeat = getMemberSeat(member.getId(), concert.getId(), seat.getId(), MemberSeatStatus.WAITING_RESERVE);
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.RESERVED);
 
         // 티켓 생성
 
@@ -369,15 +370,6 @@ public class SeatService {
                 .orElseThrow(() -> new Exception400("배송지 정보를 조회할 수 없습니다."));
     }
 
-    private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
-        return MemberSeat.builder()
-                .memberId(currentMemberId)
-                .concertId(concertId)
-                .seatId(seatId)
-                .memberSeatStatus(MemberSeatStatus.RECEIVED)
-                .build();
-    }
-
     private Concert getConcertByConcertName(String concertName) {
         return concertRepository.findByName(concertName)
                 .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
@@ -386,6 +378,15 @@ public class SeatService {
     private Seat getSeat(Concert concert, String section, String number) {
         return seatRepository.findByConcertAndSectionAndNumber(concert, section, number)
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
+    }
+
+    private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
+        return MemberSeat.builder()
+                .memberId(currentMemberId)
+                .concertId(concertId)
+                .seatId(seatId)
+                .memberSeatStatus(MemberSeatStatus.RECEIVED)
+                .build();
     }
 
     private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId, MemberSeatStatus memberSeatStatus) {
