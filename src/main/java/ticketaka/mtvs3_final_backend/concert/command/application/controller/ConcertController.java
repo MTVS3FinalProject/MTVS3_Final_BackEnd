@@ -55,7 +55,7 @@ public class ConcertController {
     /*
         공연장 정보 조회 - PathVariable
      */
-    @GetMapping
+    @GetMapping("/test")
     public ResponseEntity<?> getConcertListTest() {
 
         ConcertResponseDTO.getConcertListTestDTO responseDTO = concertService.getConcertListTest();
