@@ -100,9 +100,7 @@ public class SeatService {
         Concert concert = getConcertByConcertName(requestDTO.concertName());
 
         // 현재 회원이 접수한 좌석 목록 조회
-        List<Seat> receptionSeatList = seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
-                currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
-        );
+        List<Seat> receptionSeatList = getReceptionSeatsForConcert(currentMemberId, concert);
 
         // 좌석 정보를 DTO 로 변환
         List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> receptionSeatsDTOList = receptionSeatList.stream()
@@ -384,6 +382,13 @@ public class SeatService {
                 localDateTime.getMonthValue(),
                 localDateTime.getDayOfMonth(),
                 localDateTime.toLocalTime().toString()
+        );
+    }
+
+    // Member 가 해당 Concert 에서 접수한 Seat 목록 조회
+    private List<Seat> getReceptionSeatsForConcert(Long currentMemberId, Concert concert) {
+        return seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
+                currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
     }
 
