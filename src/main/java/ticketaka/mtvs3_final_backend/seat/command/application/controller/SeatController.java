@@ -25,7 +25,11 @@ public class SeatController {
     @PostMapping
     public ResponseEntity<?> getSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
+        log.info("getSeat_requestDTO : {}", requestDTO);
+
         SeatResponseDTO.getSeatDTO responseDTO = seatService.getSeat(requestDTO);
+
+        log.info("getSeat_responseDTO: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -36,7 +40,11 @@ public class SeatController {
     @PostMapping("/reception")
     public ResponseEntity<?> seatReception(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
+        log.info("seatReception_requestDTO : {}", requestDTO);
+
         SeatResponseDTO.seatReceptionDTO responseDTO = seatService.seatReception(requestDTO, getCurrentMemberId());
+
+        log.info("seatReception_responseDTO: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -47,7 +55,11 @@ public class SeatController {
     @PostMapping("/my-reception")
     public ResponseEntity<?> getReceptionSeats(@RequestBody SeatRequestDTO.getReceptionSeatsDTO requestDTO) {
 
+        log.info("getReceptionSeats_requestDTO : {}", requestDTO);
+
         SeatResponseDTO.getReceptionSeatsDTO responseDTO = seatService.getReceptionSeats(requestDTO, getCurrentMemberId());
+
+        log.info("getReceptionSeats_responseDTO: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -58,7 +70,11 @@ public class SeatController {
     @DeleteMapping("/reception")
     public ResponseEntity<?> cancelReceptionSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
+        log.info("cancelReceptionSeat_requestDTO : {}", requestDTO);
+
         SeatResponseDTO.cancelReceptionSeatDTO responseDTO = seatService.cancelReceptionSeat(requestDTO, getCurrentMemberId());
+
+        log.info("cancelReceptionSeat_responseDTO: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -69,7 +85,11 @@ public class SeatController {
     @PostMapping("/drawing")
     public ResponseEntity<?> drawingNotification(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
+        log.info("drawingNotification_requestDTO : {}", requestDTO);
+
         SeatResponseDTO.createDrawingNotificationDTO responseDTO = seatService.createDrawingNotification(requestDTO);
+
+        log.info("drawingNotification_responseDTO: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -79,6 +99,8 @@ public class SeatController {
      */
     @PostMapping("/draw-result")
     public ResponseEntity<?> createDrawResult(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        log.info("createDrawResult_requestDTO : {}", requestDTO);
 
         seatService.createDrawResult(requestDTO, getCurrentMemberId());
 
@@ -102,7 +124,11 @@ public class SeatController {
     @PostMapping("/reservation")
     public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
+        log.info("reserveSeat_requestDTO : {}", requestDTO);
+
         SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat(requestDTO, getCurrentMemberId());
+
+        log.info("reserveSeat_responseDTO: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
