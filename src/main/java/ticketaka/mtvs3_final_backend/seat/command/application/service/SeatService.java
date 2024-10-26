@@ -54,6 +54,7 @@ public class SeatService {
      */
     public SeatResponseDTO.getSeatDTO getSeat(SeatRequestDTO.seatIdDTO requestDTO) {
 
+        // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
         SeatDTO.getSeatId seatId = getSeatInfo(requestDTO.seatId());
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
@@ -74,6 +75,7 @@ public class SeatService {
     @Transactional
     public SeatResponseDTO.seatReceptionDTO seatReception(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
 
+        // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
         SeatDTO.getSeatId seatId = getSeatInfo(requestDTO.seatId());
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
@@ -122,17 +124,12 @@ public class SeatService {
     @Transactional
     public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
 
-        // 공연 조회
+        // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
-
         SeatDTO.getSeatId seatId = getSeatInfo(requestDTO.seatId());
-
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
-        System.out.println("seat = " + seat);
-
         MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED);
-
         memberSeatRepository.delete(memberSeat);
 
         return new SeatResponseDTO.cancelReceptionSeatDTO(
@@ -145,18 +142,12 @@ public class SeatService {
      */
     public SeatResponseDTO.drawingNotificationDTO drawingNotification(SeatRequestDTO.seatIdDTO requestDTO) {
 
-        // 공연 조회
+        // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
-
         SeatDTO.getSeatId seatId = getSeatInfo(requestDTO.seatId());
-
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
-        List<Member> memberList = memberRepository.findByConcertIdAndSeatId(
-                concert.getId(), seat.getId(), MemberSeatStatus.RESERVED
-        );
-
-        List<String> nicknameList = memberList.stream()
+        List<String> nicknameList = getMembersForConcertAndSeat(concert, seat).stream()
                 .map(Member::getNickname)
                 .toList();
 
@@ -172,11 +163,9 @@ public class SeatService {
     @Transactional
     public void createDrawResult(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
 
-        // 공연 조회
+        // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
-
         SeatDTO.getSeatId seatId = getSeatInfo(requestDTO.seatId());
-
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
         MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED);
@@ -279,15 +268,6 @@ public class SeatService {
         );
     }
 
-    private int calculateCoin(int memberCoin, Seat seat) {
-        if(memberCoin < seat.getPrice()) {
-            throw new Exception400("코인이 부족합니다.");
-        }
-
-        memberCoin -= seat.getPrice();
-        return memberCoin;
-    }
-
     /*
         좌석 결제 - 치트
      */
@@ -385,6 +365,13 @@ public class SeatService {
         );
     }
 
+    // 해당 Concert & Seat 에 접수한 회원 목록 조회
+    private List<Member> getMembersForConcertAndSeat(Concert concert, Seat seat) {
+        return memberRepository.findByConcertIdAndSeatId(
+                concert.getId(), seat.getId(), MemberSeatStatus.RESERVED
+        );
+    }
+
     // Member 가 해당 Concert 에서 접수한 Seat 목록 조회
     private List<Seat> getReceptionSeatsForConcert(Long currentMemberId, Concert concert) {
         return seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
@@ -427,5 +414,15 @@ public class SeatService {
                 .ifPresent(memberSeat -> {
                     throw new Exception400("이미 접수한 좌석입니다.");
                 });
+    }
+
+    // Coin 계산 - Seat 예약
+    private int calculateCoin(int memberCoin, Seat seat) {
+        if(memberCoin < seat.getPrice()) {
+            throw new Exception400("코인이 부족합니다.");
+        }
+
+        memberCoin -= seat.getPrice();
+        return memberCoin;
     }
 }
