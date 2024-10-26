@@ -260,7 +260,7 @@ public class SeatService {
         validateDrawResult(drawResult);
 
         // 배송지 정보 조회
-        Address address = addressRepository.findFirstByMemberId(member.getId())
+        Address address = addressRepository.findFirstByMemberIdOrderByCreatedAtDesc(member.getId())
                 .orElseThrow(() -> new Exception400("배송지 정보를 조회할 수 없습니다."));
 
         // 좌석 조회
@@ -311,7 +311,7 @@ public class SeatService {
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
 
         // 배송지 정보 조회
-        Address address = addressRepository.findFirstByMemberId(member.getId())
+        Address address = addressRepository.findFirstByMemberIdOrderByCreatedAtDesc(member.getId())
                 .orElseThrow(() -> new Exception400("배송지 정보를 조회할 수 없습니다."));
 
         // 좌석 조회

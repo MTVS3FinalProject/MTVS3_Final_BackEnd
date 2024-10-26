@@ -17,7 +17,7 @@ public class MemberAuthResponseDTO {
             String nickname,
             String birth,
             int coin,
-            String avatarData
+            int avatarData
     ) {
     }
 
