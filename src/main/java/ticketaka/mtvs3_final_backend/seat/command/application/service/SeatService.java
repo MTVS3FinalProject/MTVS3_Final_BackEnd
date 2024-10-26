@@ -58,15 +58,12 @@ public class SeatService {
         SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
-        SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
-        SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
-
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
                 seat.getFloor(),
                 getSeatInfo(seat),
-                concertTime,
-                drawingTime,
+                getTimeDTO(concert.getConcertDate()),
+                getTimeDTO(seat.getDrawingTime()),
                 getCompetitionRate(getReceptionMemberCount(concert, seat))
         );
     }
@@ -119,14 +116,12 @@ public class SeatService {
         List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> receptionSeatsDTOList = receptionSeatList.stream()
                 .map(seat -> {
                     String seatInfo = getSeatInfo(seat);
-                    SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
-                    SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
 
                     // ReceptionSeatDTO 객체 생성
                     return new SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO(
                             seatInfo,
-                            concertTime,
-                            drawingTime,
+                            getTimeDTO(concert.getConcertDate()),
+                            getTimeDTO(seat.getDrawingTime()),
                             getCompetitionRate(getReceptionMemberCount(concert, seat))
                     );
                 })
