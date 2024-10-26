@@ -69,7 +69,7 @@ public class SeatController {
     @PostMapping("/drawing")
     public ResponseEntity<?> drawingNotification(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
-        SeatResponseDTO.drawingNotificationDTO responseDTO = seatService.drawingNotification(requestDTO);
+        SeatResponseDTO.createDrawingNotificationDTO responseDTO = seatService.createDrawingNotification(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

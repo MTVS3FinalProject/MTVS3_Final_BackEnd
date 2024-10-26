@@ -140,7 +140,7 @@ public class SeatService {
     /*
         추첨 시작 알림
      */
-    public SeatResponseDTO.drawingNotificationDTO drawingNotification(SeatRequestDTO.seatIdDTO requestDTO) {
+    public SeatResponseDTO.createDrawingNotificationDTO createDrawingNotification(SeatRequestDTO.seatIdDTO requestDTO) {
 
         // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -151,7 +151,7 @@ public class SeatService {
                 .map(Member::getNickname)
                 .toList();
 
-        return new SeatResponseDTO.drawingNotificationDTO(
+        return new SeatResponseDTO.createDrawingNotificationDTO(
                 nicknameList,
                 getCompetitionRate(nicknameList.size())
         );
@@ -171,13 +171,7 @@ public class SeatService {
         MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED);
 
         // 임시 결제 권한 획득
-        DrawResult drawResult = DrawResult.builder()
-                .id(String.valueOf(currentMemberId))
-                .concertId(concert.getId())
-                .seatId(seat.getId())
-                .paymentStatus(PaymentStatus.PENDING)
-                .build();
-
+        DrawResult drawResult = newDrawResult(currentMemberId, concert.getId(), seat.getId());
         drawResultRedisRepository.save(drawResult);
 
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
@@ -195,13 +189,7 @@ public class SeatService {
         MemberSeat memberSeat = memberSeatRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
 
-        DrawResult drawResult = DrawResult.builder()
-                .id(String.valueOf(currentMemberId))
-                .concertId(concert.getId())
-                .seatId(memberSeat.getSeatId())
-                .paymentStatus(PaymentStatus.PENDING)
-                .build();
-
+        DrawResult drawResult = newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
         drawResultRedisRepository.save(drawResult);
     }
 
@@ -339,6 +327,16 @@ public class SeatService {
                 .concertId(concertId)
                 .seatId(seatId)
                 .memberSeatStatus(MemberSeatStatus.RECEIVED)
+                .build();
+    }
+
+    // DrawResult 생성
+    private DrawResult newDrawResult(Long currentMemberId, Long concertId, Long seatId) {
+        return DrawResult.builder()
+                .id(String.valueOf(currentMemberId))
+                .concertId(concertId)
+                .seatId(seatId)
+                .paymentStatus(PaymentStatus.PENDING)
                 .build();
     }
 
