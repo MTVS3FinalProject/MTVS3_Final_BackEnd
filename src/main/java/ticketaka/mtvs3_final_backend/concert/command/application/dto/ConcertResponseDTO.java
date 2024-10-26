@@ -47,4 +47,20 @@ public class ConcertResponseDTO {
             int neededCoin
     ) {
     }
+
+    // 공연 정보 조회 Test
+    public record getConcertListTestDTO(
+            List<getConcertTestDTO> concertDTOList
+    ) {
+    }
+
+    public record getConcertTestDTO(
+            int concertId,
+            String concertName,
+            int year,
+            int month,
+            int day,
+            String time
+    ) {
+    }
 }

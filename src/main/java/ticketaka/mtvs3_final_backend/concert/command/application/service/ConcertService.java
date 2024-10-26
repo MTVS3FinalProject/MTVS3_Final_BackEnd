@@ -151,4 +151,51 @@ public class ConcertService {
     private String getSeatInfo(Seat seat) {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
     }
+
+    public ConcertResponseDTO.getConcertListTestDTO getConcertListTest() {
+        List<Concert> concertList = concertRepository.findAll();
+        List<ConcertResponseDTO.getConcertTestDTO> concertDTOList = concertList.stream()
+                .map(concert -> new ConcertResponseDTO.getConcertTestDTO(
+                        concert.getId().intValue(),
+                        concert.getName(),
+                        concert.getConcertDate().getYear(),
+                        concert.getConcertDate().getMonthValue(),
+                        concert.getConcertDate().getDayOfMonth(),
+                        concert.getConcertDate().toLocalTime().toString()
+                ))
+                .toList();
+
+        return new ConcertResponseDTO.getConcertListTestDTO(concertDTOList);
+    }
+
+    /*
+        공연장 입장
+     */
+    public ConcertResponseDTO.entranceConcertDTO entranceConcertTest(Long concertId, Long currentMemberId) {
+
+        Concert concert = concertRepository.findById(concertId)
+                .orElseThrow(() -> new Exception400("해당 공연은 현재 존재하지 않습니다."));
+
+        List<Seat> availableSeatList = seatRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
+        List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
+
+        // 내가 접수한 좌석 조회
+        List<Seat> receptionSeatList = seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
+                currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
+        );
+        List<ConcertResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
+
+        int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();
+
+        return new ConcertResponseDTO.entranceConcertDTO(
+                concert.getName(),
+                concert.getConcertDate().getYear(),
+                concert.getConcertDate().getMonthValue(),
+                concert.getConcertDate().getDayOfMonth(),
+                concert.getConcertDate().toLocalTime().toString(),
+                availableSeats,
+                receptionSeats,
+                remainingTickets
+        );
+    }
 }

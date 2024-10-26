@@ -51,4 +51,26 @@ public class ConcertController {
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
+
+    /*
+        공연장 정보 조회 - PathVariable
+     */
+    @GetMapping
+    public ResponseEntity<?> getConcertListTest() {
+
+        ConcertResponseDTO.getConcertListTestDTO responseDTO = concertService.getConcertListTest();
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        공연장 입장 - PathVariable
+     */
+    @GetMapping("/{concertId}")
+    public ResponseEntity<?> entranceConcertTest(@PathVariable("concertId") int concertId) {
+
+        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcertTest((long) concertId, getCurrentMemberId());
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
 }
