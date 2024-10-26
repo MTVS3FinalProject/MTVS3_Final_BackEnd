@@ -24,7 +24,7 @@ public class QRController {
         회원 가입 용 QR 생성
      */
     @PostMapping(value = "/signup", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
+    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         System.out.println("requestDTO = " + requestDTO);
 
@@ -39,7 +39,7 @@ public class QRController {
         회원 가입 용 사진 업로드 성공 확인
      */
     @PostMapping("/signup/success")
-    public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.generateQRDTO requestDTO) {
+    public ResponseEntity<?> checkSignUpQR(@RequestBody QRRequestDTO.checkSignUpQRDTO requestDTO) {
 
         System.out.println("requestDTO = " + requestDTO);
 
@@ -62,7 +62,7 @@ public class QRController {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
-    @GetMapping(value = "/verification/success", produces = MediaType.IMAGE_PNG_VALUE)
+    @PostMapping(value = "/verification/success")
     public ResponseEntity<?> checkVerificationQR(@RequestBody QRRequestDTO.checkVerificationQRDTO requestDTO) {
 
         qrService.checkVerificationQR(requestDTO, getCurrentMemberId());

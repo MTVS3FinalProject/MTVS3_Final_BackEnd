@@ -10,6 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
@@ -34,13 +38,32 @@ public class Mtvs3FinalBackendApplication {
     @Profile("local")
     @Bean
     CommandLineRunner localServerStart(MemberRepository memberRepository,
+                                       FileRepository fileRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
                                        SeatRepository seatRepository) {
         return args -> {
+            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
+            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
+            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder);
+            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 0, passwordEncoder);
+            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 0, passwordEncoder);
+            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 0, passwordEncoder);
+            member1.setCoin(100000);
+            member2.setCoin(100000);
+            member3.setCoin(100000);
+            member4.setCoin(100000);
+            member5.setCoin(100000);
+            member6.setCoin(100000);
             memberRepository.saveAll(Arrays.asList(
-                    newMember("Dorian", "test@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), passwordEncoder)
+                    member1, member2, member3, member4, member5, member6
             ));
+            fileRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
+                    newFile(RelationType.MEMBER, 4L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024181004.png?generation=1729761005300338&alt=media", FilePurpose.SIGNUP),
+                    newFile(RelationType.MEMBER, 5L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163356.png?generation=1729755237994884&alt=media", FilePurpose.SIGNUP),
+                    newFile(RelationType.MEMBER, 6L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241025124448.png?generation=1729827892211852&alt=media", FilePurpose.SIGNUP)
+                    ));
             Concert concert01 = newConcert("Concert01", 2, LocalDateTime.of(2024, 11, 1, 19, 0));
             concertRepository.saveAll(Arrays.asList(
                     concert01
@@ -52,15 +75,24 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, PasswordEncoder passwordEncoder) {
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, int authority, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(birth)
-                .authority(Authority.USER)
+                .authority(Authority.fromInt(authority))
                 .status(Status.ACTIVE)
+                .build();
+    }
+
+    private File newFile(RelationType relationType, Long relationId, String fileUrl, FilePurpose filePurpose) {
+        return File.builder()
+                .relationType(relationType)
+                .relationId(relationId)
+                .fileUrl(fileUrl)
+                .filePurpose(filePurpose)
                 .build();
     }
 

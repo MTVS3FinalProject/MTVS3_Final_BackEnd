@@ -2,6 +2,7 @@ package ticketaka.mtvs3_final_backend.file.command.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
@@ -29,6 +30,7 @@ public class FaceAuthService {
     private final MemberRepository memberRepository;
     private final FileRepository fileRepository;
     private final FaceAuthFeignClient faceAuthFeignClient;
+    private final PasswordEncoder passwordEncoder;
 
     /*
         얼굴 인식
@@ -61,7 +63,7 @@ public class FaceAuthService {
                 .orElseThrow(() -> new Exception401("해당하는 회원을 찾을 수 없습니다."));
 
         // 2차 비밀번호 확인
-        if(!member.getSecondPwd().equals(requestDTO.secondPwd())) {
+        if(!passwordEncoder.matches(requestDTO.secondPwd(), member.getSecondPwd())) {
             throw new Exception401("회원 인증에 실패하였습니다.");
         }
 

@@ -104,8 +104,8 @@ public class MemberAuthService {
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(email)
                 .orElseThrow(() -> new Exception400("이메일 기록을 찾을 수 없습니다."));
 
-        if(!fileUpload.getUploadStatus().equals(UploadStatus.UPLOADED)) {
-            throw new Exception400("이미지가 업로드 되지 않았습니다.");
+        if(!fileUpload.getUploadStatus().equals(UploadStatus.SUCCESS)) {
+            throw new Exception400("이미지가 제대로 업로드 되지 않았습니다.");
         }
 
         String imgUrl = fileUpload.getImgUrl();
@@ -134,9 +134,9 @@ public class MemberAuthService {
                 .nickname(requestDTO.nickname())
                 .email(requestDTO.email())
                 .password(passwordEncoder.encode(requestDTO.password()))
-                .secondPwd(passwordEncoder.encode("secondPwd"))
+                .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(getLocalDateBirth(requestDTO.birth()))
-                .authority(Authority.USER)
+                .authority(Authority.fromInt(requestDTO.isHost()))
                 .status(Status.ACTIVE)
                 .build();
     }
@@ -167,11 +167,11 @@ public class MemberAuthService {
     // 반환할 회원 정보 구성
     private MemberAuthResponseDTO.memberInfoDTO getMemberInfo(Member member) {
 
-        // TODO: coin 조회, 아바타 data 조회 필요
+        // TODO: userCoin 조회, 아바타 data 조회 필요
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
                 member.getBirth().toString(),
-                0,
+                member.getCoin(),
                 1
         );
     }

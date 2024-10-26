@@ -86,12 +86,34 @@ public class SeatController {
     }
 
     /*
+        좌석 추첨 결과 - 치트
+     */
+    @PostMapping("/draw-cheat")
+    public ResponseEntity<?> cheatDrawResult(@RequestBody SeatRequestDTO.cheatDTO requestDTO) {
+
+        seatService.cheatDrawResult(requestDTO, getCurrentMemberId());
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
         좌석 결제
      */
     @PostMapping("/reservation")
     public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat(requestDTO, getCurrentMemberId());
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        좌석 결제 - 치트
+     */
+    @PostMapping("/reservation-cheat")
+    public ResponseEntity<?> cheatReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+
+        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.cheatReserveSeat(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
