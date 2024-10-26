@@ -81,16 +81,13 @@ public class SeatService {
         checkAlreadyReceipted(currentMemberId, concert, seat);
 
         MemberSeat memberSeat = newMemberSeat(currentMemberId, concert.getId(), seat.getId());
-
         memberSeatRepository.save(memberSeat);
-
-        int receptionCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
 
         return new SeatResponseDTO.seatReceptionDTO(
                 requestDTO.seatId(),
                 seat.getPrice(),
                 getCompetitionRate(getReceptionMemberCount(concert, seat)),
-                concert.getReceptionLimit() - receptionCount
+                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concert)
         );
     }
 
@@ -140,10 +137,8 @@ public class SeatService {
 
         memberSeatRepository.delete(memberSeat);
 
-        int receptionSeatCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
-
         return new SeatResponseDTO.cancelReceptionSeatDTO(
-                concert.getReceptionLimit() - receptionSeatCount
+                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concert)
         );
     }
 
@@ -382,6 +377,7 @@ public class SeatService {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
     }
 
+    // TimeDTO 생성
     private SeatResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
         return new SeatResponseDTO.timeDTO(
                 localDateTime.getYear(),
@@ -391,17 +387,25 @@ public class SeatService {
         );
     }
 
+    // Member 가 해당 Concert 에 접수한 좌석 수 조회
+    private int getReceptionCountForConcert(Long currentMemberId, Concert concert) {
+        return memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
+    }
+
+    // 해당 좌석에 접수한 회원 수 조회
     private int getReceptionMemberCount(Concert concert, Seat seat) {
         return memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
                 concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED
         ).intValue();
     }
 
-    private static int getCompetitionRate(int receptionMemberCount) {
+    // 경쟁률 계산
+    private int getCompetitionRate(int receptionMemberCount) {
         double competitionRate = receptionMemberCount > 0 ? ((double) 1 / receptionMemberCount) * 100 : 0;
         return (int) Math.round(competitionRate);
     }
 
+    // DrawResult 유효성 검사
     private void validateDrawResult(DrawResult drawResult) {
 
         PaymentStatus paymentStatus = drawResult.getPaymentStatus();
@@ -412,6 +416,7 @@ public class SeatService {
         }
     }
 
+    // 이미 접수된 Seat 인지 검사
     private void checkAlreadyReceipted(Long currentMemberId, Concert concert, Seat seat) {
         memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED)
                 .ifPresent(memberSeat -> {
