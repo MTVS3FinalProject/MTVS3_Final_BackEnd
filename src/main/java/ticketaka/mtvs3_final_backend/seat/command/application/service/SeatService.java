@@ -61,15 +61,13 @@ public class SeatService {
         SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
         SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
 
-        int competitionRate = getCompetitionRate(getReceptionMemberCount(concert, seat));
-
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
                 seat.getFloor(),
                 getSeatInfo(seat),
                 concertTime,
                 drawingTime,
-                competitionRate
+                getCompetitionRate(getReceptionMemberCount(concert, seat))
         );
     }
 
@@ -94,15 +92,12 @@ public class SeatService {
 
         memberSeatRepository.save(memberSeat);
 
-        int receptionMemberCount = getReceptionMemberCount(concert, seat);
-        int competitionRate = getCompetitionRate(receptionMemberCount);
-
         int receptionCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
 
         return new SeatResponseDTO.seatReceptionDTO(
                 requestDTO.seatId(),
                 seat.getPrice(),
-                competitionRate,
+                getCompetitionRate(getReceptionMemberCount(concert, seat)),
                 concert.getReceptionLimit() - receptionCount
         );
     }
@@ -126,15 +121,13 @@ public class SeatService {
                     String seatInfo = getSeatInfo(seat);
                     SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
                     SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
-                    int receptionMemberCount = getReceptionMemberCount(concert, seat);  // 접수된 회원 수
-                    int competitionRate = getCompetitionRate(receptionMemberCount);
 
                     // ReceptionSeatDTO 객체 생성
                     return new SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO(
                             seatInfo,
                             concertTime,
                             drawingTime,
-                            competitionRate
+                            getCompetitionRate(getReceptionMemberCount(concert, seat))
                     );
                 })
                 .toList();
@@ -189,11 +182,9 @@ public class SeatService {
                 .map(Member::getNickname)
                 .toList();
 
-        int competitionRate = getCompetitionRate(nicknameList.size());
-
         return new SeatResponseDTO.drawingNotificationDTO(
                 nicknameList,
-                competitionRate
+                getCompetitionRate(nicknameList.size())
         );
     }
 
