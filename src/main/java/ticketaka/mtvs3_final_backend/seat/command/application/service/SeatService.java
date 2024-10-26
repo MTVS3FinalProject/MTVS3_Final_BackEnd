@@ -55,23 +55,18 @@ public class SeatService {
     public SeatResponseDTO.getSeatDTO getSeat(SeatRequestDTO.seatIdDTO requestDTO) {
 
         Concert concert = getConcertByConcertName(requestDTO.concertName());
-
         SeatDTO.getSeatId seatId = getSeatId(requestDTO.seatId());
-
         Seat seat = getSeat(concert, seatId.section(), seatId.number());
 
-        String seatInfo = getSeatInfo(seat);
         SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
         SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
 
-        // 현재 좌석에 접수한 총 인원 조회
-        int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
-        int competitionRate = getCompetitionRate(receptionMemberCount);
+        int competitionRate = getCompetitionRate(getReceptionMemberCount(concert, seat));
 
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
                 seat.getFloor(),
-                seatInfo,
+                getSeatInfo(seat),
                 concertTime,
                 drawingTime,
                 competitionRate
@@ -99,7 +94,7 @@ public class SeatService {
 
         memberSeatRepository.save(memberSeat);
 
-        int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED).intValue();
+        int receptionMemberCount = getReceptionMemberCount(concert, seat);
         int competitionRate = getCompetitionRate(receptionMemberCount);
 
         int receptionCount = memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
@@ -131,9 +126,7 @@ public class SeatService {
                     String seatInfo = getSeatInfo(seat);
                     SeatResponseDTO.timeDTO concertTime = getTimeDTO(concert.getConcertDate());
                     SeatResponseDTO.timeDTO drawingTime = getTimeDTO(seat.getDrawingTime());
-                    int receptionMemberCount = memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
-                            concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED
-                    ).intValue();  // 접수된 회원 수
+                    int receptionMemberCount = getReceptionMemberCount(concert, seat);  // 접수된 회원 수
                     int competitionRate = getCompetitionRate(receptionMemberCount);
 
                     // ReceptionSeatDTO 객체 생성
@@ -412,6 +405,12 @@ public class SeatService {
                 localDateTime.getDayOfMonth(),
                 localDateTime.toLocalTime().toString()
         );
+    }
+
+    private int getReceptionMemberCount(Concert concert, Seat seat) {
+        return memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
+                concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED
+        ).intValue();
     }
 
     private static int getCompetitionRate(int receptionMemberCount) {
