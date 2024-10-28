@@ -64,7 +64,7 @@ public class Mtvs3FinalBackendApplication {
                     newFile(RelationType.MEMBER, 5L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163356.png?generation=1729755237994884&alt=media", FilePurpose.SIGNUP),
                     newFile(RelationType.MEMBER, 6L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241025124448.png?generation=1729827892211852&alt=media", FilePurpose.SIGNUP)
                     ));
-            Concert concert01 = newConcert("Concert01", 2, LocalDateTime.of(2024, 11, 1, 19, 0));
+            Concert concert01 = newConcert("Concert01", LocalDateTime.of(2024, 11, 1, 19, 0), 18, 2);
             concertRepository.saveAll(Arrays.asList(
                     concert01
             ));
@@ -96,11 +96,12 @@ public class Mtvs3FinalBackendApplication {
                 .build();
     }
 
-    private Concert newConcert(String name, int receptionLimit, LocalDateTime concertDate) {
+    private Concert newConcert(String name, LocalDateTime concertDate, int ageRestriction, int receptionLimit) {
         return Concert.builder()
                 .name(name)
-                .receptionLimit(receptionLimit)
                 .concertDate(concertDate)
+                .ageRestriction(ageRestriction)
+                .receptionLimit(receptionLimit)
                 .build();
     }
 

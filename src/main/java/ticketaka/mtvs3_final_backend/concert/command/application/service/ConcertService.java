@@ -23,6 +23,7 @@ import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -62,8 +63,11 @@ public class ConcertService {
      */
     public ConcertResponseDTO.entranceConcertDTO entranceConcert(ConcertRequestDTO.entranceConcertDTO requestDTO, Long currentMemberId) {
 
+        Member member = getMember(currentMemberId);
         Concert concert = concertRepository.findByName(requestDTO.concertName())
                 .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
+
+        checkMemberAge(member, concert);
 
         List<Seat> availableSeatList = seatRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
         List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
@@ -150,5 +154,18 @@ public class ConcertService {
 
     private String getSeatInfo(Seat seat) {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
+    }
+
+    // 연령 확인
+    private void checkMemberAge(Member member, Concert concert) {
+        int memberAge = LocalDate.now().getYear() - member.getBirth().getYear();
+        if (LocalDate.now().getDayOfYear() < member.getBirth().getDayOfYear()) {
+            memberAge--; // 올해 생일이 아직 안 지났으면 1년을 뺀다
+        }
+
+        int ageRestriction = concert.getAgeRestriction();
+        if(memberAge < ageRestriction) {
+            throw new Exception400("해당 공연의 연령 제한을 충족하지 못합니다.");
+        }
     }
 }
