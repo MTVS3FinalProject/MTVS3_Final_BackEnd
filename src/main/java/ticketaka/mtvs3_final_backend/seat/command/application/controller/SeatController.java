@@ -116,9 +116,9 @@ public class SeatController {
         좌석 추첨 결과 - 치트
      */
     @PostMapping("/{concertId}/draw-cheat")
-    public ResponseEntity<?> cheatDrawResult(@RequestBody SeatRequestDTO.cheatDTO requestDTO) {
+    public ResponseEntity<?> cheatDrawResult(@PathVariable("concertId") int concertId) {
 
-        seatService.cheatDrawResult(requestDTO, getCurrentMemberId());
+        seatService.cheatDrawResult((long) concertId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -127,13 +127,14 @@ public class SeatController {
         좌석 결제
      */
     @PostMapping("/{concertId}/seats/{seatId}/payment")
-    public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> reserveSeat(@PathVariable("concertId") int concertId,
+                                         @PathVariable("seatId") int seatId) {
 
-        log.info("reserveSeat_requestDTO : {}", requestDTO);
+        log.info("reserveSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat(requestDTO, getCurrentMemberId());
+        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat((long) concertId, (long) seatId, getCurrentMemberId());
 
-        log.info("reserveSeat_responseDTO: {}", responseDTO);
+        log.info("reserveSeat_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -142,9 +143,9 @@ public class SeatController {
         좌석 결제 - 치트
      */
     @PostMapping("/{concertId}/payment-cheat")
-    public ResponseEntity<?> cheatReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> cheatReserveSeat(@PathVariable("concertId") int concertId) {
 
-        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.cheatReserveSeat(requestDTO, getCurrentMemberId());
+        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.cheatReserveSeat((long) concertId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
