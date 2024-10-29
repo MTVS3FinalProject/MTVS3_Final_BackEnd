@@ -55,13 +55,13 @@ public class SeatController {
         현재 회원이 접수한 좌석 조회
      */
     @GetMapping("/{concertId}/receptions")
-    public ResponseEntity<?> getReceptionSeats(@RequestBody SeatRequestDTO.getReceptionSeatsDTO requestDTO) {
+    public ResponseEntity<?> getReceptionSeats(@PathVariable("concertId") int concertId) {
 
-        log.info("getReceptionSeats_requestDTO : {}", requestDTO);
+        log.info("getReceptionSeats_request: concertId={}", concertId);
 
-        SeatResponseDTO.getReceptionSeatsDTO responseDTO = seatService.getReceptionSeats(requestDTO, getCurrentMemberId());
+        SeatResponseDTO.getReceptionSeatsDTO responseDTO = seatService.getReceptionSeats((long) concertId, getCurrentMemberId());
 
-        log.info("getReceptionSeats_responseDTO: {}", responseDTO);
+        log.info("getReceptionSeats_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
