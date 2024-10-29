@@ -72,6 +72,9 @@ public class SeatService {
     @Transactional
     public SeatResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long currentMemberId) {
 
+        // Member 조회
+        Member member = getMember(currentMemberId);
+
         // Concert & Seat 조회
         Concert concert = getConcert(concertId);
         Seat seat = getSeat(seatId);
@@ -91,6 +94,9 @@ public class SeatService {
         현재 회원이 접수한 모든 좌석 조회
     */
     public SeatResponseDTO.getReceptionSeatsDTO getReceptionSeats(Long concertId, Long currentMemberId) {
+
+        // Member 조회
+        Member member = getMember(currentMemberId);
 
         // Concert
         Concert concert = getConcert(concertId);
@@ -119,6 +125,9 @@ public class SeatService {
      */
     @Transactional
     public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(Long concertId, Long seatId, Long currentMemberId) {
+
+        // Member 조회
+        Member member = getMember(currentMemberId);
 
         // Concert & Seat 조회
         Concert concert = getConcert(concertId);
@@ -155,6 +164,9 @@ public class SeatService {
      */
     @Transactional
     public void processDrawResult(Long concertId, Long seatId, Long currentMemberId) {
+
+        // Member 조회
+        Member member = getMember(currentMemberId);
 
         // Concert & Seat 조회
         Concert concert = getConcert(concertId);
