@@ -39,13 +39,14 @@ public class SeatController {
         좌석 접수
      */
     @PostMapping("/{concertId}/seats/{seatId}/reception")
-    public ResponseEntity<?> seatReception(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> seatReception(@PathVariable("concertId") int concertId,
+                                           @PathVariable("seatId") int seatId) {
 
-        log.info("seatReception_requestDTO : {}", requestDTO);
+        log.info("seatReception_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.seatReceptionDTO responseDTO = seatService.seatReception(requestDTO, getCurrentMemberId());
+        SeatResponseDTO.seatReceptionDTO responseDTO = seatService.seatReception((long) concertId, (long) seatId, getCurrentMemberId());
 
-        log.info("seatReception_responseDTO: {}", responseDTO);
+        log.info("seatReception_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
