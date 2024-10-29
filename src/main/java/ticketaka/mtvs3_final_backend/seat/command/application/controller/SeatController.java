@@ -102,11 +102,12 @@ public class SeatController {
         좌석 추첨 결과 반영
      */
     @PostMapping("/{concertId}/seats/{seatId}/result")
-    public ResponseEntity<?> createDrawResult(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> processDrawResult(@PathVariable("concertId") int concertId,
+                                               @PathVariable("seatId") int seatId) {
 
-        log.info("createDrawResult_requestDTO : {}", requestDTO);
+        log.info("createDrawResult_request: concertId={}, seatId={}", concertId, seatId);
 
-        seatService.createDrawResult(requestDTO, getCurrentMemberId());
+        seatService.createDrawResult((long) concertId, (long) seatId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
