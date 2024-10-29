@@ -14,7 +14,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/concert/seat")
+@RequestMapping("/api/concerts")
 public class SeatController {
 
     private final SeatService seatService;
@@ -22,7 +22,7 @@ public class SeatController {
     /*
         좌석 조회
      */
-    @PostMapping
+    @GetMapping("/{concertId}/seats/{seatId}")
     public ResponseEntity<?> getSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         log.info("getSeat_requestDTO : {}", requestDTO);
@@ -37,7 +37,7 @@ public class SeatController {
     /*
         좌석 접수
      */
-    @PostMapping("/reception")
+    @PostMapping("/{concertId}/seats/{seatId}/reception")
     public ResponseEntity<?> seatReception(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         log.info("seatReception_requestDTO : {}", requestDTO);
@@ -52,7 +52,7 @@ public class SeatController {
     /*
         현재 회원이 접수한 좌석 조회
      */
-    @PostMapping("/my-reception")
+    @GetMapping("/{concertId}/receptions")
     public ResponseEntity<?> getReceptionSeats(@RequestBody SeatRequestDTO.getReceptionSeatsDTO requestDTO) {
 
         log.info("getReceptionSeats_requestDTO : {}", requestDTO);
@@ -67,7 +67,7 @@ public class SeatController {
     /*
         좌석 접수 취소
      */
-    @DeleteMapping("/reception")
+    @DeleteMapping("/{concertId}/seats/{seatId}")
     public ResponseEntity<?> cancelReceptionSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         log.info("cancelReceptionSeat_requestDTO : {}", requestDTO);
@@ -82,7 +82,7 @@ public class SeatController {
     /*
         추첨 시작 알림
      */
-    @PostMapping("/drawing")
+    @PostMapping("/{concertId}/seats/{seatId}/drawing")
     public ResponseEntity<?> drawingNotification(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         log.info("drawingNotification_requestDTO : {}", requestDTO);
@@ -97,7 +97,7 @@ public class SeatController {
     /*
         좌석 추첨 결과 반영
      */
-    @PostMapping("/draw-result")
+    @PostMapping("/{concertId}/seats/{seatId}/result")
     public ResponseEntity<?> createDrawResult(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         log.info("createDrawResult_requestDTO : {}", requestDTO);
@@ -110,7 +110,7 @@ public class SeatController {
     /*
         좌석 추첨 결과 - 치트
      */
-    @PostMapping("/draw-cheat")
+    @PostMapping("/{concertId}/draw-cheat")
     public ResponseEntity<?> cheatDrawResult(@RequestBody SeatRequestDTO.cheatDTO requestDTO) {
 
         seatService.cheatDrawResult(requestDTO, getCurrentMemberId());
@@ -121,7 +121,7 @@ public class SeatController {
     /*
         좌석 결제
      */
-    @PostMapping("/reservation")
+    @PostMapping("/{concertId}/seats/{seatId}/payment")
     public ResponseEntity<?> reserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         log.info("reserveSeat_requestDTO : {}", requestDTO);
@@ -136,7 +136,7 @@ public class SeatController {
     /*
         좌석 결제 - 치트
      */
-    @PostMapping("/reservation-cheat")
+    @PostMapping("/{concertId}/payment-cheat")
     public ResponseEntity<?> cheatReserveSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
 
         SeatResponseDTO.reserveSeatDTO responseDTO = seatService.cheatReserveSeat(requestDTO, getCurrentMemberId());
