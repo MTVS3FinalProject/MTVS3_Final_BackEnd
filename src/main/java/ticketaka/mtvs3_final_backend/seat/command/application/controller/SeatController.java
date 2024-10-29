@@ -86,13 +86,14 @@ public class SeatController {
         추첨 시작 알림
      */
     @PostMapping("/{concertId}/seats/{seatId}/drawing")
-    public ResponseEntity<?> drawingNotification(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> drawingNotification(@PathVariable("concertId") int concertId,
+                                                 @PathVariable("seatId") int seatId) {
 
-        log.info("drawingNotification_requestDTO : {}", requestDTO);
+        log.info("drawingNotification_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.createDrawingNotificationDTO responseDTO = seatService.createDrawingNotification(requestDTO);
+        SeatResponseDTO.createDrawingNotificationDTO responseDTO = seatService.createDrawingNotification((long) concertId, (long) seatId);
 
-        log.info("drawingNotification_responseDTO: {}", responseDTO);
+        log.info("drawingNotification_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
