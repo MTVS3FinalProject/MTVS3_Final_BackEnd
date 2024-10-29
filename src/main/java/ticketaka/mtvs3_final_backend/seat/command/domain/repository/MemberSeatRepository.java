@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface MemberSeatRepository extends JpaRepository<MemberSeat, Long> {
 
-    Long countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
+    int countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
 
     int countByMemberIdAndConcertId(Long memberId, Long concertId);
 

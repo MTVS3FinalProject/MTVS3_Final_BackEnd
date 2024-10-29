@@ -62,7 +62,7 @@ public class SeatService {
                 formatSeatInfo(seat),
                 getTimeDTO(concert.getConcertDate()),
                 getTimeDTO(seat.getDrawingTime()),
-                getCompetitionRate(getReceptionMemberCount(concert, seat))
+                getCompetitionRate(getReceptionMemberCount(concertId, seatId))
         );
     }
 
@@ -73,20 +73,21 @@ public class SeatService {
     public SeatResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 조회
-        Member member = getMember(currentMemberId);
-
-        // Concert & Seat 조회
+        getMember(currentMemberId);
+        // Concert 조회
         Concert concert = getConcert(concertId);
+        // Seat 조회
         Seat seat = getSeat(seatId);
 
-        checkAlreadyReceipted(currentMemberId, concert, seat);
-
-        receiptSeat(currentMemberId, concert, seat);
+        // 이미 접수된 좌석인지 확인
+        checkAlreadyReceipted(currentMemberId, concertId, seatId);
+        // 좌석 접수
+        receiptSeat(currentMemberId, concertId, seatId);
 
         return new SeatResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
-                getCompetitionRate(getReceptionMemberCount(concert, seat)),
-                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concert)
+                getCompetitionRate(getReceptionMemberCount(concertId, seatId)),
+                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concertId)
         );
     }
 
@@ -96,8 +97,7 @@ public class SeatService {
     public SeatResponseDTO.getReceptionSeatsDTO getReceptionSeats(Long concertId, Long currentMemberId) {
 
         // Member 조회
-        Member member = getMember(currentMemberId);
-
+        getMember(currentMemberId);
         // Concert
         Concert concert = getConcert(concertId);
 
@@ -370,13 +370,13 @@ public class SeatService {
     }
 
     // Member 가 해당 Concert 에 접수한 좌석 수 조회
-    private int getReceptionCountForConcert(Long currentMemberId, Concert concert) {
-        return memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concert.getId());
+    private int getReceptionCountForConcert(Long currentMemberId, Long concertId) {
+        return memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concertId);
     }
 
     // 좌석 접수
-    private void receiptSeat(Long currentMemberId, Concert concert, Seat seat) {
-        MemberSeat memberSeat = newMemberSeat(currentMemberId, concert.getId(), seat.getId());
+    private void receiptSeat(Long currentMemberId, Long concertId, Long seatId) {
+        MemberSeat memberSeat = newMemberSeat(currentMemberId, concertId, seatId);
         memberSeatRepository.save(memberSeat);
     }
 
@@ -387,10 +387,10 @@ public class SeatService {
     }
 
     // 해당 좌석에 접수한 회원 수 조회
-    private int getReceptionMemberCount(Concert concert, Seat seat) {
+    private int getReceptionMemberCount(Long concertId, Long seatId) {
         return memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
-                concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED
-        ).intValue();
+                concertId, seatId, MemberSeatStatus.RECEIVED
+        );
     }
 
     // 경쟁률 계산
@@ -409,9 +409,10 @@ public class SeatService {
     }
 
     // 이미 접수된 Seat 인지 검사
-    private void checkAlreadyReceipted(Long currentMemberId, Concert concert, Seat seat) {
-        memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED)
-                .ifPresent(memberSeat -> {
+    private void checkAlreadyReceipted(Long currentMemberId, Long concertId, Long seatId) {
+        memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(
+                currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED
+                ).ifPresent(memberSeat -> {
                     throw new Exception400("이미 접수한 좌석입니다.");
                 });
     }
