@@ -11,6 +11,7 @@ public class ConcertResponseDTO {
     }
 
     public record getConcertDTO(
+            int concertId,
             String concertName,
             int year,
             int month,

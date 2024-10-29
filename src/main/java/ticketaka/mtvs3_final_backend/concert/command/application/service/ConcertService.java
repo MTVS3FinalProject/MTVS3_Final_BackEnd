@@ -44,9 +44,10 @@ public class ConcertService {
      */
     public ConcertResponseDTO.getConcertListDTO getConcertList() {
 
-        List<Concert> concertList = concertRepository.findAll();
-        List<ConcertResponseDTO.getConcertDTO> concertDTOList = concertList.stream()
+        // TODO: QueryDSL
+        List<ConcertResponseDTO.getConcertDTO> concertDTOList = concertRepository.findAll().stream()
                 .map(concert -> new ConcertResponseDTO.getConcertDTO(
+                        concert.getId().intValue(),
                         concert.getName(),
                         concert.getConcertDate().getYear(),
                         concert.getConcertDate().getMonthValue(),
@@ -61,11 +62,10 @@ public class ConcertService {
     /*
         공연장 입장
      */
-    public ConcertResponseDTO.entranceConcertDTO entranceConcert(ConcertRequestDTO.entranceConcertDTO requestDTO, Long currentMemberId) {
+    public ConcertResponseDTO.entranceConcertDTO entranceConcert(Long concertId, Long currentMemberId) {
 
         Member member = getMember(currentMemberId);
-        Concert concert = concertRepository.findByName(requestDTO.concertName())
-                .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
+        Concert concert = getConcert(concertId);
 
         checkMemberAge(member, concert);
 
@@ -126,11 +126,20 @@ public class ConcertService {
         );
     }
 
+    // Member 조회
     private Member getMember(Long currentMemberId) {
         return memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
     }
 
+    // Concert 조회
+    private Concert getConcert(Long concertId) {
+        return concertRepository.findById(concertId)
+                .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
+    }
+
+    // Address 생성
+    // TODO: MemberController 로 이동할 예정
     private Address newAddress(ConcertRequestDTO.enterDeliveryAddressDTO requestDTO, Long memberId) {
         return Address.builder()
                 .memberId(memberId)
@@ -141,17 +150,18 @@ public class ConcertService {
                 .build();
     }
 
-    private static List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> seatList, Concert concert) {
+    // SeatIdDTO 조회
+    private List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> seatList, Concert concert) {
         return seatList.stream()
                 .map(seat -> {
-                    String year = String.valueOf(concert.getConcertDate().getYear());
-                    String seatId = year + seat.getSection() + seat.getNumber();
+                    String seatName = concert.getConcertDate().getYear() + seat.getSection() + seat.getNumber();
 
-                    return new ConcertResponseDTO.SeatIdDTO(seatId, seat.getDrawingTime().toString());
+                    return new ConcertResponseDTO.SeatIdDTO(seat.getId().intValue(), seatName, seat.getDrawingTime().toString());
                 })
                 .toList();
     }
 
+    // SeatInfo Formatting
     private String getSeatInfo(Seat seat) {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
     }
