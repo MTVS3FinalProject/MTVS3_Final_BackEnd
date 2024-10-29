@@ -69,13 +69,15 @@ public class ConcertService {
 
         checkMemberAge(member, concert);
 
-        List<Seat> availableSeatList = seatRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
-        List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
-
         // 내가 접수한 좌석 조회
         List<Seat> receptionSeatList = seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
+
+        // 이외에 접수 가능한 좌석 조회
+        List<Seat> availableSeatList = seatRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
+        List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
+
         List<ConcertResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
 
         int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();

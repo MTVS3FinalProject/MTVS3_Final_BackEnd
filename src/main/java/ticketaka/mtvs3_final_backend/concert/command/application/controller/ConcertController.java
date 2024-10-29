@@ -14,7 +14,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/concert")
+@RequestMapping("/api/concerts")
 public class ConcertController {
 
     private final ConcertService concertService;
@@ -33,10 +33,10 @@ public class ConcertController {
     /*
         공연장 입장
      */
-    @PostMapping
-    public ResponseEntity<?> entranceConcert(@RequestBody ConcertRequestDTO.entranceConcertDTO requestDTO) {
+    @GetMapping("/{concertId}")
+    public ResponseEntity<?> entranceConcert(@PathVariable("concertId") int concertId) {
         
-        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert(requestDTO, getCurrentMemberId());
+        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert((long) concertId, getCurrentMemberId());
         
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
