@@ -70,13 +70,14 @@ public class SeatController {
         좌석 접수 취소
      */
     @DeleteMapping("/{concertId}/seats/{seatId}")
-    public ResponseEntity<?> cancelReceptionSeat(@RequestBody SeatRequestDTO.seatIdDTO requestDTO) {
+    public ResponseEntity<?> cancelReceptionSeat(@PathVariable("concertId") int concertId,
+                                                 @PathVariable("seatId") int seatId) {
 
-        log.info("cancelReceptionSeat_requestDTO : {}", requestDTO);
+        log.info("cancelReceptionSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.cancelReceptionSeatDTO responseDTO = seatService.cancelReceptionSeat(requestDTO, getCurrentMemberId());
+        SeatResponseDTO.cancelReceptionSeatDTO responseDTO = seatService.cancelReceptionSeat((long) concertId, (long) seatId, getCurrentMemberId());
 
-        log.info("cancelReceptionSeat_responseDTO: {}", responseDTO);
+        log.info("cancelReceptionSeat_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
