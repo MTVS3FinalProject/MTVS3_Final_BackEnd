@@ -107,7 +107,7 @@ public class SeatController {
 
         log.info("createDrawResult_request: concertId={}, seatId={}", concertId, seatId);
 
-        seatService.createDrawResult((long) concertId, (long) seatId, getCurrentMemberId());
+        seatService.processDrawResult((long) concertId, (long) seatId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

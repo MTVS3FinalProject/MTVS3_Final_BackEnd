@@ -52,7 +52,7 @@ public class SeatService {
     /*
         좌석 조회
      */
-    public SeatResponseDTO.getSeatDTO getSeat(SeatRequestDTO.seatIdDTO requestDTO) {
+    public SeatResponseDTO.getSeatDTO getSeat(Long concertId, Long seatId) {
 
         // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -73,7 +73,7 @@ public class SeatService {
         좌석 접수
      */
     @Transactional
-    public SeatResponseDTO.seatReceptionDTO seatReception(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+    public SeatResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long currentMemberId) {
 
         // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -96,7 +96,7 @@ public class SeatService {
     /*
         현재 회원이 접수한 모든 좌석 조회
     */
-    public SeatResponseDTO.getReceptionSeatsDTO getReceptionSeats(SeatRequestDTO.getReceptionSeatsDTO requestDTO, Long currentMemberId) {
+    public SeatResponseDTO.getReceptionSeatsDTO getReceptionSeats(Long concertId, Long currentMemberId) {
 
         // 공연 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -122,7 +122,7 @@ public class SeatService {
         좌석 접수 취소
      */
     @Transactional
-    public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+    public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(Long concertId, Long seatId, Long currentMemberId) {
 
         // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -140,7 +140,7 @@ public class SeatService {
     /*
         추첨 시작 알림
      */
-    public SeatResponseDTO.createDrawingNotificationDTO createDrawingNotification(SeatRequestDTO.seatIdDTO requestDTO) {
+    public SeatResponseDTO.createDrawingNotificationDTO createDrawingNotification(Long concertId, Long seatId) {
 
         // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -161,7 +161,7 @@ public class SeatService {
         좌석 추첨 결과 반영
      */
     @Transactional
-    public void createDrawResult(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+    public void processDrawResult(Long concertId, Long seatId, Long currentMemberId) {
 
         // Concert & Seat 조회
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -181,7 +181,7 @@ public class SeatService {
     /*
         추첨 결과 치트
      */
-    public void cheatDrawResult(SeatRequestDTO.cheatDTO requestDTO, Long currentMemberId) {
+    public void cheatDrawResult(Long concertId, Long currentMemberId) {
 
         Member member = getMember(currentMemberId);
         Concert concert = getConcertByConcertName(requestDTO.concertName());
@@ -197,7 +197,7 @@ public class SeatService {
         좌석 결제
      */
     @Transactional
-    public SeatResponseDTO.reserveSeatDTO reserveSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+    public SeatResponseDTO.reserveSeatDTO reserveSeat(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 확인
         Member member = getMember(currentMemberId);
@@ -237,7 +237,7 @@ public class SeatService {
     /*
         좌석 결제 - 치트
      */
-    public SeatResponseDTO.reserveSeatDTO cheatReserveSeat(SeatRequestDTO.seatIdDTO requestDTO, Long currentMemberId) {
+    public SeatResponseDTO.reserveSeatDTO cheatReserveSeat(Long concertId, Long currentMemberId) {
 
         // Member 확인
         Member member = getMember(currentMemberId);
