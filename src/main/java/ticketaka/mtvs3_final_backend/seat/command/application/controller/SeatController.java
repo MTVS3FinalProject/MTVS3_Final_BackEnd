@@ -23,12 +23,12 @@ public class SeatController {
         좌석 조회
      */
     @GetMapping("/{concertId}/seats/{seatId}")
-    public ResponseEntity<?> getSeat(@PathVariable("concertId") int concertId,
+    public ResponseEntity<?> getConcertSeat(@PathVariable("concertId") int concertId,
                                      @PathVariable("seatId") int seatId) {
 
         log.info("getSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.getSeatDTO responseDTO = seatService.getSeat((long) concertId, (long) seatId);
+        SeatResponseDTO.getSeatDTO responseDTO = seatService.getConcertSeat((long) concertId, (long) seatId);
 
         log.info("getSeat_response: {}", responseDTO);
 

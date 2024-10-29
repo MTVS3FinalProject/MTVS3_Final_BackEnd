@@ -52,12 +52,11 @@ public class SeatService {
     /*
         좌석 조회
      */
-    public SeatResponseDTO.getSeatDTO getSeat(Long concertId, Long seatId) {
+    public SeatResponseDTO.getSeatDTO getConcertSeat(Long concertId, Long seatId) {
 
         // Concert & Seat 조회
         Concert concert = getConcert(concertId);
-        SeatDTO.getSeatId seatId = getSeatInfo(requestDTO.seatId());
-        Seat seat = getSeat(concert, seatId.section(), seatId.number());
+        Seat seat = getSeat(seatId);
 
         return new SeatResponseDTO.getSeatDTO(
                 requestDTO.seatId(),
@@ -272,22 +271,22 @@ public class SeatService {
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
     }
 
-    // Concert 조회 - 공연 이름
+    // Concert 조회
     private Concert getConcert(Long concertId) {
         return concertRepository.findById(concertId)
                 .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
+    }
+
+    // Seat 조회
+    private Seat getSeat(Long seatId) {
+        return seatRepository.findById(seatId)
+                .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
     }
 
     // 최근 입력한 Address 조회
     private Address getAddress(Member member) {
         return addressRepository.findFirstByMemberIdOrderByCreatedAtDesc(member.getId())
                 .orElseThrow(() -> new Exception400("배송지 정보를 조회할 수 없습니다."));
-    }
-
-    // Seat 조회 - 공연, 구역, 번호
-    private Seat getSeat(Concert concert, String section, String number) {
-        return seatRepository.findByConcertAndSectionAndNumber(concert, section, number)
-                .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
     }
 
     // MemberSeat 조회
