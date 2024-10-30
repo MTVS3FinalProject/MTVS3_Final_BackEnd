@@ -79,10 +79,8 @@ public class SeatService {
         // Seat 조회
         Seat seat = getSeat(seatId);
 
-        // 이미 예약된 좌석인지 확인
-        checkAlreadyReserved(concertId, seatId);
-        // 이미 접수된 좌석인지 확인
-        checkAlreadyReceipted(currentMemberId, concertId, seatId);
+        // 좌석 접수 유효성 확인
+        checkAvailableSeat(concertId, seatId, currentMemberId);
         // 좌석 접수
         receiptSeat(currentMemberId, concertId, seatId);
 
@@ -410,6 +408,14 @@ public class SeatService {
             case FAILED -> throw new Exception400("좌석 추첨 결과가 유효하지 않습니다.");
         }
         drawResultRedisRepository.delete(drawResult);
+    }
+
+    // 좌석 접수 유효성 확인
+    private void checkAvailableSeat(Long concertId, Long seatId, Long currentMemberId) {
+        // 이미 예약된 좌석인지 확인
+        checkAlreadyReserved(concertId, seatId);
+        // 이미 접수된 좌석인지 확인
+        checkAlreadyReceipted(currentMemberId, concertId, seatId);
     }
 
     // 이미 예약된 Seat 인지 검사
