@@ -52,8 +52,9 @@ public class SeatService {
      */
     public SeatResponseDTO.getSeatDTO getConcertSeat(Long concertId, Long seatId) {
 
-        // Concert & Seat 조회
+        // Concert 조회
         Concert concert = getConcert(concertId);
+        // Seat 조회
         Seat seat = getSeat(seatId);
 
         return new SeatResponseDTO.getSeatDTO(
@@ -78,6 +79,8 @@ public class SeatService {
         // Seat 조회
         Seat seat = getSeat(seatId);
 
+        // 이미 예약된 좌석인지 확인
+        checkAlreadyReserved(concertId, seatId);
         // 이미 접수된 좌석인지 확인
         checkAlreadyReceipted(currentMemberId, concertId, seatId);
         // 좌석 접수
@@ -407,6 +410,14 @@ public class SeatService {
             case FAILED -> throw new Exception400("좌석 추첨 결과가 유효하지 않습니다.");
         }
         drawResultRedisRepository.delete(drawResult);
+    }
+
+    // 이미 예약된 Seat 인지 검사
+    private void checkAlreadyReserved(Long concertId, Long seatId) {
+        seatRepository.findByConcertIdAndIdAndSeatStatus(concertId, seatId, SeatStatus.RESERVED)
+                .ifPresent(seat -> {
+                    throw new Exception400("이미 예약된 좌석입니다.");
+                });
     }
 
     // 이미 접수된 Seat 인지 검사
