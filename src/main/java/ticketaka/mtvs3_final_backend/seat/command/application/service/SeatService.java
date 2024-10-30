@@ -20,7 +20,6 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
-import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatDTO;
 import ticketaka.mtvs3_final_backend.seat.command.application.dto.SeatResponseDTO;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
@@ -104,20 +103,8 @@ public class SeatService {
         // 현재 회원이 접수한 좌석 목록 조회
         List<Seat> receptionSeatList = getReceptionSeatsForConcert(currentMemberId, concert);
 
-        // 좌석 정보를 DTO 로 변환
-        List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> receptionSeatsDTOList = receptionSeatList.stream()
-                .map(seat -> new SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO(
-                        seat.getId().intValue(),
-                        formatSeatName(concert, seat),
-                        formatSeatInfo(seat),
-                        getTimeDTO(concert.getConcertDate()),
-                        getTimeDTO(seat.getDrawingTime()),
-                        getCompetitionRate(getReceptionMemberCount(concert, seat))
-                ))
-                .toList();
-
         // 최종 DTO 생성 및 반환
-        return new SeatResponseDTO.getReceptionSeatsDTO(receptionSeatsDTOList);
+        return new SeatResponseDTO.getReceptionSeatsDTO(getReceptionSeatsDTO(concert, receptionSeatList));
     }
 
     /*
@@ -127,16 +114,16 @@ public class SeatService {
     public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 조회
-        Member member = getMember(currentMemberId);
-
-        // Concert & Seat 조회
+        getMember(currentMemberId);
+        // Concert 조회
         Concert concert = getConcert(concertId);
-        Seat seat = getSeat(seatId);
+        // Seat 조회
+        getSeat(seatId);
 
-        cancelMemberSeat(currentMemberId, concert, seat);
+        cancelMemberSeat(currentMemberId, concertId, seatId);
 
         return new SeatResponseDTO.cancelReceptionSeatDTO(
-                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concert)
+                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concertId)
         );
     }
 
@@ -145,11 +132,12 @@ public class SeatService {
      */
     public SeatResponseDTO.createDrawingNotificationDTO createDrawingNotification(Long concertId, Long seatId) {
 
-        // Concert & Seat 조회
-        Concert concert = getConcert(concertId);
-        Seat seat = getSeat(seatId);
+        // Concert 조회
+        getConcert(concertId);
+        // Seat 조회
+        getSeat(seatId);
 
-        List<String> nicknameList = getMembersForConcertAndSeat(concert, seat).stream()
+        List<String> nicknameList = getMembersForConcertAndSeat(concertId, seatId, MemberSeatStatus.RECEIVED).stream()
                 .map(Member::getNickname)
                 .toList();
 
@@ -356,9 +344,9 @@ public class SeatService {
     }
 
     // 해당 Concert & Seat 에 접수한 회원 목록 조회
-    private List<Member> getMembersForConcertAndSeat(Concert concert, Seat seat) {
-        return memberRepository.findByConcertIdAndSeatId(
-                concert.getId(), seat.getId(), MemberSeatStatus.RESERVED
+    private List<Member> getMembersForConcertAndSeat(Long concertId, Long seatId, MemberSeatStatus status) {
+        return memberRepository.findByConcertIdAndSeatIdAndMemberSeatStatus(
+                concertId, seatId, status
         );
     }
 
@@ -367,6 +355,20 @@ public class SeatService {
         return seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
+    }
+
+    // 해당 공연에 접수한 좌석 리스트 -> getReceptionSeatsDTO
+    private List<SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO> getReceptionSeatsDTO(Concert concert, List<Seat> receptionSeatList) {
+        return receptionSeatList.stream()
+                .map(seat -> new SeatResponseDTO.getReceptionSeatsDTO.ReceptionSeatDTO(
+                        seat.getId().intValue(),
+                        formatSeatName(concert, seat),
+                        formatSeatInfo(seat),
+                        getTimeDTO(concert.getConcertDate()),
+                        getTimeDTO(seat.getDrawingTime()),
+                        getCompetitionRate(getReceptionMemberCount(concert.getId(), seat.getId()))
+                ))
+                .toList();
     }
 
     // Member 가 해당 Concert 에 접수한 좌석 수 조회
@@ -381,8 +383,8 @@ public class SeatService {
     }
 
     // 좌석 접수 취소
-    private void cancelMemberSeat(Long currentMemberId, Concert concert, Seat seat) {
-        MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED);
+    private void cancelMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
+        MemberSeat memberSeat = getMemberSeat(currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED);
         memberSeatRepository.delete(memberSeat);
     }
 

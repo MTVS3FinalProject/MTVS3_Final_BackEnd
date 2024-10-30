@@ -22,7 +22,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE ms.concertId = :concertId " +
             "AND ms.seatId = :seatId " +
             "AND ms.memberSeatStatus = :status")
-    List<Member> findByConcertIdAndSeatId(@Param("concertId") Long concertId,
-                                          @Param("seatId") Long seatId,
-                                          @Param("status") MemberSeatStatus status);
+    List<Member> findByConcertIdAndSeatIdAndMemberSeatStatus(@Param("concertId") Long concertId,
+                                                             @Param("seatId") Long seatId,
+                                                             @Param("status") MemberSeatStatus status);
 }
