@@ -137,7 +137,7 @@ public class SeatService {
         // Seat 조회
         getSeat(seatId);
 
-        List<String> nicknameList = getMembersForConcertAndSeat(concertId, seatId, MemberSeatStatus.RECEIVED).stream()
+        List<String> nicknameList = getMembersForDrawing(concertId, seatId, MemberSeatStatus.RECEIVED).stream()
                 .map(Member::getNickname)
                 .toList();
 
@@ -154,35 +154,19 @@ public class SeatService {
     public void processDrawResult(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 조회
-        Member member = getMember(currentMemberId);
+        getMember(currentMemberId);
+        // Concert 조회
+        getConcert(concertId);
+        // Seat 조회
+        getSeat(seatId);
 
-        // Concert & Seat 조회
-        Concert concert = getConcert(concertId);
-        Seat seat = getSeat(seatId);
-
-        MemberSeat memberSeat = getMemberSeat(currentMemberId, concert.getId(), seat.getId(), MemberSeatStatus.RECEIVED);
+        MemberSeat memberSeat = getMemberSeat(currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED);
 
         // 임시 결제 권한 획득
-        DrawResult drawResult = newDrawResult(currentMemberId, concert.getId(), seat.getId());
-        drawResultRedisRepository.save(drawResult);
+        newDrawResult(currentMemberId, concertId, seatId);
 
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         memberSeatRepository.save(memberSeat);
-    }
-
-    /*
-        추첨 결과 치트
-     */
-    public void cheatDrawResult(Long concertId, Long currentMemberId) {
-
-        Member member = getMember(currentMemberId);
-        Concert concert = getConcert(concertId);
-
-        MemberSeat memberSeat = memberSeatRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
-                .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
-
-        DrawResult drawResult = newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
-        drawResultRedisRepository.save(drawResult);
     }
 
     /*
@@ -193,23 +177,22 @@ public class SeatService {
 
         // Member 확인
         Member member = getMember(currentMemberId);
-
         // 배송지 정보 조회
         Address address = getAddress(member);
-
-        // Concert & Seat 조회
+        // Concert 조회
         Concert concert = getConcert(concertId);
+        // Seat 조회
         Seat seat = getSeat(seatId);
 
         // 좌석 결제 권한 확인
         validateDrawResult(getDrawResult(member));
-
         // 좌석 결제
         calculateCoin(member, seat);
 
         seat.setSeatStatus(SeatStatus.RESERVED);
         seatRepository.save(seat);
 
+        // Seat 예약
         reserveMemberSeat(member, concert, seat);
 
         // TODO: 티켓 생성, seatNum
@@ -224,6 +207,20 @@ public class SeatService {
                 address.getPhoneNumber(),
                 formatUserAddress(address)
         );
+    }
+
+    /*
+        추첨 결과 치트
+     */
+    public void cheatDrawResult(Long concertId, Long currentMemberId) {
+
+        Member member = getMember(currentMemberId);
+        Concert concert = getConcert(concertId);
+
+        MemberSeat memberSeat = memberSeatRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
+                .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
+
+        newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
     }
 
     /*
@@ -309,13 +306,15 @@ public class SeatService {
     }
 
     // DrawResult 생성
-    private DrawResult newDrawResult(Long currentMemberId, Long concertId, Long seatId) {
-        return DrawResult.builder()
+    private void newDrawResult(Long currentMemberId, Long concertId, Long seatId) {
+        DrawResult drawResult = DrawResult.builder()
                 .id(String.valueOf(currentMemberId))
                 .concertId(concertId)
                 .seatId(seatId)
                 .paymentStatus(PaymentStatus.PENDING)
                 .build();
+
+        drawResultRedisRepository.save(drawResult);
     }
 
     // SeatName 생성
@@ -344,7 +343,7 @@ public class SeatService {
     }
 
     // 해당 Concert & Seat 에 접수한 회원 목록 조회
-    private List<Member> getMembersForConcertAndSeat(Long concertId, Long seatId, MemberSeatStatus status) {
+    private List<Member> getMembersForDrawing(Long concertId, Long seatId, MemberSeatStatus status) {
         return memberRepository.findByConcertIdAndSeatIdAndMemberSeatStatus(
                 concertId, seatId, status
         );
