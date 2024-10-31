@@ -36,6 +36,7 @@ springdoc:
     operations-sorter: method
     disable-swagger-default-url: true
     display-request-duration: true
+    doc-expansion: none
 
   api-docs:
     path: /v3/api-docs
