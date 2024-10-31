@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.file.command.application.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/qr")
+@Tag(name = "02_QRController")
 public class QRController {
 
     private final QRService qrService;

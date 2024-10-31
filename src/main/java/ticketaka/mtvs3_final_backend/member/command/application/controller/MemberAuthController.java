@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.member.command.application.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import ticketaka.mtvs3_final_backend.member.command.application.service.MemberAu
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "01_MemberController")
 public class MemberAuthController {
 
     private final MemberAuthService memberAuthService;
