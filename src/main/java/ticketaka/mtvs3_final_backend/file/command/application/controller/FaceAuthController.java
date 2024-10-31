@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.file.command.application.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/face")
+@Tag(name = "03_FaceAuthController")
 public class FaceAuthController {
 
     private final FaceAuthService faceAuthService;

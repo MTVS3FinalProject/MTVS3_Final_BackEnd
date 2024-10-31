@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.seat.command.application.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/concerts")
+@Tag(name = "05_SeatController")
 public class SeatController {
 
     private final SeatService seatService;
@@ -24,7 +26,7 @@ public class SeatController {
      */
     @GetMapping("/{concertId}/seats/{seatId}")
     public ResponseEntity<?> getConcertSeat(@PathVariable("concertId") int concertId,
-                                     @PathVariable("seatId") int seatId) {
+                                            @PathVariable("seatId") int seatId) {
 
         log.info("getSeat_request: concertId={}, seatId={}", concertId, seatId);
 
