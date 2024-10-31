@@ -18,7 +18,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
-import ticketaka.mtvs3_final_backend.seat.command.domain.model.MemberSeatStatus;
+import ticketaka.mtvs3_final_backend.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.seat.command.domain.repository.SeatRepository;
