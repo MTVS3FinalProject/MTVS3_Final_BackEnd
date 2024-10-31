@@ -29,6 +29,19 @@ spring:
 jwt:
   secret: ${JWT.SECRET}
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: desc
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+
+  api-docs:
+    path: /v3/api-docs
+
+  show-actuator: true
+
 logging:
   level:
     '[ticketaka]': debug
