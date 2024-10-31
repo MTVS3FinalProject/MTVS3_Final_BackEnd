@@ -4,6 +4,16 @@ import java.util.List;
 
 public class SeatResponseDTO {
 
+    // 좌석 조회
+    public record getSeatDTO(
+            int floor,
+            String seatInfo,
+            timeDTO concertTime,
+            timeDTO drawingTime,
+            int competitionRate
+    ) {
+    }
+
     // 공연 날짜
     public record timeDTO(
             int year,
@@ -13,20 +23,8 @@ public class SeatResponseDTO {
     ) {
     }
 
-    // 좌석 조회
-    public record getSeatDTO(
-            String seatId,
-            int floor,
-            String seatInfo,
-            timeDTO concertTime,
-            timeDTO drawingTime,
-            int competitionRate
-    ) {
-    }
-
     // 좌석 접수
     public record seatReceptionDTO(
-            String seatId,
             int seatPrice,
             int competitionRate,
             int remainingTicket
@@ -38,6 +36,8 @@ public class SeatResponseDTO {
             List<ReceptionSeatDTO> receptionSeatDTOList
     ) {
         public record ReceptionSeatDTO(
+                int seatId,
+                String seatName,
                 String seatInfo,
                 timeDTO concertTime,
                 timeDTO drawingTime,
@@ -61,7 +61,8 @@ public class SeatResponseDTO {
 
     // 좌석 결제
     public record reserveSeatDTO(
-            String seatId,
+            int seatId,
+            String seatName,
             String seatInfo,
             int seatNum,
             int seatPrice,

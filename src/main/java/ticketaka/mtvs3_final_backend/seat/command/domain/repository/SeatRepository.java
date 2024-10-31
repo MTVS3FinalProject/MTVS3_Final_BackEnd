@@ -29,4 +29,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
                                                            @Param("status") MemberSeatStatus status);
 
     Optional<Seat> findByIdAndConcert(Long seatId, Concert concert);
+
+    Optional<Seat>  findByConcertIdAndIdAndSeatStatus(Long concertId, Long seatId, SeatStatus seatStatus);
 }

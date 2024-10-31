@@ -3,6 +3,5 @@ spring:
     active:
       - local
 
-
 server:
   port: ${SERVER.PORT}

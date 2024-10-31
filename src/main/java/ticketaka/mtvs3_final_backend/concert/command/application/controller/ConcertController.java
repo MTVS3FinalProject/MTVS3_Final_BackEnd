@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.concert.command.application.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,8 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/concert")
+@RequestMapping("/api/concerts")
+@Tag(name = "04_ConcertController")
 public class ConcertController {
 
     private final ConcertService concertService;
@@ -33,10 +35,10 @@ public class ConcertController {
     /*
         공연장 입장
      */
-    @PostMapping
-    public ResponseEntity<?> entranceConcert(@RequestBody ConcertRequestDTO.entranceConcertDTO requestDTO) {
+    @GetMapping("/{concertId}")
+    public ResponseEntity<?> entranceConcert(@PathVariable("concertId") int concertId) {
         
-        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert(requestDTO, getCurrentMemberId());
+        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert((long) concertId, getCurrentMemberId());
         
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
