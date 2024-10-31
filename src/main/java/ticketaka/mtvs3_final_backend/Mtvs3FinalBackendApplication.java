@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.concert.command.domain.model.Concert;
+import ticketaka.mtvs3_final_backend.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.concert.command.domain.repository.ConcertRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
@@ -65,6 +66,7 @@ public class Mtvs3FinalBackendApplication {
                     newFile(RelationType.MEMBER, 6L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241025124448.png?generation=1729827892211852&alt=media", FilePurpose.SIGNUP)
                     ));
             Concert concert01 = newConcert("Concert01", LocalDateTime.of(2024, 11, 1, 19, 0), 18, 2);
+            concert01.setConcertStatus(ConcertStatus.RESERVING);
             concertRepository.saveAll(Arrays.asList(
                     concert01
             ));

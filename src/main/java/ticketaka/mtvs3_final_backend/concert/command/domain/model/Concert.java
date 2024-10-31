@@ -1,10 +1,7 @@
 package ticketaka.mtvs3_final_backend.concert.command.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 
 import java.time.LocalDateTime;
@@ -28,11 +25,17 @@ public class Concert extends BaseTimeEntity {
     @Column
     private int receptionLimit;
 
+    @Setter
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ConcertStatus concertStatus;
+
     @Builder
     public Concert(String name, LocalDateTime concertDate, int ageRestriction, int receptionLimit) {
         this.name = name;
         this.concertDate = concertDate;
         this.ageRestriction = ageRestriction;
         this.receptionLimit = receptionLimit;
+        this.concertStatus = ConcertStatus.PREPARING;
     }
 }
