@@ -1,24 +1,30 @@
 package ticketaka.mtvs3_final_backend._core.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Ticketaka",
+                description = "Metaverse Concert Platform",
+                version = "1.0"
+        ),
+        servers = {@Server(url = "https://ticketaka.shop", description = "Ticketaka Server")}
+)
 @Configuration
 public class SwaggerConfig {
 
     @Bean
     public OpenAPI openApi() {
-        Info info = new Info()
-                .title("Ticketaka")
-                .description("Metaverse Concert Platform")
-                .version("1.0");
-
         String jwt = "JWT";
+
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(
                 jwt,
@@ -30,7 +36,6 @@ public class SwaggerConfig {
         );
 
         return new OpenAPI()
-                .info(info)
                 .addSecurityItem(securityRequirement)
                 .components(components);
     }
