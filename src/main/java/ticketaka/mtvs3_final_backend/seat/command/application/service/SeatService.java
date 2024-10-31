@@ -103,7 +103,6 @@ public class SeatService {
 
         // 현재 회원이 접수한 좌석 목록 조회
         List<Seat> receptionSeatList = getReceptionSeatsForConcert(currentMemberId, concert);
-
         // 최종 DTO 생성 및 반환
         return new SeatResponseDTO.getReceptionSeatsDTO(getReceptionSeatsDTO(concert, receptionSeatList));
     }
@@ -121,6 +120,7 @@ public class SeatService {
         // Seat 조회
         getSeat(seatId);
 
+        // 좌석 접수 취소
         cancelMemberSeat(currentMemberId, concertId, seatId);
 
         return new SeatResponseDTO.cancelReceptionSeatDTO(
@@ -190,11 +190,11 @@ public class SeatService {
         // 좌석 결제
         calculateCoin(member, seat);
 
-        seat.setSeatStatus(SeatStatus.RESERVED);
-        seatRepository.save(seat);
-
         // Seat 예약
         reserveMemberSeat(member, concert, seat);
+
+        seat.setSeatStatus(SeatStatus.RESERVED);
+        seatRepository.save(seat);
 
         // TODO: 티켓 생성, seatNum
         return new SeatResponseDTO.reserveSeatDTO(
