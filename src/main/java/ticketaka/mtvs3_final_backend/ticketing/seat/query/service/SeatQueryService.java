@@ -61,6 +61,8 @@ public class SeatQueryService {
     */
     public SeatQueryResponseDTO.getMyConcertReceptionsDTO getMyConcertReceptions(Long concertId, Long memberId) {
 
+        // Member 조회
+        getMember(memberId);
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
 

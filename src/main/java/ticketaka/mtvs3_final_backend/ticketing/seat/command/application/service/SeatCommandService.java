@@ -20,7 +20,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
@@ -28,14 +28,13 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatSta
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.MemberSeatRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class SeatService {
+public class SeatCommandService {
 
     private final CoinHistoryService coinHistoryService;
 
@@ -51,7 +50,7 @@ public class SeatService {
         좌석 접수
      */
     @Transactional
-    public SeatResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long currentMemberId) {
+    public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 조회
         getMember(currentMemberId);
@@ -65,7 +64,7 @@ public class SeatService {
         // 좌석 접수
         receiptSeat(currentMemberId, concertId, seatId);
 
-        return new SeatResponseDTO.seatReceptionDTO(
+        return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
                 getCompetitionRate(getReceptionMemberCount(concertId, seatId)),
                 concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concertId)
@@ -76,7 +75,7 @@ public class SeatService {
         좌석 접수 취소
      */
     @Transactional
-    public SeatResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(Long concertId, Long seatId, Long currentMemberId) {
+    public SeatCommandResponseDTO.cancelReceptionSeatDTO cancelReceptionSeat(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 조회
         getMember(currentMemberId);
@@ -88,7 +87,7 @@ public class SeatService {
         // 좌석 접수 취소
         cancelMemberSeat(currentMemberId, concertId, seatId);
 
-        return new SeatResponseDTO.cancelReceptionSeatDTO(
+        return new SeatCommandResponseDTO.cancelReceptionSeatDTO(
                 concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concertId)
         );
     }
@@ -96,7 +95,7 @@ public class SeatService {
     /*
         추첨 시작 알림
      */
-    public SeatResponseDTO.createDrawingNotificationDTO createDrawingNotification(Long concertId, Long seatId) {
+    public SeatCommandResponseDTO.createDrawingNotificationDTO createDrawingNotification(Long concertId, Long seatId) {
 
         // Concert 조회
         getConcert(concertId);
@@ -107,7 +106,7 @@ public class SeatService {
                 .map(Member::getNickname)
                 .toList();
 
-        return new SeatResponseDTO.createDrawingNotificationDTO(
+        return new SeatCommandResponseDTO.createDrawingNotificationDTO(
                 nicknameList,
                 getCompetitionRate(nicknameList.size())
         );
@@ -139,7 +138,7 @@ public class SeatService {
         좌석 결제
      */
     @Transactional
-    public SeatResponseDTO.reserveSeatDTO reserveSeat(Long concertId, Long seatId, Long currentMemberId) {
+    public SeatCommandResponseDTO.reserveSeatDTO reserveSeat(Long concertId, Long seatId, Long currentMemberId) {
 
         // Member 확인
         Member member = getMember(currentMemberId);
@@ -162,7 +161,7 @@ public class SeatService {
         seatRepository.save(seat);
 
         // TODO: 티켓 생성, seatNum
-        return new SeatResponseDTO.reserveSeatDTO(
+        return new SeatCommandResponseDTO.reserveSeatDTO(
                 seat.getId().intValue(),
                 formatSeatName(concert, seat),
                 formatSeatInfo(seat),
@@ -192,7 +191,7 @@ public class SeatService {
     /*
         좌석 결제 - 치트
      */
-    public SeatResponseDTO.reserveSeatDTO cheatReserveSeat(Long concertId, Long currentMemberId) {
+    public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long concertId, Long currentMemberId) {
 
         // Member 확인
         Member member = getMember(currentMemberId);
@@ -212,7 +211,7 @@ public class SeatService {
         Address address = getAddress(member);
 
         // TODO: seatNum
-        return new SeatResponseDTO.reserveSeatDTO(
+        return new SeatCommandResponseDTO.reserveSeatDTO(
                 seat.getId().intValue(),
                 concert.getConcertDate().getYear() + formatSeatInfo(seat),
                 formatSeatInfo(seat),

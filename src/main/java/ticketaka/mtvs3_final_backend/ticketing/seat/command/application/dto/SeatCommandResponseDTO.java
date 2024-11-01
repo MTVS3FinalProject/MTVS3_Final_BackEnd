@@ -2,7 +2,7 @@ package ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto;
 
 import java.util.List;
 
-public class SeatResponseDTO {
+public class SeatCommandResponseDTO {
 
     // 좌석 조회
     public record getSeatDTO(

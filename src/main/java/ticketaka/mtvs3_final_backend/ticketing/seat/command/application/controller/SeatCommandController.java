@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatResponseDTO;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.service.SeatService;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatCommandResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.service.SeatCommandService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
 
@@ -16,9 +16,9 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RestController
 @RequestMapping("/api/concerts")
 @Tag(name = "05_01_01_SeatController")
-public class SeatController {
+public class SeatCommandController {
 
-    private final SeatService seatService;
+    private final SeatCommandService seatCommandService;
 
     /*
         좌석 접수
@@ -29,7 +29,7 @@ public class SeatController {
 
         log.info("seatReception_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.seatReceptionDTO responseDTO = seatService.seatReception(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.seatReceptionDTO responseDTO = seatCommandService.seatReception(concertId, seatId, getCurrentMemberId());
 
         log.info("seatReception_response: {}", responseDTO);
 
@@ -45,7 +45,7 @@ public class SeatController {
 
         log.info("cancelReceptionSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.cancelReceptionSeatDTO responseDTO = seatService.cancelReceptionSeat(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.cancelReceptionSeatDTO responseDTO = seatCommandService.cancelReceptionSeat(concertId, seatId, getCurrentMemberId());
 
         log.info("cancelReceptionSeat_response: {}", responseDTO);
 
@@ -61,7 +61,7 @@ public class SeatController {
 
         log.info("drawingNotification_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.createDrawingNotificationDTO responseDTO = seatService.createDrawingNotification(concertId, seatId);
+        SeatCommandResponseDTO.createDrawingNotificationDTO responseDTO = seatCommandService.createDrawingNotification(concertId, seatId);
 
         log.info("drawingNotification_response: {}", responseDTO);
 
@@ -77,7 +77,7 @@ public class SeatController {
 
         log.info("createDrawResult_request: concertId={}, seatId={}", concertId, seatId);
 
-        seatService.processDrawResult(concertId, seatId, getCurrentMemberId());
+        seatCommandService.processDrawResult(concertId, seatId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -88,7 +88,7 @@ public class SeatController {
     @PostMapping("/{concertId}/draw-cheat")
     public ResponseEntity<?> cheatDrawResult(@PathVariable("concertId") Long concertId) {
 
-        seatService.cheatDrawResult(concertId, getCurrentMemberId());
+        seatCommandService.cheatDrawResult(concertId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -102,7 +102,7 @@ public class SeatController {
 
         log.info("reserveSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.reserveSeat(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.reserveSeat(concertId, seatId, getCurrentMemberId());
 
         log.info("reserveSeat_response: {}", responseDTO);
 
@@ -115,7 +115,7 @@ public class SeatController {
     @PostMapping("/{concertId}/payment-cheat")
     public ResponseEntity<?> cheatReserveSeat(@PathVariable("concertId") Long concertId) {
 
-        SeatResponseDTO.reserveSeatDTO responseDTO = seatService.cheatReserveSeat(concertId, getCurrentMemberId());
+        SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.cheatReserveSeat(concertId, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

@@ -1,7 +1,5 @@
 package ticketaka.mtvs3_final_backend.ticketing.seat.query.dto;
 
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatResponseDTO;
-
 import java.util.List;
 
 public class SeatQueryResponseDTO {
