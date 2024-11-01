@@ -32,7 +32,9 @@ public class SeatQueryController {
 
         log.info("GetConcertSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatQueryResponseDTO.getSeatInfoDTO responseDTO = seatQueryService.getConcertSeat(concertId, seatId);
+        SeatQueryResponseDTO.getSeatInfoDTO responseDTO = seatQueryService.getConcertSeat(
+                getCurrentMemberId(), concertId, seatId
+        );
 
         log.info("GetConcertSeat_response: {}", responseDTO);
 
@@ -48,7 +50,7 @@ public class SeatQueryController {
         log.info("GetMyConcertReceptions_request: concertId={}", concertId);
 
         SeatQueryResponseDTO.getMyConcertReceptionsDTO responseDTO = seatQueryService.getMyConcertReceptions(
-                concertId, getCurrentMemberId()
+                getCurrentMemberId(), concertId
         );
 
         log.info("GetMyConcertReceptions_response: {}", responseDTO);

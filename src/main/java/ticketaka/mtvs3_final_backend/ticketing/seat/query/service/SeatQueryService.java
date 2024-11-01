@@ -11,6 +11,7 @@ import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryReposito
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
@@ -35,7 +36,7 @@ public class SeatQueryService {
     /*
         좌석 정보 조회
      */
-    public SeatQueryResponseDTO.getSeatInfoDTO getConcertSeat(Long concertId, Long seatId) {
+    public SeatQueryResponseDTO.getSeatInfoDTO getConcertSeat(Long memberId, Long concertId, Long seatId) {
 
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
@@ -46,6 +47,7 @@ public class SeatQueryService {
         return new SeatQueryResponseDTO.getSeatInfoDTO(
                 seat.getFloor(),
                 formatSeatInfo(seat),
+                isSeatReceivedByMember(memberId, concertId, seatId),
                 getTimeDTO(concert.getConcertDate()),
                 getTimeDTO(seat.getDrawingTime()),
                 seat.getSeatStatus().toString(),
@@ -98,6 +100,17 @@ public class SeatQueryService {
     private Seat getSeat(Long seatId) {
         return seatQueryRepository.findById(seatId)
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
+    }
+
+    // MemberSeat 조회
+    private MemberSeat getMemberSeat(Long memberId, Long concertId, Long seatId) {
+        return memberSeatQueryRepository.findByMemberIdAndConcertIdAndSeatId(memberId, concertId, seatId)
+                .orElseThrow(() -> new Exception400("해당 좌석과 관련이 없습니다."));
+    }
+
+    // 이미 접수한 좌석인지 확인
+    private boolean isSeatReceivedByMember(Long memberId, Long concertId, Long seatId) {
+        return getMemberSeat(memberId, concertId, seatId).getMemberSeatStatus().equals(MemberSeatStatus.RECEIVED);
     }
 
     // Member 가 해당 Concert 에서 접수한 Seat 목록 조회

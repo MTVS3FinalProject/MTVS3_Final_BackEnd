@@ -19,6 +19,7 @@ public class SeatQueryResponseDTO {
     public record getSeatInfoDTO(
             int floor,
             String seatInfo,
+            boolean isReceived,
             timeDTO concertTime,
             timeDTO drawingTime,
             String seatStatus,

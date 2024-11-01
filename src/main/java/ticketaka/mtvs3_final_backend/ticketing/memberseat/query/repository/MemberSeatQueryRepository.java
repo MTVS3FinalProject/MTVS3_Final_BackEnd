@@ -5,8 +5,12 @@ import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 
+import java.util.Optional;
+
 @Repository
 public interface MemberSeatQueryRepository extends JpaRepository<MemberSeat, Long> {
 
     int countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
+
+    Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatId(Long memberId, Long concertId, Long seatId);
 }
