@@ -57,11 +57,9 @@ public class SeatCommandService {
         getMember(memberId);
         // Concert 조회
         Concert concert = getConcert(concertId);
-        // Seat 조회
-        Seat seat = getSeat(seatId);
 
         // 좌석 접수
-        seatReceptionService.seatReception(memberId, concertId, seatId);
+        Seat seat = seatReceptionService.seatReception(memberId, concertId, seatId);
 
         return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
@@ -259,16 +257,6 @@ public class SeatCommandService {
                 .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
     }
 
-    // MemberSeat 생성
-    private MemberSeat newMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
-        return MemberSeat.builder()
-                .memberId(currentMemberId)
-                .concertId(concertId)
-                .seatId(seatId)
-                .memberSeatStatus(MemberSeatStatus.RECEIVED)
-                .build();
-    }
-
     // DrawResult 생성
     private void newDrawResult(Long currentMemberId, Long concertId, Long seatId) {
         DrawResult drawResult = DrawResult.builder()
@@ -308,12 +296,6 @@ public class SeatCommandService {
         return memberSeatCommandRepository.countByMemberIdAndConcertId(currentMemberId, concertId);
     }
 
-    // 좌석 접수
-    private void receiptSeat(Long currentMemberId, Long concertId, Long seatId) {
-        MemberSeat memberSeat = newMemberSeat(currentMemberId, concertId, seatId);
-        memberSeatCommandRepository.save(memberSeat);
-    }
-
     // 좌석 접수 취소
     private void cancelMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
         MemberSeat memberSeat = getMemberSeat(currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED);
@@ -340,31 +322,6 @@ public class SeatCommandService {
             case FAILED -> throw new Exception400("좌석 추첨 결과가 유효하지 않습니다.");
         }
         drawResultRedisRepository.delete(drawResult);
-    }
-
-    // 좌석 접수 유효성 확인
-    private void checkAvailableSeat(Long concertId, Long seatId, Long currentMemberId) {
-        // 이미 예약된 좌석인지 확인
-        checkAlreadyReserved(concertId, seatId);
-        // 이미 접수된 좌석인지 확인
-        checkAlreadyReceipted(currentMemberId, concertId, seatId);
-    }
-
-    // 이미 예약된 Seat 인지 검사
-    private void checkAlreadyReserved(Long concertId, Long seatId) {
-        seatCommandRepository.findByConcertIdAndIdAndSeatStatus(concertId, seatId, SeatStatus.RESERVED)
-                .ifPresent(seat -> {
-                    throw new Exception400("이미 예약된 좌석입니다.");
-                });
-    }
-
-    // 이미 접수된 Seat 인지 검사
-    private void checkAlreadyReceipted(Long currentMemberId, Long concertId, Long seatId) {
-        memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(
-                currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED
-                ).ifPresent(memberSeat -> {
-                    throw new Exception400("이미 접수한 좌석입니다.");
-                });
     }
 
     // Coin 계산 - Seat 예약

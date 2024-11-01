@@ -15,6 +15,4 @@ public interface SeatCommandRepository extends JpaRepository<Seat, Long> {
     List<Seat> findAllByConcertAndSeatStatus(Concert concert, SeatStatus seatStatus);
 
     Optional<Seat> findByIdAndConcert(Long seatId, Concert concert);
-
-    Optional<Seat>  findByConcertIdAndIdAndSeatStatus(Long concertId, Long seatId, SeatStatus seatStatus);
 }
