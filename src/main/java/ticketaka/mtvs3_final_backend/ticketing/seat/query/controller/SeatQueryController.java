@@ -12,6 +12,8 @@ import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.dto.SeatQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.service.SeatQueryService;
 
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -28,11 +30,28 @@ public class SeatQueryController {
     public ResponseEntity<?> GetConcertSeat(@PathVariable("concertId") int concertId,
                                             @PathVariable("seatId") int seatId) {
 
-        log.info("getSeat_request: concertId={}, seatId={}", concertId, seatId);
+        log.info("GetConcertSeat_request: concertId={}, seatId={}", concertId, seatId);
 
         SeatQueryResponseDTO.getSeatInfoDTO responseDTO = seatQueryService.GetSeatInfo((long) concertId, (long) seatId);
 
-        log.info("getSeat_response: {}", responseDTO);
+        log.info("GetConcertSeat_response: {}", responseDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        현재 회원이 접수한 좌석 조회
+     */
+    @GetMapping("{concertId}/receptions")
+    public ResponseEntity<?> GetMyConcertReceptions(@PathVariable("concertId") long concertId) {
+
+        log.info("GetMyConcertReceptions_request: concertId={}", concertId);
+
+        SeatQueryResponseDTO.getMyConcertReceptionsDTO responseDTO = seatQueryService.GetMyConcertReceptions(
+                concertId, getCurrentMemberId()
+        );
+
+        log.info("GetMyConcertReceptions_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
