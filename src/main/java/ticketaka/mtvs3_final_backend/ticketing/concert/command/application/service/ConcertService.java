@@ -25,6 +25,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.Se
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -51,10 +52,7 @@ public class ConcertService {
                 .map(concert -> new ConcertResponseDTO.getConcertDTO(
                         concert.getId().intValue(),
                         concert.getName(),
-                        concert.getConcertDate().getYear(),
-                        concert.getConcertDate().getMonthValue(),
-                        concert.getConcertDate().getDayOfMonth(),
-                        concert.getConcertDate().toLocalTime().toString()
+                        getTimeDTO(concert.getConcertDate())
                 ))
                 .toList();
 
@@ -168,6 +166,16 @@ public class ConcertService {
     // SeatInfo Formatting
     private String getSeatInfo(Seat seat) {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
+    }
+
+    // TimeDTO 생성
+    private ConcertResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
+        return new ConcertResponseDTO.timeDTO(
+                localDateTime.getYear(),
+                localDateTime.getMonthValue(),
+                localDateTime.getDayOfMonth(),
+                localDateTime.toLocalTime().toString()
+        );
     }
 
     // 연령 확인
