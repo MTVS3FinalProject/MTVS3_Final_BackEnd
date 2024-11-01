@@ -18,22 +18,10 @@ public class ConcertResponseDTO {
     ) {
     }
 
-    // 공연 날짜
-    public record timeDTO(
-            int year,
-            int month,
-            int day,
-            String time
-    ) {
-    }
-
     // 공연장 입장
     public record entranceConcertDTO(
             String concertName,
-            int year,
-            int month,
-            int day,
-            String time,
+            timeDTO concertTime,
             List<SeatIdDTO> availableSeats,
             List<SeatIdDTO> receptionSeats,
             int remainingTickets
@@ -54,6 +42,15 @@ public class ConcertResponseDTO {
             int seatPrice,
             int userCoin,
             int neededCoin
+    ) {
+    }
+
+    // 공연 날짜
+    public record timeDTO(
+            int year,
+            int month,
+            int day,
+            String time
     ) {
     }
 }

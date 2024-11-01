@@ -84,10 +84,7 @@ public class ConcertService {
 
         return new ConcertResponseDTO.entranceConcertDTO(
                 concert.getName(),
-                concert.getConcertDate().getYear(),
-                concert.getConcertDate().getMonthValue(),
-                concert.getConcertDate().getDayOfMonth(),
-                concert.getConcertDate().toLocalTime().toString(),
+                getTimeDTO(concert.getConcertDate()),
                 availableSeats,
                 receptionSeats,
                 remainingTickets

@@ -36,9 +36,9 @@ public class ConcertController {
         공연장 입장
      */
     @GetMapping("/{concertId}")
-    public ResponseEntity<?> entranceConcert(@PathVariable("concertId") int concertId) {
+    public ResponseEntity<?> entranceConcert(@PathVariable("concertId") Long concertId) {
         
-        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert((long) concertId, getCurrentMemberId());
+        ConcertResponseDTO.entranceConcertDTO responseDTO = concertService.entranceConcert(concertId, getCurrentMemberId());
         
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
