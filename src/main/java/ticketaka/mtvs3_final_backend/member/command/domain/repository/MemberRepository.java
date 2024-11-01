@@ -18,7 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByNickname(String nickname);
 
     @Query("SELECT m FROM Member m " +
-            "JOIN MemberSeat ms ON m.id = ms.id " +
+            "JOIN MemberSeat ms ON m.id = ms.memberId " +
             "WHERE ms.concertId = :concertId " +
             "AND ms.seatId = :seatId " +
             "AND ms.memberSeatStatus = :status")
