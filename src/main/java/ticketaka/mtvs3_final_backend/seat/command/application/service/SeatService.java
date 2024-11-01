@@ -48,25 +48,6 @@ public class SeatService {
     private final DrawResultRedisRepository drawResultRedisRepository;
 
     /*
-        좌석 조회
-     */
-    public SeatResponseDTO.getSeatDTO getConcertSeat(Long concertId, Long seatId) {
-
-        // Concert 조회
-        Concert concert = getConcert(concertId);
-        // Seat 조회
-        Seat seat = getSeat(seatId);
-
-        return new SeatResponseDTO.getSeatDTO(
-                seat.getFloor(),
-                formatSeatInfo(seat),
-                getTimeDTO(concert.getConcertDate()),
-                getTimeDTO(seat.getDrawingTime()),
-                getCompetitionRate(getReceptionMemberCount(concertId, seatId))
-        );
-    }
-
-    /*
         좌석 접수
      */
     @Transactional

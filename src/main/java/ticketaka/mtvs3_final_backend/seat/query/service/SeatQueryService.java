@@ -37,16 +37,14 @@ public class SeatQueryService {
         // Seat 조회
         Seat seat = getSeat(seatId);
 
-        Integer competitionRate = seat.getSeatStatus().equals(SeatStatus.AVAILABLE) ?
-                getCompetitionRate(getReceptionMemberCount(concertId, seatId)) : null;
-
         return new SeatQueryResponseDTO.getSeatInfoDTO(
                 seat.getFloor(),
                 formatSeatInfo(seat),
                 getTimeDTO(concert.getConcertDate()),
                 getTimeDTO(seat.getDrawingTime()),
                 seat.getSeatStatus().toString(),
-                competitionRate
+                seat.getSeatStatus().equals(SeatStatus.AVAILABLE) ?
+                        getCompetitionRate(getReceptionMemberCount(concertId, seatId)) : null
         );
     }
 

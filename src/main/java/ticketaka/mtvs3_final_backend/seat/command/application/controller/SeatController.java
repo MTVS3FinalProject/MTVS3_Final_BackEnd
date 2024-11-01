@@ -22,22 +22,6 @@ public class SeatController {
     private final SeatService seatService;
 
     /*
-        좌석 조회
-     */
-    @GetMapping("/{concertId}/seats/{seatId}")
-    public ResponseEntity<?> getConcertSeat(@PathVariable("concertId") int concertId,
-                                            @PathVariable("seatId") int seatId) {
-
-        log.info("getSeat_request: concertId={}, seatId={}", concertId, seatId);
-
-        SeatResponseDTO.getSeatDTO responseDTO = seatService.getConcertSeat((long) concertId, (long) seatId);
-
-        log.info("getSeat_response: {}", responseDTO);
-
-        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
-    }
-
-    /*
         좌석 접수
      */
     @PostMapping("/{concertId}/seats/{seatId}/reception")
