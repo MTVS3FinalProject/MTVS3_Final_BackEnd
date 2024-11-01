@@ -16,7 +16,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/concerts")
-@Tag(name = "05_SeatController")
+@Tag(name = "05_01_01_SeatController")
 public class SeatController {
 
     private final SeatService seatService;

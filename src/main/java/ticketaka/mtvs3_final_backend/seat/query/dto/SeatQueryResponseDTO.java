@@ -1,6 +1,6 @@
 package ticketaka.mtvs3_final_backend.seat.query.dto;
 
-public class SeatInfoResponseDTO {
+public class SeatQueryResponseDTO {
 
     // 좌석 정보 조회
     public record getSeatInfoDTO(

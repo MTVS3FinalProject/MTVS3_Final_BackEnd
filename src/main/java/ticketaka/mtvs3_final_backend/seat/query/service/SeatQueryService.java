@@ -12,7 +12,7 @@ import ticketaka.mtvs3_final_backend.memberseat.command.domain.model.MemberSeatS
 import ticketaka.mtvs3_final_backend.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
-import ticketaka.mtvs3_final_backend.seat.query.dto.SeatInfoResponseDTO;
+import ticketaka.mtvs3_final_backend.seat.query.dto.SeatQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class SeatInfoService {
+public class SeatQueryService {
 
     private final ConcertQueryRepository concertQueryRepository;
     private final SeatQueryRepository seatQueryRepository;
@@ -30,7 +30,7 @@ public class SeatInfoService {
     /*
         좌석 정보 조회
      */
-    public Object getSeatInfo(Long concertId, Long seatId) {
+    public SeatQueryResponseDTO.getSeatInfoDTO GetSeatInfo(Long concertId, Long seatId) {
 
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
@@ -40,7 +40,7 @@ public class SeatInfoService {
         Integer competitionRate = seat.getSeatStatus().equals(SeatStatus.AVAILABLE) ?
                 getCompetitionRate(getReceptionMemberCount(concertId, seatId)) : null;
 
-        return new SeatInfoResponseDTO.getSeatInfoDTO(
+        return new SeatQueryResponseDTO.getSeatInfoDTO(
                 seat.getFloor(),
                 formatSeatInfo(seat),
                 getTimeDTO(concert.getConcertDate()),
@@ -63,8 +63,8 @@ public class SeatInfoService {
     }
 
     // TimeDTO 생성
-    private SeatInfoResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
-        return new SeatInfoResponseDTO.timeDTO(
+    private SeatQueryResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
+        return new SeatQueryResponseDTO.timeDTO(
                 localDateTime.getYear(),
                 localDateTime.getMonthValue(),
                 localDateTime.getDayOfMonth(),
