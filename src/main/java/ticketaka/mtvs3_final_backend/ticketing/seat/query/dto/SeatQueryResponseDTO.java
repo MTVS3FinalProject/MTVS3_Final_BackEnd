@@ -31,8 +31,8 @@ public class SeatQueryResponseDTO {
             int seatId,
             String seatName,
             String seatInfo,
-            SeatResponseDTO.timeDTO concertTime,
-            SeatResponseDTO.timeDTO drawingTime,
+            timeDTO concertTime,
+            timeDTO drawingTime,
             int competitionRate
     ) {
     }

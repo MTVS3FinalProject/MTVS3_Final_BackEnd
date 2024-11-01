@@ -5,17 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
-import ticketaka.mtvs3_final_backend.memberseat.command.domain.model.MemberSeatStatus;
-import ticketaka.mtvs3_final_backend.memberseat.query.repository.MemberSeatQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.dto.SeatQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -23,6 +27,7 @@ import java.time.LocalDateTime;
 @Service
 public class SeatQueryService {
 
+    private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
     private final SeatQueryRepository seatQueryRepository;
     private final MemberSeatQueryRepository memberSeatQueryRepository;
@@ -30,13 +35,14 @@ public class SeatQueryService {
     /*
         좌석 정보 조회
      */
-    public SeatQueryResponseDTO.getSeatInfoDTO GetSeatInfo(Long concertId, Long seatId) {
+    public SeatQueryResponseDTO.getSeatInfoDTO getConcertSeat(Long concertId, Long seatId) {
 
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
         // Seat 조회
         Seat seat = getSeat(seatId);
 
+        int receptionMemberCount = getReceptionMemberCount(concertId, seat.getId());
         return new SeatQueryResponseDTO.getSeatInfoDTO(
                 seat.getFloor(),
                 formatSeatInfo(seat),
@@ -44,8 +50,42 @@ public class SeatQueryService {
                 getTimeDTO(seat.getDrawingTime()),
                 seat.getSeatStatus().toString(),
                 seat.getSeatStatus().equals(SeatStatus.AVAILABLE) ?
-                        getCompetitionRate(getReceptionMemberCount(concertId, seatId)) : null
+                        getCompetitionRate(receptionMemberCount) : null
         );
+    }
+
+    /*
+        현재 회원이 접수한 모든 좌석 조회
+    */
+    public SeatQueryResponseDTO.getMyConcertReceptionsDTO getMyConcertReceptions(Long concertId, Long memberId) {
+
+        // Concert 조회
+        Concert concert = getReservingConcert(concertId);
+
+        // 현재 회원이 접수한 좌석 목록 조회
+        List<Seat> receptionSeatList = getReceptionSeatsForConcert(memberId, concertId);
+
+        return new SeatQueryResponseDTO.getMyConcertReceptionsDTO(
+                receptionSeatList.stream()
+                        .map(seat -> {
+                            int receptionMemberCount = getReceptionMemberCount(concertId, seat.getId());
+                            return new SeatQueryResponseDTO.receptionSeatDTO(
+                                    seat.getId().intValue(),
+                                    formatSeatName(concert, seat),
+                                    formatSeatInfo(seat),
+                                    getTimeDTO(concert.getConcertDate()),
+                                    getTimeDTO(seat.getDrawingTime()),
+                                    getCompetitionRate(receptionMemberCount)
+                            );
+                        })
+                        .toList()
+        );
+    }
+
+    // Member 조회
+    private Member getMember(Long memberId) {
+        return memberQueryRepository.findById(memberId)
+                .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
     }
 
     // Concert 조회
@@ -60,6 +100,11 @@ public class SeatQueryService {
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
     }
 
+    // Member 가 해당 Concert 에서 접수한 Seat 목록 조회
+    private List<Seat> getReceptionSeatsForConcert(Long memberId, Long concertId) {
+        return seatQueryRepository.findAllSeatsByMemberIdAndConcertId(memberId, concertId);
+    }
+
     // TimeDTO 생성
     private SeatQueryResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
         return new SeatQueryResponseDTO.timeDTO(
@@ -68,6 +113,11 @@ public class SeatQueryService {
                 localDateTime.getDayOfMonth(),
                 localDateTime.toLocalTime().toString()
         );
+    }
+
+    // SeatName 생성
+    private String formatSeatName(Concert concert, Seat seat) {
+        return concert.getConcertDate().getYear() + seat.getSection() + seat.getNumber();
     }
 
     // SeatInfo 생성
