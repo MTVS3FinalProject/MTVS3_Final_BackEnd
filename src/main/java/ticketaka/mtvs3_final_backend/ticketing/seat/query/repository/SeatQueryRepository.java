@@ -17,7 +17,7 @@ public interface SeatQueryRepository extends JpaRepository<Seat, Long> {
             "WHERE ms.memberId = :memberId " +
             "AND ms.concertId = :concertId " +
             "AND ms.memberSeatStatus = :status")
-    List<Seat> findAllSeatsByMemberIdAndConcertId(@Param("memberId") Long memberId,
-                                                  @Param("concertId") Long concertId,
-                                                  @Param("status") MemberSeatStatus status);
+    List<Seat> findAllSeatsByMemberIdAndConcertIdAndMemberSeatStatus(@Param("memberId") Long memberId,
+                                                                     @Param("concertId") Long concertId,
+                                                                     @Param("status") MemberSeatStatus status);
 }

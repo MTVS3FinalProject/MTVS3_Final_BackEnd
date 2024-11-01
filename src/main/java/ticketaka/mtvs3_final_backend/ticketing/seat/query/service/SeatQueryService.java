@@ -102,7 +102,7 @@ public class SeatQueryService {
 
     // Member 가 해당 Concert 에서 접수한 Seat 목록 조회
     private List<Seat> getReceptionSeatsForConcert(Long memberId, Long concertId) {
-        return seatQueryRepository.findAllSeatsByMemberIdAndConcertId(
+        return seatQueryRepository.findAllSeatsByMemberIdAndConcertIdAndMemberSeatStatus(
                 memberId, concertId, MemberSeatStatus.RECEIVED
         );
     }

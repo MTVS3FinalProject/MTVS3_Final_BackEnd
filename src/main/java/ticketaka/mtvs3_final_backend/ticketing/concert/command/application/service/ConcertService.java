@@ -22,6 +22,7 @@ import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.M
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatRepository;
+import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,6 +37,7 @@ public class ConcertService {
     private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
     private final SeatRepository seatRepository;
+    private final SeatQueryRepository seatQueryRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
 
@@ -70,7 +72,7 @@ public class ConcertService {
         checkMemberAge(member, concert);
 
         // 내가 접수한 좌석 조회
-        List<Seat> receptionSeatList = seatRepository.findAllSeatsByMemberIdAndConcertIdAndStatus(
+        List<Seat> receptionSeatList = seatQueryRepository.findAllSeatsByMemberIdAndConcertIdAndMemberSeatStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
 
