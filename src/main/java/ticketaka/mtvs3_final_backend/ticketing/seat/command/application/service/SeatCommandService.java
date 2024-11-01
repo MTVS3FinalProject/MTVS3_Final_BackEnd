@@ -25,8 +25,8 @@ import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.M
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.MemberSeatRepository;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatRepository;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.repository.MemberSeatCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 
 import java.util.List;
 
@@ -36,11 +36,12 @@ import java.util.List;
 @Service
 public class SeatCommandService {
 
+    private final SeatReceptionService seatReceptionService;
     private final CoinHistoryService coinHistoryService;
 
     private final ConcertRepository concertRepository;
-    private final SeatRepository seatRepository;
-    private final MemberSeatRepository memberSeatRepository;
+    private final SeatCommandRepository seatCommandRepository;
+    private final MemberSeatCommandRepository memberSeatCommandRepository;
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
 
@@ -50,24 +51,22 @@ public class SeatCommandService {
         좌석 접수
      */
     @Transactional
-    public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long currentMemberId) {
+    public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long concertId, Long seatId, Long memberId) {
 
         // Member 조회
-        getMember(currentMemberId);
+        getMember(memberId);
         // Concert 조회
         Concert concert = getConcert(concertId);
         // Seat 조회
         Seat seat = getSeat(seatId);
 
-        // 좌석 접수 유효성 확인
-        checkAvailableSeat(concertId, seatId, currentMemberId);
         // 좌석 접수
-        receiptSeat(currentMemberId, concertId, seatId);
+        seatReceptionService.seatReception(memberId, concertId, seatId);
 
         return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
                 getCompetitionRate(getReceptionMemberCount(concertId, seatId)),
-                concert.getReceptionLimit() - getReceptionCountForConcert(currentMemberId, concertId)
+                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId)
         );
     }
 
@@ -131,7 +130,7 @@ public class SeatCommandService {
         newDrawResult(currentMemberId, concertId, seatId);
 
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
-        memberSeatRepository.save(memberSeat);
+        memberSeatCommandRepository.save(memberSeat);
     }
 
     /*
@@ -158,7 +157,7 @@ public class SeatCommandService {
         reserveMemberSeat(member, concert, seat);
 
         seat.setSeatStatus(SeatStatus.RESERVED);
-        seatRepository.save(seat);
+        seatCommandRepository.save(seat);
 
         // TODO: 티켓 생성, seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(
@@ -182,7 +181,7 @@ public class SeatCommandService {
         Member member = getMember(currentMemberId);
         Concert concert = getConcert(concertId);
 
-        MemberSeat memberSeat = memberSeatRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
+        MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
 
         newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
@@ -198,14 +197,14 @@ public class SeatCommandService {
 
         // Concert & Seat 조회
         Concert concert = getConcert(concertId);
-        MemberSeat memberSeat = memberSeatRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
+        MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
 
-        Seat seat = seatRepository.findById(memberSeat.getSeatId())
+        Seat seat = seatCommandRepository.findById(memberSeat.getSeatId())
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 업습니다."));
 
         seat.setSeatStatus(SeatStatus.RESERVED);
-        seatRepository.save(seat);
+        seatCommandRepository.save(seat);
 
         // 배송지 정보 조회
         Address address = getAddress(member);
@@ -238,7 +237,7 @@ public class SeatCommandService {
 
     // Seat 조회
     private Seat getSeat(Long seatId) {
-        return seatRepository.findById(seatId)
+        return seatCommandRepository.findById(seatId)
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
     }
 
@@ -250,7 +249,7 @@ public class SeatCommandService {
 
     // MemberSeat 조회
     private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId, MemberSeatStatus memberSeatStatus) {
-        return memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concertId, seatId, memberSeatStatus)
+        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concertId, seatId, memberSeatStatus)
                 .orElseThrow(() -> new Exception400("해당 좌석을 접수한 내역을 찾을 수 없습니다."));
     }
 
@@ -306,24 +305,24 @@ public class SeatCommandService {
 
     // Member 가 해당 Concert 에 접수한 좌석 수 조회
     private int getReceptionCountForConcert(Long currentMemberId, Long concertId) {
-        return memberSeatRepository.countByMemberIdAndConcertId(currentMemberId, concertId);
+        return memberSeatCommandRepository.countByMemberIdAndConcertId(currentMemberId, concertId);
     }
 
     // 좌석 접수
     private void receiptSeat(Long currentMemberId, Long concertId, Long seatId) {
         MemberSeat memberSeat = newMemberSeat(currentMemberId, concertId, seatId);
-        memberSeatRepository.save(memberSeat);
+        memberSeatCommandRepository.save(memberSeat);
     }
 
     // 좌석 접수 취소
     private void cancelMemberSeat(Long currentMemberId, Long concertId, Long seatId) {
         MemberSeat memberSeat = getMemberSeat(currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED);
-        memberSeatRepository.delete(memberSeat);
+        memberSeatCommandRepository.delete(memberSeat);
     }
 
     // 해당 좌석에 접수한 회원 수 조회
     private int getReceptionMemberCount(Long concertId, Long seatId) {
-        return memberSeatRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
+        return memberSeatCommandRepository.countByConcertIdAndSeatIdAndMemberSeatStatus(
                 concertId, seatId, MemberSeatStatus.RECEIVED
         );
     }
@@ -353,7 +352,7 @@ public class SeatCommandService {
 
     // 이미 예약된 Seat 인지 검사
     private void checkAlreadyReserved(Long concertId, Long seatId) {
-        seatRepository.findByConcertIdAndIdAndSeatStatus(concertId, seatId, SeatStatus.RESERVED)
+        seatCommandRepository.findByConcertIdAndIdAndSeatStatus(concertId, seatId, SeatStatus.RESERVED)
                 .ifPresent(seat -> {
                     throw new Exception400("이미 예약된 좌석입니다.");
                 });
@@ -361,7 +360,7 @@ public class SeatCommandService {
 
     // 이미 접수된 Seat 인지 검사
     private void checkAlreadyReceipted(Long currentMemberId, Long concertId, Long seatId) {
-        memberSeatRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(
+        memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(
                 currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED
                 ).ifPresent(memberSeat -> {
                     throw new Exception400("이미 접수한 좌석입니다.");
@@ -389,6 +388,6 @@ public class SeatCommandService {
     private void reserveMemberSeat(Member member, Concert concert, Seat seat) {
         MemberSeat memberSeat = getMemberSeat(member.getId(), concert.getId(), seat.getId(), MemberSeatStatus.WAITING_RESERVE);
         memberSeat.setMemberSeatStatus(MemberSeatStatus.RESERVED);
-        memberSeatRepository.save(memberSeat);
+        memberSeatCommandRepository.save(memberSeat);
     }
 }

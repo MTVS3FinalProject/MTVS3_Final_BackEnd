@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository;
+package ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.M
 import java.util.Optional;
 
 @Repository
-public interface MemberSeatRepository extends JpaRepository<MemberSeat, Long> {
+public interface MemberSeatCommandRepository extends JpaRepository<MemberSeat, Long> {
 
     int countByConcertIdAndSeatIdAndMemberSeatStatus(Long concertId, Long seatId, MemberSeatStatus status);
 

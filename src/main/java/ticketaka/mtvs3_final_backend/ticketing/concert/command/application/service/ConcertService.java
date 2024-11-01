@@ -21,7 +21,7 @@ import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRep
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatRepository;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDate;
@@ -37,7 +37,7 @@ public class ConcertService {
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
-    private final SeatRepository seatRepository;
+    private final SeatCommandRepository seatCommandRepository;
     private final SeatQueryRepository seatQueryRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
@@ -75,7 +75,7 @@ public class ConcertService {
         );
 
         // 이외에 접수 가능한 좌석 조회
-        List<Seat> availableSeatList = seatRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
+        List<Seat> availableSeatList = seatCommandRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
         List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
 
         List<ConcertResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
@@ -110,7 +110,7 @@ public class ConcertService {
 
         Concert concert = concertRepository.findById(drawResult.getConcertId())
                 .orElseThrow(() -> new Exception400("해당 콘서트를 찾을 수 없습니다."));
-        Seat seat = seatRepository.findByIdAndConcert(drawResult.getSeatId(), concert)
+        Seat seat = seatCommandRepository.findByIdAndConcert(drawResult.getSeatId(), concert)
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
 
         String seatInfo = getSeatInfo(seat);

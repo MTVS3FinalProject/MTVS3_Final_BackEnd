@@ -21,7 +21,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatRepository;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,7 +42,7 @@ public class Mtvs3FinalBackendApplication {
                                        FileRepository fileRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
-                                       SeatRepository seatRepository) {
+                                       SeatCommandRepository seatCommandRepository) {
         return args -> {
             Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
             Member member2 = newMember("INUK", "inuk@test.com", "test1234", "2469", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
@@ -70,7 +70,7 @@ public class Mtvs3FinalBackendApplication {
             concertRepository.saveAll(Arrays.asList(
                     concert01
             ));
-            seatRepository.saveAll(Arrays.asList(
+            seatCommandRepository.saveAll(Arrays.asList(
                     newSeat(2, "A1", "13", 19999, LocalDateTime.of(2024, 10, 22, 17, 30), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "A1", "15", 29999, LocalDateTime.of(2024, 10, 22, 17, 45), concert01, SeatStatus.UNAVAILABLE)
             ));

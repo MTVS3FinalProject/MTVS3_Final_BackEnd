@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SeatRepository extends JpaRepository<Seat, Long> {
+public interface SeatCommandRepository extends JpaRepository<Seat, Long> {
 
     List<Seat> findAllByConcertAndSeatStatus(Concert concert, SeatStatus seatStatus);
 
