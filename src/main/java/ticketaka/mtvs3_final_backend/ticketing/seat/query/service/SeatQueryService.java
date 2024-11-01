@@ -95,7 +95,7 @@ public class SeatQueryService {
     // Concert 조회
     private Concert getReservingConcert(Long concertId) {
         return concertQueryRepository.findByIdAndConcertStatus(concertId, ConcertStatus.RESERVING)
-                .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
+                .orElseThrow(() -> new Exception400("해당 콘서트는 현재 예약 가능한 상태가 아닙니다."));
     }
 
     // Seat 조회

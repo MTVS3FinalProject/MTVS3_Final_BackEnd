@@ -45,7 +45,7 @@ public class SeatCommandController {
 
         log.info("cancelReceptionSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatCommandResponseDTO.cancelReceptionSeatDTO responseDTO = seatCommandService.cancelReceptionSeat(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.cancelReceptionSeatDTO responseDTO = seatCommandService.cancelReception(concertId, seatId, getCurrentMemberId());
 
         log.info("cancelReceptionSeat_response: {}", responseDTO);
 
