@@ -11,6 +11,7 @@ import ticketaka.mtvs3_final_backend.concert.query.repositroy.ConcertQueryReposi
 import ticketaka.mtvs3_final_backend.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.seat.command.domain.model.Seat;
+import ticketaka.mtvs3_final_backend.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.seat.query.dto.SeatInfoResponseDTO;
 import ticketaka.mtvs3_final_backend.seat.query.repository.SeatQueryRepository;
 
@@ -29,19 +30,23 @@ public class SeatInfoService {
     /*
         좌석 정보 조회
      */
-    public SeatInfoResponseDTO.getSeatInfoDTO getSeatInfo(Long concertId, Long seatId) {
+    public Object getSeatInfo(Long concertId, Long seatId) {
 
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
         // Seat 조회
         Seat seat = getSeat(seatId);
 
+        Integer competitionRate = seat.getSeatStatus().equals(SeatStatus.AVAILABLE) ?
+                getCompetitionRate(getReceptionMemberCount(concertId, seatId)) : null;
+
         return new SeatInfoResponseDTO.getSeatInfoDTO(
                 seat.getFloor(),
                 formatSeatInfo(seat),
                 getTimeDTO(concert.getConcertDate()),
                 getTimeDTO(seat.getDrawingTime()),
-                getCompetitionRate(getReceptionMemberCount(concertId, seatId))
+                seat.getSeatStatus().toString(),
+                competitionRate
         );
     }
 

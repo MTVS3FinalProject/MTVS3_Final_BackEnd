@@ -8,7 +8,8 @@ public class SeatInfoResponseDTO {
             String seatInfo,
             timeDTO concertTime,
             timeDTO drawingTime,
-            int competitionRate
+            String seatStatus,
+            Integer competitionRate
     ) {
     }
 
