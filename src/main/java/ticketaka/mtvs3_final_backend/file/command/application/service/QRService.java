@@ -37,8 +37,8 @@ public class QRService {
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
     private static final String QR_FORMAT = "PNG";
-    private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/camera/signup";
-    private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/camera/verification";
+    private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/signup/guide";
+    private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
 
     /*
         회원 가입 용 QR 생성
