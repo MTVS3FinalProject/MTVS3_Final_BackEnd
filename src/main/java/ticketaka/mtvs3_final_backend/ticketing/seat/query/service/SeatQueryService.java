@@ -112,7 +112,11 @@ public class SeatQueryService {
 
     // 이미 접수한 좌석인지 확인
     private boolean isSeatReceivedByMember(Long memberId, Long concertId, Long seatId) {
-        return getMemberSeat(memberId, concertId, seatId).getMemberSeatStatus().equals(MemberSeatStatus.RECEIVED);
+        try {
+            return getMemberSeat(memberId, concertId, seatId).getMemberSeatStatus().equals(MemberSeatStatus.RECEIVED);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // Member 가 해당 Concert 에서 접수한 Seat 목록 조회
