@@ -52,6 +52,7 @@ public class SeatReceptionService {
 
     // 접수 가능한 Seat 조회
     private Seat getAvailableSeat(Long concertId, Long seatId) {
+        log.info("get available seat : {} {}", concertId, seatId);
         return seatQueryRepository.findByConcertIdAndIdAndSeatStatus(
                 concertId, seatId, SeatStatus.AVAILABLE
         ).orElseThrow(() -> new Exception400("접수 불가능한 좌석입니다."));

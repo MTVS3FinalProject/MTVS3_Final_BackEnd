@@ -25,5 +25,11 @@ public interface SeatQueryRepository extends JpaRepository<Seat, Long> {
                                                                      @Param("status") MemberSeatStatus status);
 
     // 접수 가능한 Seat 조회
-    Optional<Seat> findByConcertIdAndIdAndSeatStatus(Long concertId, Long seatId, SeatStatus seatStatus);
+    @Query("SELECT s FROM Seat s " +
+            "WHERE s.concert.id = :concertId " +
+            "AND s.id = :seatId " +
+            "AND s.seatStatus = :status")
+    Optional<Seat> findByConcertIdAndIdAndSeatStatus(@Param("concertId") Long concertId,
+                                                     @Param("seatId") Long seatId,
+                                                     @Param("status") SeatStatus seatStatus);
 }

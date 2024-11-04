@@ -29,7 +29,7 @@ public class SeatCommandController {
 
         log.info("seatReception_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatCommandResponseDTO.seatReceptionDTO responseDTO = seatCommandService.seatReception(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.seatReceptionDTO responseDTO = seatCommandService.seatReception(getCurrentMemberId(), concertId, seatId);
 
         log.info("seatReception_response: {}", responseDTO);
 
@@ -45,7 +45,7 @@ public class SeatCommandController {
 
         log.info("cancelReceptionSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatCommandResponseDTO.cancelReceptionSeatDTO responseDTO = seatCommandService.cancelReception(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.cancelReceptionSeatDTO responseDTO = seatCommandService.cancelReception(getCurrentMemberId(), concertId, seatId);
 
         log.info("cancelReceptionSeat_response: {}", responseDTO);
 
