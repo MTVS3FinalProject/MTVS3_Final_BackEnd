@@ -92,7 +92,7 @@ public class QRService {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
-    public void checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
+    public QRResponseDTO.checkVerificationQR checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
 
         validateMember(currentMemberId);
 
@@ -107,6 +107,10 @@ public class QRService {
 
         fileUpload.setUploadStatus(UploadStatus.SUCCESS);
         fileUploadRedisRepository.save(fileUpload);
+
+        return new QRResponseDTO.checkVerificationQR(
+                1
+        );
     }
 
     // QR 생성
