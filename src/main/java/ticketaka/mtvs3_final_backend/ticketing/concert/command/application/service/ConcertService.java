@@ -83,6 +83,7 @@ public class ConcertService {
         int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();
 
         return new ConcertResponseDTO.entranceConcertDTO(
+                concert.getId().intValue(),
                 concert.getName(),
                 getTimeDTO(concert.getConcertDate()),
                 availableSeats,

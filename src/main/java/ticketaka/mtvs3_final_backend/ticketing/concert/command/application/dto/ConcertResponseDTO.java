@@ -20,6 +20,7 @@ public class ConcertResponseDTO {
 
     // 공연장 입장
     public record entranceConcertDTO(
+            int concertId,
             String concertName,
             timeDTO concertTime,
             List<SeatIdDTO> availableSeats,
