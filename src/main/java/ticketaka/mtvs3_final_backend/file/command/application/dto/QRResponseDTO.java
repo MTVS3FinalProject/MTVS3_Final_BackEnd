@@ -9,7 +9,9 @@ public class QRResponseDTO {
     }
 
     public record checkVerificationQR(
-            int seatNum
+            int floor,
+            int seatNum,
+            String seatInfo
     ) {
     }
 }

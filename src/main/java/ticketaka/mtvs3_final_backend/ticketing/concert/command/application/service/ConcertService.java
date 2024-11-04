@@ -95,7 +95,7 @@ public class ConcertService {
     /*
         예매자 정보 입력
      */
-    public ConcertResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(ConcertRequestDTO.enterDeliveryAddressDTO requestDTO, Long currentMemberId) {
+    public ConcertResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long currentMemberId, Long concertId, Long seatId, ConcertRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
         Member member = getMember(currentMemberId);
 

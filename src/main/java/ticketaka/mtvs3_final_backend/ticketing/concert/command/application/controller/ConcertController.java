@@ -46,10 +46,12 @@ public class ConcertController {
     /*
         예매자 정보 입력
      */
-    @PostMapping("/member/delivery-address")
-    public ResponseEntity<?> concert(@RequestBody ConcertRequestDTO.enterDeliveryAddressDTO requestDTO) {
+    @PostMapping("/{concertId}/seats/{seatId}/reservation")
+    public ResponseEntity<?> concert(@PathVariable("concertId") Long concertId,
+                                     @PathVariable("seatId") Long seatId,
+                                     @RequestBody ConcertRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
-        ConcertResponseDTO.enterDeliveryAddressDTO responseDTO = concertService.enterDeliveryAddress(requestDTO, getCurrentMemberId());
+        ConcertResponseDTO.enterDeliveryAddressDTO responseDTO = concertService.enterDeliveryAddress(getCurrentMemberId(), concertId, seatId, requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
