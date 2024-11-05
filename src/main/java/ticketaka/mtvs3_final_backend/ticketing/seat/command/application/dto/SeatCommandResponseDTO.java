@@ -69,7 +69,8 @@ public class SeatCommandResponseDTO {
             int userCoin,
             String userName,
             String userPhoneNumber,
-            String userAddress
+            String userAddress,
+            int ticketId
     ) {
     }
 }
