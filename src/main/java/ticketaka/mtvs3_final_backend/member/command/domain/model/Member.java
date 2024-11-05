@@ -32,7 +32,7 @@ public class Member extends BaseTimeEntity {
 
     @Column
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'USER'")
+    @ColumnDefault("'FAN'")
     private Authority authority;
     @Column
     @Enumerated(value = EnumType.STRING)

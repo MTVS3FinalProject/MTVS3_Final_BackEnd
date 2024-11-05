@@ -1,6 +1,7 @@
 package ticketaka.mtvs3_final_backend.file.command.application.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -26,7 +27,7 @@ public class QRController {
         회원 가입 용 QR 생성
      */
     @PostMapping(value = "/signup", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> generateSignUpQR(@RequestBody QRRequestDTO.generateSignUpQRDTO requestDTO) {
+    public ResponseEntity<?> generateSignUpQR(@RequestBody @Valid QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         System.out.println("requestDTO = " + requestDTO);
 

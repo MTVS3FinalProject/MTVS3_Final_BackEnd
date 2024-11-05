@@ -125,7 +125,6 @@ public class SeatCommandService {
 
         // 임시 결제 권한 획득
         newDrawResult(currentMemberId, concertId, seatId);
-
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         memberSeatCommandRepository.save(memberSeat);
     }
