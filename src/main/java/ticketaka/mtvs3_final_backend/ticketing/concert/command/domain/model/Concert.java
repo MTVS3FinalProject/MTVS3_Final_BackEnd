@@ -21,9 +21,9 @@ public class Concert extends BaseTimeEntity {
     @Column
     private LocalDateTime concertDate;
     @Column
-    private int ageRestriction;
+    private Integer ageRestriction;
     @Column
-    private int receptionLimit;
+    private Integer receptionLimit;
 
     @Setter
     @Column
@@ -31,7 +31,7 @@ public class Concert extends BaseTimeEntity {
     private ConcertStatus concertStatus;
 
     @Builder
-    public Concert(String name, LocalDateTime concertDate, int ageRestriction, int receptionLimit) {
+    public Concert(String name, LocalDateTime concertDate, Integer ageRestriction, Integer receptionLimit) {
         this.name = name;
         this.concertDate = concertDate;
         this.ageRestriction = ageRestriction;
