@@ -13,7 +13,6 @@ import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
@@ -39,6 +38,7 @@ import java.util.List;
 public class SeatCommandService {
 
     private final SeatReceptionService seatReceptionService;
+    private final SeatDrawingService seatDrawingService;
     private final CoinHistoryService coinHistoryService;
 
     private final ConcertQueryRepository concertQueryRepository;
@@ -92,16 +92,15 @@ public class SeatCommandService {
     /*
         추첨 시작 알림
      */
-    public SeatCommandResponseDTO.createDrawingNotificationDTO createDrawingNotification(Long concertId, Long seatId) {
+    public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long concertId, Long seatId) {
 
         // Concert 조회
         getReservingConcert(concertId);
         // Seat 조회
         getSeat(seatId);
 
-        List<String> nicknameList = getMembersForDrawing(concertId, seatId).stream()
-                .map(Member::getNickname)
-                .toList();
+        // 추첨 시작 알림
+        List<String> nicknameList = seatDrawingService.drawingNotification(concertId, seatId);
 
         return new SeatCommandResponseDTO.createDrawingNotificationDTO(
                 nicknameList,
@@ -282,13 +281,6 @@ public class SeatCommandService {
     // UserAddress 생성
     private String formatUserAddress(Address address) {
         return address.getAddress() + " " + address.getDetail();
-    }
-
-    // 해당 Concert & Seat 에 접수한 회원 목록 조회
-    private List<Member> getMembersForDrawing(Long concertId, Long seatId) {
-        return memberRepository.findByConcertIdAndSeatIdAndMemberSeatStatus(
-                concertId, seatId, MemberSeatStatus.RECEIVED
-        );
     }
 
     // Member 가 해당 Concert 에 접수한 좌석 수 조회
