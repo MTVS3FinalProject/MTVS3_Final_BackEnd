@@ -7,4 +7,11 @@ public class QRResponseDTO {
             String userCode
     ) {
     }
+
+    public record checkVerificationQR(
+            int floor,
+            int seatNum,
+            String seatInfo
+    ) {
+    }
 }

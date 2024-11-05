@@ -68,8 +68,8 @@ public class QRController {
     @PostMapping(value = "/verification/success")
     public ResponseEntity<?> checkVerificationQR(@RequestBody QRRequestDTO.checkVerificationQRDTO requestDTO) {
 
-        qrService.checkVerificationQR(requestDTO, getCurrentMemberId());
+        QRResponseDTO.checkVerificationQR responseDTO = qrService.checkVerificationQR(requestDTO, getCurrentMemberId());
 
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 }

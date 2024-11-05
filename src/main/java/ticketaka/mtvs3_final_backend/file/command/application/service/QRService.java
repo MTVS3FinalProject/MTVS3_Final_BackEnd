@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
@@ -19,6 +20,10 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
+import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
+import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
+import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,9 +35,12 @@ import java.util.UUID;
 @Service
 public class QRService {
 
+    private final SeatQueryRepository seatQueryRepository;
+
     private final MemberRepository memberRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
+    private final DrawResultRedisRepository drawResultRedisRepository;
 
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
@@ -92,9 +100,12 @@ public class QRService {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
-    public void checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
+    public QRResponseDTO.checkVerificationQR checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
 
         validateMember(currentMemberId);
+
+        DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(currentMemberId))
+                .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
 
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
                 .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
@@ -107,6 +118,15 @@ public class QRService {
 
         fileUpload.setUploadStatus(UploadStatus.SUCCESS);
         fileUploadRedisRepository.save(fileUpload);
+
+        Seat seat =  seatQueryRepository.findById(drawResult.getSeatId())
+                .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
+
+        return new QRResponseDTO.checkVerificationQR(
+                seat.getFloor(),
+                1,
+                seat.getSection() + "구역 " + seat.getNumber() + "번"
+        );
     }
 
     // QR 생성
