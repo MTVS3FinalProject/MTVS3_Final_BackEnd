@@ -37,16 +37,15 @@ public class Ticket extends BaseTimeEntity {
 
     @Column
     private LocalDateTime issuedTime;
-
     @Column
     private String qrCode;
 
     @Builder
-    public Ticket(Long memberId, Long concertId, Long seatId, TicketStatus ticketStatus, String ticketNumber, Integer ticketPrice) {
+    public Ticket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
         this.memberId = memberId;
         this.concertId = concertId;
         this.seatId = seatId;
-        this.ticketStatus = ticketStatus;
+        this.ticketStatus = TicketStatus.RESERVE;
         this.ticketNumber = ticketNumber;
         this.ticketPrice = ticketPrice;
         this.issuedTime = null;

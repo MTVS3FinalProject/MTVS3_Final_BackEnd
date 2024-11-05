@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 
 @Repository
-public interface TicketRepository extends JpaRepository<Ticket, Long> {
+public interface TicketCommandRepository extends JpaRepository<Ticket, Long> {
 }

@@ -59,7 +59,7 @@ public class SeatQueryService {
     /*
         현재 회원이 접수한 모든 좌석 조회
     */
-    public SeatQueryResponseDTO.getMyConcertReceptionsDTO getMyConcertReceptions(Long concertId, Long memberId) {
+    public SeatQueryResponseDTO.getMyConcertReceptionsDTO getMyConcertReceptions(Long memberId, Long concertId) {
 
         // Member 조회
         getMember(memberId);
