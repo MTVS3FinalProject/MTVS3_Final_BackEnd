@@ -20,16 +20,16 @@ public class Title extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String titleName;
     @Column(nullable = false)
-    private String description;
+    private String titleScript;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Rarity rarity;
+    private TitleRarity titleRarity;
 
     @Builder
-    public Title(String titleName, String description, Rarity rarity) {
+    public Title(String titleName, String titleScript, TitleRarity titleRarity) {
         this.titleName = titleName;
-        this.description = description;
-        this.rarity = rarity;
+        this.titleScript = titleScript;
+        this.titleRarity = titleRarity;
     }
 }
