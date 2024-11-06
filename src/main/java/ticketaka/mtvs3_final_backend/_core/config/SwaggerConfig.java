@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
                 description = "Metaverse Concert Platform",
                 version = "1.0"
         ),
-        servers = {@Server(url = "https://ticketaka.shop", description = "Ticketaka Server")}
+        servers = {@Server(url = "https://ticketaka.shop/api", description = "Ticketaka Server")}
 )
 @Configuration
 public class SwaggerConfig {
