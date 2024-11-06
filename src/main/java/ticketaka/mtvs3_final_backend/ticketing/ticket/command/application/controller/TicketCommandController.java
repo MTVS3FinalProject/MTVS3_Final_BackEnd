@@ -9,8 +9,12 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.servic
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/concert/ticket")
+@RequestMapping("/api/concerts")
 public class TicketCommandController {
 
     private final TicketCommandService ticketCommandService;
+    
+    /*
+        티켓 발급
+     */
 }
