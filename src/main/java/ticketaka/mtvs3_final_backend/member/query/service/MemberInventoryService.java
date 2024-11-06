@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 @Slf4j
