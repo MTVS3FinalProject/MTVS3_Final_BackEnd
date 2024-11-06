@@ -9,5 +9,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class CustomTicketCommandService {
+public class TicketCustomCommandService {
 }
