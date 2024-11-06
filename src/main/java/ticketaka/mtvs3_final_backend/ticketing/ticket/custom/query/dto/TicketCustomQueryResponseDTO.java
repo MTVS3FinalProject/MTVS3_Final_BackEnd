@@ -7,13 +7,14 @@ public class TicketCustomQueryResponseDTO {
     /*
         티켓 커스텀 가능한 공연 리스트 조회
      */
-    public record getTicketListDTO(
+    public record getCustomizableTicketListDTO(
             List<getTicketDTO> ticketDTOList
     ) {
     }
 
     public record getTicketDTO(
             Long concertId,
+            String concertName,
             Long ticketId
     ) {
     }

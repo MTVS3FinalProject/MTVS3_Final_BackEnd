@@ -25,9 +25,9 @@ public class TicketCustomQueryController {
         티켓 커스텀 가능한 공연 리스트 조회
      */
     @GetMapping("/concerts")
-    public ResponseEntity<?> getTicketList() {
+    public ResponseEntity<?> getCustomizableTicketList() {
 
-        TicketCustomQueryResponseDTO.getTicketListDTO responseDTO = ticketCustomQueryService.getTicketList(getCurrentMemberId());
+        TicketCustomQueryResponseDTO.getCustomizableTicketListDTO responseDTO = ticketCustomQueryService.getCustomizableTicketList(getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
