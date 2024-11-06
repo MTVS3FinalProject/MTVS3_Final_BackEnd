@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.title.membertitle.command.domain.model;
+package ticketaka.mtvs3_final_backend.member.title.command.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
