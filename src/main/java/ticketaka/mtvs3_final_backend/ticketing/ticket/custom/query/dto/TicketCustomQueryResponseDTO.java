@@ -18,4 +18,19 @@ public class TicketCustomQueryResponseDTO {
             Long ticketId
     ) {
     }
+
+    /*
+        티켓 커스텀 입장
+     */
+    public record getTicketCustomInfoDTO(
+            List<stickerDTO> stickerDTOList
+    ) {
+    }
+
+    // Sticker
+    public record stickerDTO(
+            int stickerId,
+            byte[] stickerImage
+    ) {
+    }
 }
