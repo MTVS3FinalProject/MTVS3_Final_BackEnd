@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class TicketCustomQueryService {
 
     private final StickerQueryService stickerQueryService;
+    private final FileQueryService fileQueryService;
 
     private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
@@ -80,9 +82,18 @@ public class TicketCustomQueryService {
 
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
         List<Sticker> stickerList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
+        // Sticker 에 대응하는 ImgUrl 조회
+        Map<Long, byte[]> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
+                .map(Sticker::getId)
+                .toList());
 
         return new TicketCustomQueryResponseDTO.getTicketCustomInfoDTO(
-                List.of()
+                stickerList.stream()
+                        .map(sticker -> new TicketCustomQueryResponseDTO.stickerDTO(
+                                sticker.getId().intValue(),
+                                stickerImgMap.getOrDefault(sticker.getId(), null)
+                        ))
+                        .toList()
         );
     }
 
