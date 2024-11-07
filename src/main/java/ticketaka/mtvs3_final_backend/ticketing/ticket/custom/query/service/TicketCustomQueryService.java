@@ -8,6 +8,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class TicketCustomQueryService {
+
+    private final StickerQueryService stickerQueryService;
 
     private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
@@ -63,10 +66,35 @@ public class TicketCustomQueryService {
         );
     }
 
+    /*
+        티켓 커스텀 입장 - 스티커 정보 조회
+     */
+    public TicketCustomQueryResponseDTO.getTicketCustomInfoDTO getTicketCustomInfo(Long memberId, Long ticketId) {
+
+        // Member 조회
+        getMember(memberId);
+
+        // Ticket 조회
+        Ticket ticket = getTicket(ticketId);
+
+        // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
+        List<TicketCustomQueryResponseDTO.stickerDTO> stickerDTOList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
+
+        return new TicketCustomQueryResponseDTO.getTicketCustomInfoDTO(
+                stickerDTOList
+        );
+    }
+
     // Member 조회
     private Member getMember(Long memberId) {
         return memberQueryRepository.findById(memberId)
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
+    }
+
+    // Ticket 조회
+    private Ticket getTicket(Long ticketId) {
+        return ticketQueryRepository.findById(ticketId)
+                .orElseThrow(() -> new Exception400("해당 티켓을 찾을 수 없습니다."));
     }
 
     // ConcertList 조회

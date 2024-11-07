@@ -40,7 +40,7 @@ public class TicketCustomQueryController {
         티켓 커스텀 제작 입장
      */
     @GetMapping("/{ticketId}/custom")
-    public ResponseEntity<?> getTicketCustomInfo(@PathVariable("ticketId") String ticketId) {
+    public ResponseEntity<?> getTicketCustomInfo(@PathVariable("ticketId") Long ticketId) {
 
         log.info("getTicketCustomInfo Request");
 
