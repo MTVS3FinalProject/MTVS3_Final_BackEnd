@@ -8,6 +8,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
@@ -78,10 +79,10 @@ public class TicketCustomQueryService {
         Ticket ticket = getTicket(ticketId);
 
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
-        List<TicketCustomQueryResponseDTO.stickerDTO> stickerDTOList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
+        List<Sticker> stickerList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
 
         return new TicketCustomQueryResponseDTO.getTicketCustomInfoDTO(
-                stickerDTOList
+                List.of()
         );
     }
 

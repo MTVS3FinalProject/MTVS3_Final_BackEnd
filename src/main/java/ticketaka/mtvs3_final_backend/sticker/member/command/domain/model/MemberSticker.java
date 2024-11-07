@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.member.sticker.command.domain.model;
+package ticketaka.mtvs3_final_backend.sticker.member.command.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
