@@ -1,7 +1,7 @@
-package ticketaka.mtvs3_final_backend.redis.FileUpload.repository;
+package ticketaka.mtvs3_final_backend.redis.fileupload.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.fileupload.domain.FileUploadForAuth;
 
 import java.util.Optional;
 

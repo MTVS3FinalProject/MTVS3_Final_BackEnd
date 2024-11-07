@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.redis.FileUpload.domain;
+package ticketaka.mtvs3_final_backend.redis.fileupload.domain;
 
 public enum UploadStatus {
     // 인증 대기, 업로드 완료, 인증 완료, 인증 실패
