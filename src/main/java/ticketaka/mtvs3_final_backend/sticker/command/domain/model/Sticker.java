@@ -26,13 +26,18 @@ public class Sticker extends BaseTimeEntity {
     private String stickerScript;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private StickerType stickerType;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private StickerRarity stickerRarity;
 
     @Builder
-    public Sticker(Long concertId, String stickerName, String stickerScript, StickerType stickerType) {
+    public Sticker(Long concertId, String stickerName, String stickerScript, StickerType stickerType, StickerRarity stickerRarity) {
         this.concertId = concertId;
         this.stickerName = stickerName;
         this.stickerScript = stickerScript;
         this.stickerType = stickerType;
+        this.stickerRarity = stickerRarity;
     }
 }
