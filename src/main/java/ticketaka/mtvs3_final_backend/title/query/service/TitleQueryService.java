@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.title.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
@@ -21,10 +20,8 @@ public class TitleQueryService {
 
     private final TitleQueryRepository titleQueryRepository;
 
-    /*
-        Member Title List 조회
-     */
-    public Map<Long, Title> getMemberTitleList(List<MemberTitle> memberTitleList) {
+    // Inventory Title 조회
+    public Map<Long, Title> getMemberTitleMap(List<MemberTitle> memberTitleList) {
 
         List<Title> titleList = titleQueryRepository.findAllById(
                 memberTitleList.stream()

@@ -10,6 +10,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
@@ -17,6 +18,7 @@ import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQ
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -63,7 +65,7 @@ public class StickerQueryService {
     }
 
     // 회원이 가진 Sticker 조회
-    private List<Sticker> getMemberStickerList(Long memberId) {
+    public List<Sticker> getMemberStickerList(Long memberId) {
         return stickerQueryRepository.findAllByMemberIdAndStickerType(memberId, StickerType.COLLECTION);
     }
 }

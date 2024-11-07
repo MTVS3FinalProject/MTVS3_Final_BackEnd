@@ -26,7 +26,8 @@ public class MemberQueryResponseDTO {
             int stickerId,
             String stickerName,
             String stickerScript,
-            String stickerRarity
+            String stickerRarity,
+            byte[] stickerImage
     ) {
     }
 }
