@@ -16,8 +16,8 @@ import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileReposito
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.fileupload.domain.FileUploadForAuth;
-import ticketaka.mtvs3_final_backend.redis.fileupload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 
 @Slf4j
 @RequiredArgsConstructor

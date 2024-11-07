@@ -15,9 +15,9 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
-import ticketaka.mtvs3_final_backend.redis.fileupload.domain.FileUploadForAuth;
-import ticketaka.mtvs3_final_backend.redis.fileupload.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.fileupload.repository.FileUploadForAuthRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 
 import java.io.IOException;
 

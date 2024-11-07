@@ -22,9 +22,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
-import ticketaka.mtvs3_final_backend.redis.fileupload.domain.FileUploadForAuth;
-import ticketaka.mtvs3_final_backend.redis.fileupload.domain.UploadStatus;
-import ticketaka.mtvs3_final_backend.redis.fileupload.repository.FileUploadForAuthRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 

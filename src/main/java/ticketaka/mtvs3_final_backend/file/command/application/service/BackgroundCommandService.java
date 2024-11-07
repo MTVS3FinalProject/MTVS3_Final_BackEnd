@@ -22,7 +22,7 @@ public class BackgroundCommandService {
      */
     public TicketCustomCommandResponseDTO.generateAIBackgroundDTO generateBackground(BackgroundRequestDTO.generateBackgroundDTO requestDTO) {
 
-        BackgroundResponseDTO.generateBackgroundDTO responseDTO = backgroundFeignClient.generateBackground(requestDTO);
+//        BackgroundResponseDTO.generateBackgroundDTO responseDTO = backgroundFeignClient.generateBackground(requestDTO);
 
         // Img 저장 및 byte[] 반환
 
