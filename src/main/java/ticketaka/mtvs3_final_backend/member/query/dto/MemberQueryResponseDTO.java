@@ -6,8 +6,9 @@ public class MemberQueryResponseDTO {
 
     public record getMemberInventoryDTO(
             // Title List
-            List<getMemberTitleDTO> memberTitleDTOList
+            List<getMemberTitleDTO> memberTitleDTOList,
             // Sticker List
+            List<getMemberStickerDTO> memberStickerDTOList
             // CustomTicket List
     ) {
     }
@@ -18,6 +19,14 @@ public class MemberQueryResponseDTO {
             String titleScript,
             String titleRarity,
             Boolean isRepresentative
+    ) {
+    }
+
+    public record getMemberStickerDTO(
+            int stickerId,
+            String stickerName,
+            String stickerScript,
+            String stickerRarity
     ) {
     }
 }
