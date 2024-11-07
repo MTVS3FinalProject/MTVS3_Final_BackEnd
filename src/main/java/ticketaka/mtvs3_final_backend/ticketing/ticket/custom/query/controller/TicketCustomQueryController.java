@@ -27,7 +27,11 @@ public class TicketCustomQueryController {
     @GetMapping("/concerts")
     public ResponseEntity<?> getCustomizableTicketList() {
 
+        log.info("getCustomizableTicketList Request");
+
         TicketCustomQueryResponseDTO.getCustomizableTicketListDTO responseDTO = ticketCustomQueryService.getCustomizableTicketList(getCurrentMemberId());
+
+        log.info("getCustomizableTicketList Response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -38,6 +42,12 @@ public class TicketCustomQueryController {
     @GetMapping("/{ticketId}/custom")
     public ResponseEntity<?> getTicketCustomInfo(@PathVariable("ticketId") String ticketId) {
 
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+        log.info("getTicketCustomInfo Request");
+
+        TicketCustomQueryResponseDTO.getTicketCustomInfoDTO responseDTO = ticketCustomQueryService.getTicketCustomInfo(getCurrentMemberId(), ticketId);
+
+        log.info("getTicketCustomInfo Response : {}", responseDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 }
