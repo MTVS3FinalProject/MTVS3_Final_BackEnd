@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.redis.daily.sticker;
+package ticketaka.mtvs3_final_backend.redis.daily.background;
 
 import jakarta.persistence.Id;
 import lombok.*;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RedisHash(value = "draw_result", timeToLive = 24 * 60 * 60) // 60 * 15
-public class DailySticker {
+public class DailyBackground {
 
     @Id
     private String id;
@@ -19,7 +19,7 @@ public class DailySticker {
     private LocalDate lastRefreshDate;
 
     @Builder
-    public DailySticker(String id, Integer refreshCount, LocalDate lastRefreshDate) {
+    public DailyBackground(String id, Integer refreshCount, LocalDate lastRefreshDate) {
         this.id = id;
         this.refreshCount = refreshCount;
         this.lastRefreshDate = lastRefreshDate;
