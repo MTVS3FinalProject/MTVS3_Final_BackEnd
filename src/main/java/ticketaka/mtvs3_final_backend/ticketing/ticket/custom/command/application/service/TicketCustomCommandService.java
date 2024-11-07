@@ -58,7 +58,7 @@ public class TicketCustomCommandService {
         }
 
         // 일일 갱신 횟수 제한 확인 및 차감
-        validateDailyBackground(dailyBackground);
+        countDailyBackground(dailyBackground);
 
         // Concert 조회
         Concert concert = getConcert(ticket.getConcertId());
@@ -98,7 +98,7 @@ public class TicketCustomCommandService {
     }
 
     // DailyBackground 갱신 횟수 차감
-    private void validateDailyBackground(DailyBackground dailyBackground) {
+    private void countDailyBackground(DailyBackground dailyBackground) {
 
         if (dailyBackground.getRefreshCount() == 0) {
             throw new Exception400("금일 배경 생성 횟수를 모두 사용하였습니다.");

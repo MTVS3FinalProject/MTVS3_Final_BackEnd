@@ -10,6 +10,8 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.Relation
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
+import ticketaka.mtvs3_final_backend.redis.daily.background.repository.DailyBackgroundRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
@@ -40,6 +42,8 @@ public class TicketCustomQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final TicketQueryRepository ticketQueryRepository;
     private final TicketCustomQueryRepository ticketCustomQueryRepository;
+
+    private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
 
     /*
         커스텀 티켓 목록 조회
@@ -100,6 +104,9 @@ public class TicketCustomQueryService {
         // Ticket 조회
         Ticket ticket = getTicket(ticketId);
 
+        // DailyBackgroundRefreshCount 조회
+        Integer dailyBackgroundRefreshCount = getDailyBackgroundRefreshCount(memberId);
+
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
         List<Sticker> stickerList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
         // Sticker 에 대응하는 ImgUrl 조회
@@ -108,6 +115,7 @@ public class TicketCustomQueryService {
                 .toList());
 
         return new TicketCustomQueryResponseDTO.getTicketCustomObjectDTO(
+                dailyBackgroundRefreshCount,
                 stickerList.stream()
                         .map(sticker -> new TicketCustomQueryResponseDTO.stickerDTO(
                                 sticker.getId().intValue(),
@@ -169,5 +177,12 @@ public class TicketCustomQueryService {
                         .toList()
                 ).stream()
                 .collect(Collectors.toMap(CustomTicket::getTicketId, customTicket -> customTicket));
+    }
+
+    // DailyBackgroundRefreshCount
+    private Integer getDailyBackgroundRefreshCount(Long memberId) {
+        return dailyBackgroundRedisRepository.findById(String.valueOf(memberId))
+                .map(dailyBackground -> DailyBackground.DAILY_BACKGROUND_GENERATION_LIMIT - dailyBackground.getRefreshCount())
+                .orElse(DailyBackground.DAILY_BACKGROUND_GENERATION_LIMIT);
     }
 }

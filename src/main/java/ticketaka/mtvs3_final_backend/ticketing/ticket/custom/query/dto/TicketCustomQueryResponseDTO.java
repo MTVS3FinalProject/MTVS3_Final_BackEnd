@@ -34,6 +34,7 @@ public class TicketCustomQueryResponseDTO {
         티켓 커스텀 입장
      */
     public record getTicketCustomObjectDTO(
+            int dailyBackgroundRefreshCount,
             List<stickerDTO> stickerDTOList
     ) {
     }
