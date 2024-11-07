@@ -13,7 +13,6 @@ import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryReposito
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
-import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.service.ConcertQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.service.SeatQueryService;
@@ -94,11 +93,10 @@ public class TicketCustomQueryService {
     /*
         티켓 커스텀 입장 - 스티커 정보 조회
      */
-    public TicketCustomQueryResponseDTO.getTicketCustomInfoDTO getTicketCustomInfo(Long memberId, Long ticketId) {
+    public TicketCustomQueryResponseDTO.getTicketCustomObjectDTO getTicketCustomObject(Long memberId, Long ticketId) {
 
         // Member 조회
         getMember(memberId);
-
         // Ticket 조회
         Ticket ticket = getTicket(ticketId);
 
@@ -109,7 +107,7 @@ public class TicketCustomQueryService {
                 .map(Sticker::getId)
                 .toList());
 
-        return new TicketCustomQueryResponseDTO.getTicketCustomInfoDTO(
+        return new TicketCustomQueryResponseDTO.getTicketCustomObjectDTO(
                 stickerList.stream()
                         .map(sticker -> new TicketCustomQueryResponseDTO.stickerDTO(
                                 sticker.getId().intValue(),

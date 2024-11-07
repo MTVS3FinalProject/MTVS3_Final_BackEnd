@@ -40,11 +40,11 @@ public class TicketCustomQueryController {
         티켓 커스텀 제작 입장 - 스티커 조회
      */
     @GetMapping("/tickets/{ticketId}")
-    public ResponseEntity<?> getTicketCustomInfo(@PathVariable("ticketId") Long ticketId) {
+    public ResponseEntity<?> getTicketCustomObject(@PathVariable("ticketId") Long ticketId) {
 
         log.info("getTicketCustomInfo Request");
 
-        TicketCustomQueryResponseDTO.getTicketCustomInfoDTO responseDTO = ticketCustomQueryService.getTicketCustomInfo(getCurrentMemberId(), ticketId);
+        TicketCustomQueryResponseDTO.getTicketCustomObjectDTO responseDTO = ticketCustomQueryService.getTicketCustomObject(getCurrentMemberId(), ticketId);
 
         log.info("getTicketCustomInfo Response : {}", responseDTO);
 

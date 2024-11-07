@@ -33,7 +33,7 @@ public class TicketCustomQueryResponseDTO {
     /*
         티켓 커스텀 입장
      */
-    public record getTicketCustomInfoDTO(
+    public record getTicketCustomObjectDTO(
             List<stickerDTO> stickerDTOList
     ) {
     }
