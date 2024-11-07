@@ -103,31 +103,6 @@ public class FileService {
         fileRepository.save(file);
     }
 
-    // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
-    protected byte[] getImageFromUrl(String imageUrl) {
-        try {
-            URL url = new URL(imageUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.connect();
-
-            try (InputStream inputStream = connection.getInputStream();
-                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = inputStream.read(buffer)) != -1) {
-                    byteArrayOutputStream.write(buffer, 0, len);
-                }
-
-                return byteArrayOutputStream.toByteArray();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     // 파일 삭제
     public void deleteFirebaseBucket(String key) {
 
