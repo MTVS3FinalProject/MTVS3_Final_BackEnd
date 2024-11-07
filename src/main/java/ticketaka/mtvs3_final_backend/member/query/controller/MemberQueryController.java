@@ -3,9 +3,15 @@ package ticketaka.mtvs3_final_backend.member.query.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
+import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.service.MemberQueryService;
+
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -15,4 +21,15 @@ import ticketaka.mtvs3_final_backend.member.query.service.MemberQueryService;
 public class MemberQueryController {
 
     private final MemberQueryService memberQueryService;
+
+    /*
+        인벤토리 조회
+     */
+    @GetMapping
+    public ResponseEntity<?> getMemberInventory() {
+
+        MemberQueryResponseDTO.getMemberInventoryDTO responseDTO = memberQueryService.getMemberInventory(getCurrentMemberId());
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
 }
