@@ -19,6 +19,11 @@ public class CustomTicket extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long memberId;
+    @Column(nullable = false)
+    private Long ticketId;
+
     @Column
     @ElementCollection
     private List<Long> stickerIdList;
@@ -26,7 +31,9 @@ public class CustomTicket extends BaseTimeEntity {
     private Long backgroundId;
 
     @Builder
-    public CustomTicket(List<Long> stickerIdList, Long backgroundId) {
+    public CustomTicket(Long memberId, Long ticketId, List<Long> stickerIdList, Long backgroundId) {
+        this.memberId = memberId;
+        this.ticketId = ticketId;
         this.stickerIdList = stickerIdList;
         this.backgroundId = backgroundId;
     }

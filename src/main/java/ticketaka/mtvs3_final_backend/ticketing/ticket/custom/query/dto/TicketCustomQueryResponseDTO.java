@@ -5,7 +5,7 @@ import java.util.List;
 public class TicketCustomQueryResponseDTO {
 
     /*
-        티켓 커스텀 가능한 공연 리스트 조회
+        커스텀 티켓 목록 조회
      */
     public record getCustomizableTicketListDTO(
             List<getTicketDTO> ticketDTOList
@@ -13,9 +13,20 @@ public class TicketCustomQueryResponseDTO {
     }
 
     public record getTicketDTO(
-            Long concertId,
+            ticketConcertDTO concertInfo,
+            String seatInfo,
+            Long ticketId,
+            byte[] ticketImage
+    ) {
+    }
+
+    // 공연 날짜
+    public record ticketConcertDTO(
             String concertName,
-            Long ticketId
+            int year,
+            int month,
+            int day,
+            String time
     ) {
     }
 

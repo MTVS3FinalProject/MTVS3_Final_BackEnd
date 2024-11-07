@@ -20,6 +20,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.query.dto.SeatQueryResponseD
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -86,6 +87,11 @@ public class SeatQueryService {
         );
     }
 
+    // SeatInfoList 조회
+    public List<Seat> getSeatInfoList(List<Long> seatIdList) {
+        return seatQueryRepository.findAllById(seatIdList);
+    }
+
     // Member 조회
     private Member getMember(Long memberId) {
         return memberQueryRepository.findById(memberId)
@@ -142,7 +148,7 @@ public class SeatQueryService {
     }
 
     // SeatInfo 생성
-    private String formatSeatInfo(Seat seat) {
+    public String formatSeatInfo(Seat seat) {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
     }
 

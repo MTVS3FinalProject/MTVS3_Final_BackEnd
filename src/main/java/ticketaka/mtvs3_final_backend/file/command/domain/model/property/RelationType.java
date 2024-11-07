@@ -1,5 +1,5 @@
 package ticketaka.mtvs3_final_backend.file.command.domain.model.property;
 
 public enum RelationType {
-    MEMBER, TICKET, STICKER
+    MEMBER, TICKET, STICKER, CUSTOM_TICKET
 }
