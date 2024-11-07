@@ -22,11 +22,11 @@ public class TicketCustomCommandController {
         배경 생성
      */
     @PostMapping("/{ticketId}/sticker")
-    public ResponseEntity<?> generateAISticker(@PathVariable("ticketId") Long ticketId) {
+    public ResponseEntity<?> generateAIBackground(@PathVariable("ticketId") Long ticketId) {
 
         log.info("createAISticker Request: ticketId = {}", ticketId);
 
-        TicketCustomCommandResponseDTO.createAIStickerDTO responseDTO = ticketCustomCommandService.generateAISticker(getCurrentMemberId());
+        TicketCustomCommandResponseDTO.generateAIBackgroundDTO responseDTO = ticketCustomCommandService.generateAIBackground(getCurrentMemberId(), ticketId);
 
         log.info("createAISticker Response: {}", responseDTO);
 

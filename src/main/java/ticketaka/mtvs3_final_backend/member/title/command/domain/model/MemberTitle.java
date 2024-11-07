@@ -24,8 +24,7 @@ public class MemberTitle extends BaseTimeEntity {
     private Boolean isRepresentative;
 
     @Builder
-    public MemberTitle(Long id, Long memberId, Long titleId) {
-        this.id = id;
+    public MemberTitle(Long memberId, Long titleId) {
         this.memberId = memberId;
         this.titleId = titleId;
         this.isRepresentative = false;

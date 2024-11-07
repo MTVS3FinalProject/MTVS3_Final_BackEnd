@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model;
+package ticketaka.mtvs3_final_backend.file.command.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
