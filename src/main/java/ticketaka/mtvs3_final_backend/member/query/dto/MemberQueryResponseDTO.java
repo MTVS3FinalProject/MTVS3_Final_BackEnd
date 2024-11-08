@@ -8,8 +8,9 @@ public class MemberQueryResponseDTO {
             // Title List
             List<getMemberTitleDTO> memberTitleDTOList,
             // Sticker List
-            List<getMemberStickerDTO> memberStickerDTOList
+            List<getMemberStickerDTO> memberStickerDTOList,
             // CustomTicket List
+            List<getMemberTicketDTO> memberTicketDTOList
     ) {
     }
 
@@ -28,6 +29,14 @@ public class MemberQueryResponseDTO {
             String stickerScript,
             String stickerRarity,
             byte[] stickerImage
+    ) {
+    }
+
+    public record getMemberTicketDTO(
+            int ticketId,
+            String concertName,
+            String seatInfo,
+            byte[] ticketImage
     ) {
     }
 }

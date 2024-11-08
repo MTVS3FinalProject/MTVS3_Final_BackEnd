@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
@@ -15,6 +16,11 @@ import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
 import ticketaka.mtvs3_final_backend.sticker.member.query.repository.MemberStickerQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.service.TicketCustomQueryService;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
@@ -30,8 +36,10 @@ public class MemberQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final TitleQueryService titleQueryService;
     private final StickerQueryService stickerQueryService;
+    private final TicketCustomQueryService ticketCustomQueryService;
     private final FileQueryService fileQueryService;
 
+    private final TicketQueryRepository ticketQueryRepository;
     private final MemberTitleQueryRepository memberTitleQueryRepository;
 //    private final MemberStickerQueryRepository;
 
@@ -75,10 +83,37 @@ public class MemberQueryService {
                 .toList();
         
         // Custom Ticket List 조회
+        // Ticket 조회
+        List<Ticket> ticketList = getTicketList(memberId);
+
+        // ConcertIdList 조회
+        Map<Long, Concert> concertMap = ticketCustomQueryService.getConcertMap(ticketList);
+        // SeatInfoList 조회
+        Map<Long, String> seatInfoMap = ticketCustomQueryService.getSeatInfoMap(ticketList);
+        // Custom Ticket 조회
+        Map<Long, CustomTicket> customTicketMap = ticketCustomQueryService.getCustomTicketMap(ticketList);
+        List<MemberQueryResponseDTO.getMemberTicketDTO> memberTicketDTOList = ticketList.stream()
+                .map(ticket -> {
+                    Concert concert = concertMap.get(ticket.getConcertId());
+                    String seatInfo = seatInfoMap.get(ticket.getSeatId());
+                    CustomTicket customTicket = customTicketMap.get(ticket.getId());
+                    byte[] ticketImage = customTicket != null ?
+                            fileQueryService.getTicketImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
+                            fileQueryService.getTicketImage(RelationType.TICKET, ticket.getId());
+
+                    return new MemberQueryResponseDTO.getMemberTicketDTO(
+                            ticket.getId().intValue(),
+                            concert.getName(),
+                            seatInfo,
+                            ticketImage
+                    );
+                })
+                .toList();
 
         return new MemberQueryResponseDTO.getMemberInventoryDTO(
                 memberTitleDTOList,
-                memberStickerDTOList
+                memberStickerDTOList,
+                memberTicketDTOList
         );
     }
 
@@ -86,5 +121,10 @@ public class MemberQueryService {
     private Member getMember(Long memberId) {
         return memberQueryRepository.findById(memberId)
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
+    }
+
+    // 보유 Ticket List 조회
+    private List<Ticket> getTicketList(Long memberId) {
+        return ticketQueryRepository.findAllByMemberId(memberId);
     }
 }

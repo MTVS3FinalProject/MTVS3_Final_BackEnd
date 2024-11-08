@@ -148,7 +148,7 @@ public class TicketCustomQueryService {
     }
 
     // Ticket List 로 ConcertMap 조회
-    private Map<Long, Concert> getConcertMap(List<Ticket> ticketList) {
+    public Map<Long, Concert> getConcertMap(List<Ticket> ticketList) {
         return concertQueryService.getConcertList(
                         ticketList.stream()
                                 .map(Ticket::getConcertId)
@@ -159,7 +159,7 @@ public class TicketCustomQueryService {
     }
 
     // Ticket List 로 SeatInfoMap 조회
-    private Map<Long, String> getSeatInfoMap(List<Ticket> ticketList) {
+    public Map<Long, String> getSeatInfoMap(List<Ticket> ticketList) {
         return seatQueryService.getSeatInfoList(
                         ticketList.stream()
                                 .map(Ticket::getSeatId)
@@ -170,7 +170,7 @@ public class TicketCustomQueryService {
     }
 
     // Ticket List 로 CustomTicketMap 조회
-    private Map<Long, CustomTicket> getCustomTicketMap(List<Ticket> ticketList) {
+    public Map<Long, CustomTicket> getCustomTicketMap(List<Ticket> ticketList) {
         return getCustomTicketList(
                 ticketList.stream()
                         .map(Ticket::getId)
