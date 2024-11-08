@@ -7,8 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertRequestDTO;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertResponseDTO;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.repository.MemberStickerCommandRepository;
+import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertCommandRequestDTO;
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
@@ -32,37 +39,41 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class ConcertService {
+public class ConcertCommandService {
+
+    private final StickerQueryService stickerQueryService;
+    private final FileQueryService fileQueryService;
 
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
     private final SeatCommandRepository seatCommandRepository;
     private final SeatQueryRepository seatQueryRepository;
+    private final MemberStickerCommandRepository memberStickerCommandRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
 
     /*
         공연장 정보 조회
      */
-    public ConcertResponseDTO.getConcertListDTO getConcertList() {
+    public ConcertCommandResponseDTO.getConcertListDTO getConcertList() {
 
         // TODO: QueryDSL
-        List<ConcertResponseDTO.getConcertDTO> concertDTOList = concertRepository.findAll().stream()
-                .map(concert -> new ConcertResponseDTO.getConcertDTO(
+        List<ConcertCommandResponseDTO.getConcertDTO> concertDTOList = concertRepository.findAll().stream()
+                .map(concert -> new ConcertCommandResponseDTO.getConcertDTO(
                         concert.getId().intValue(),
                         concert.getName(),
                         getTimeDTO(concert.getConcertDate())
                 ))
                 .toList();
 
-        return new ConcertResponseDTO.getConcertListDTO(concertDTOList);
+        return new ConcertCommandResponseDTO.getConcertListDTO(concertDTOList);
     }
 
     /*
         공연장 입장
      */
-    public ConcertResponseDTO.entranceConcertDTO entranceConcert(Long concertId, Long currentMemberId) {
+    public ConcertCommandResponseDTO.entranceConcertDTO entranceConcert(Long concertId, Long currentMemberId) {
 
         Member member = getMember(currentMemberId);
         Concert concert = getConcert(concertId);
@@ -76,13 +87,13 @@ public class ConcertService {
 
         // 이외에 접수 가능한 좌석 조회
         List<Seat> availableSeatList = seatCommandRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
-        List<ConcertResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
+        List<ConcertCommandResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
 
-        List<ConcertResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
+        List<ConcertCommandResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
 
         int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();
 
-        return new ConcertResponseDTO.entranceConcertDTO(
+        return new ConcertCommandResponseDTO.entranceConcertDTO(
                 concert.getId().intValue(),
                 concert.getName(),
                 getTimeDTO(concert.getConcertDate()),
@@ -93,9 +104,36 @@ public class ConcertService {
     }
 
     /*
+        Puzzle 결과 Sticker 획득
+     */
+    public ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO acquireStickerFromPuzzleResult(Long memberId, Long concertId, ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
+
+        // Sticker Rarity 계산
+        StickerRarity stickerRarity = calculateStickerRarity(requestDTO.rank());
+
+        // Sticker 할당
+        Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, stickerRarity);
+
+        // Member Sticker 생성
+        MemberSticker memberSticker = newMemberSticker(memberId, sticker.getId());
+        memberStickerCommandRepository.save(memberSticker);
+
+        // Sticker image 조회
+        byte[] stickerImage = fileQueryService.getFileImage(RelationType.STICKER, sticker.getId());
+
+        return new ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO(
+                sticker.getId().intValue(),
+                sticker.getStickerName(),
+                sticker.getStickerScript(),
+                sticker.getStickerRarity().toString(),
+                stickerImage
+        );
+    }
+
+    /*
         예매자 정보 입력
      */
-    public ConcertResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long currentMemberId, Long concertId, Long seatId, ConcertRequestDTO.enterDeliveryAddressDTO requestDTO) {
+    public ConcertCommandResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long currentMemberId, Long concertId, Long seatId, ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
         Member member = getMember(currentMemberId);
 
@@ -117,7 +155,7 @@ public class ConcertService {
         String seatInfo = getSeatInfo(seat);
         int neededCoin = seat.getPrice() > member.getCoin() ? seat.getPrice() - member.getCoin() : 0;
 
-        return new ConcertResponseDTO.enterDeliveryAddressDTO(
+        return new ConcertCommandResponseDTO.enterDeliveryAddressDTO(
                 seatInfo,
                 1,
                 seat.getPrice(),
@@ -140,7 +178,7 @@ public class ConcertService {
 
     // Address 생성
     // TODO: MemberController 로 이동할 예정
-    private Address newAddress(ConcertRequestDTO.enterDeliveryAddressDTO requestDTO, Long memberId) {
+    private Address newAddress(ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO, Long memberId) {
         return Address.builder()
                 .memberId(memberId)
                 .userName(requestDTO.userName())
@@ -150,13 +188,21 @@ public class ConcertService {
                 .build();
     }
 
+    // MemberSticker 생성
+    private MemberSticker newMemberSticker(Long memberId, Long stickerId) {
+        return MemberSticker.builder()
+                .memberId(memberId)
+                .stickerId(stickerId)
+                .build();
+    }
+
     // SeatIdDTO 조회
-    private List<ConcertResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> seatList, Concert concert) {
+    private List<ConcertCommandResponseDTO.SeatIdDTO> getSeatIdDTOList(List<Seat> seatList, Concert concert) {
         return seatList.stream()
                 .map(seat -> {
                     String seatName = concert.getConcertDate().getYear() + seat.getSection() + seat.getNumber();
 
-                    return new ConcertResponseDTO.SeatIdDTO(seat.getId().intValue(), seatName, seat.getDrawingTime().toString());
+                    return new ConcertCommandResponseDTO.SeatIdDTO(seat.getId().intValue(), seatName, seat.getDrawingTime().toString());
                 })
                 .toList();
     }
@@ -167,8 +213,8 @@ public class ConcertService {
     }
 
     // TimeDTO 생성
-    private ConcertResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
-        return new ConcertResponseDTO.timeDTO(
+    private ConcertCommandResponseDTO.timeDTO getTimeDTO(LocalDateTime localDateTime) {
+        return new ConcertCommandResponseDTO.timeDTO(
                 localDateTime.getYear(),
                 localDateTime.getMonthValue(),
                 localDateTime.getDayOfMonth(),
@@ -187,5 +233,18 @@ public class ConcertService {
         if(memberAge < ageRestriction) {
             throw new Exception400("해당 공연의 연령 제한을 충족하지 못합니다.");
         }
+    }
+
+    // Sticker Rarity 계산
+    private StickerRarity calculateStickerRarity(int rank) {
+
+        StickerRarity[] stickerRarities = StickerRarity.values();
+
+        // rank 유효성 검사
+        if (rank < 1 || rank > stickerRarities.length) {
+            throw new Exception400("아쉽게도 Sticker 를 획득하지 못하였습니다.");
+        }
+
+        return stickerRarities[rank - 1];
     }
 }

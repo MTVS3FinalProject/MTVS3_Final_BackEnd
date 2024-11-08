@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface StickerQueryRepository extends JpaRepository<Sticker, Long> {
             "AND s.stickerType = :stickerType")
     List<Sticker> findAllByMemberIdAndStickerType(@Param("memberId") Long memberId,
                                                   @Param("stickerType") StickerType stickerType);
+
+    List<Sticker> findAllByConcertIdAndStickerTypeAndStickerRarity(Long concertId, StickerType stickerType, StickerRarity stickerRarity);
 }

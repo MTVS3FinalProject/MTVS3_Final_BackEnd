@@ -2,7 +2,6 @@ package ticketaka.mtvs3_final_backend.file.query.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
@@ -42,8 +41,8 @@ public class FileQueryService {
                 ));
     }
 
-    // Ticket 관련 Image 조회
-    public byte[] getTicketImage(RelationType relationType, Long id) {
+    // File Image 조회
+    public byte[] getFileImage(RelationType relationType, Long id) {
 
         File file = fileQueryRepository.findByRelationTypeAndRelationId(relationType, id)
                 .orElseThrow(() -> new Exception400("해당 Ticket 이미지를 찾을 수 없습니다."));

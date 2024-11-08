@@ -40,7 +40,8 @@ public class ConcertCommandResponseDTO {
             int stickerId,
             String stickerName,
             String stickerScript,
-            String stickerRarity
+            String stickerRarity,
+            byte[] stickerImage
     ) {
     }
 

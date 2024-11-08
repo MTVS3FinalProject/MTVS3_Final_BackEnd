@@ -13,8 +13,6 @@ import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryReposito
 import ticketaka.mtvs3_final_backend.member.title.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.member.title.command.domain.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
-import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
-import ticketaka.mtvs3_final_backend.sticker.member.query.repository.MemberStickerQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
@@ -98,8 +96,8 @@ public class MemberQueryService {
                     String seatInfo = seatInfoMap.get(ticket.getSeatId());
                     CustomTicket customTicket = customTicketMap.get(ticket.getId());
                     byte[] ticketImage = customTicket != null ?
-                            fileQueryService.getTicketImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
-                            fileQueryService.getTicketImage(RelationType.TICKET, ticket.getId());
+                            fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
+                            fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
 
                     return new MemberQueryResponseDTO.getMemberTicketDTO(
                             ticket.getId().intValue(),

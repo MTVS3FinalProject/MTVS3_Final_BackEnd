@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MemberStickerQueryRepository extends JpaRepository<MemberSticker, Long> {
 
-//    List<MemberSticker> findAllByMemberId(Long memberId);
+    List<MemberSticker> findAllByMemberId(Long memberId);
 }

@@ -74,8 +74,8 @@ public class TicketCustomQueryService {
                             String seatInfo = seatInfoMap.get(ticket.getSeatId());
                             CustomTicket customTicket = customTicketMap.get(ticket.getId());
                             byte[] ticketImage = customTicket != null ?
-                                    fileQueryService.getTicketImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
-                                    fileQueryService.getTicketImage(RelationType.TICKET, ticket.getId());
+                                    fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
+                                    fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
 
                             return new TicketCustomQueryResponseDTO.getTicketDTO(
                                     new TicketCustomQueryResponseDTO.ticketConcertDTO(
