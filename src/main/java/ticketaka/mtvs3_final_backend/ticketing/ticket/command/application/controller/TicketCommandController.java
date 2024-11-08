@@ -24,7 +24,7 @@ public class TicketCommandController {
         커스텀 티켓 저장
      */
     @PostMapping("/{ticketId}/custom")
-    public ResponseEntity<?> saveCustomTicket(@PathVariable("ticketId") String ticketId,
+    public ResponseEntity<?> saveCustomTicket(@PathVariable("ticketId") Long ticketId,
                                               @RequestBody TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
 
         ticketCommandService.saveCustomTicket(getCurrentMemberId(), ticketId, requestDTO);

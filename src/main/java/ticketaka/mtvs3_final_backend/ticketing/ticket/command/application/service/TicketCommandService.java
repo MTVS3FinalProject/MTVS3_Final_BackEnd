@@ -13,9 +13,13 @@ import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Conc
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.service.TicketCustomCommandService;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 import java.util.UUID;
 
@@ -25,10 +29,13 @@ import java.util.UUID;
 @Service
 public class TicketCommandService {
 
+    private final TicketCustomCommandService ticketCustomCommandService;
+
     private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
     private final SeatQueryRepository seatQueryRepository;
     private final TicketCommandRepository ticketCommandRepository;
+    private final TicketQueryRepository ticketQueryRepository;
 
     /*
         티켓 생성
@@ -48,6 +55,17 @@ public class TicketCommandService {
         return new TicketResponseDTO.createTicketDTO(
                 ticket.getId()
         );
+    }
+
+    /*
+        Custom Ticket 저장
+     */
+    public void saveCustomTicket(Long memberId, Long ticketId, TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
+
+        getMember(memberId);
+        getTicket(ticketId);
+
+        ticketCustomCommandService.saveCustomTicket(ticketId, requestDTO);
     }
 
     // Ticket 생성
@@ -80,6 +98,12 @@ public class TicketCommandService {
     private Seat getSeat(Long seatId) {
         return seatQueryRepository.findById(seatId)
                 .orElseThrow(() -> new Exception400("해당 좌석은 존재하지 않습니다."));
+    }
+
+    // Ticket 조회
+    private Ticket getTicket(Long ticketId) {
+        return ticketQueryRepository.findById(ticketId)
+                .orElseThrow(() -> new Exception400("해당 티켓은 존재하지 않습니다."));
     }
 
     // TicketNumber 생성
