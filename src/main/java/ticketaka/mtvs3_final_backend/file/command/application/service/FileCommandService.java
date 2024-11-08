@@ -49,13 +49,13 @@ public class FileCommandService {
     }
 
     // AI 배경 이미지 저장
-    public void saveAIBackgroundImage(Background background, byte[] backgroundImage) {
+    public void saveAIBackgroundImage(Long backgroundId, byte[] backgroundImage) {
 
         String fileName = AI_BACKGROUND_FILENAME_PREFIX + System.currentTimeMillis();
         String fileUrl = uploadImgByByte(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
-        newFile(RelationType.BACKGROUND, background.getId(), fileUrl, FilePurpose.CUSTOM);
+        newFile(RelationType.BACKGROUND, backgroundId, fileUrl, FilePurpose.CUSTOM);
     }
 
     // Custom Ticket 이미지 저장

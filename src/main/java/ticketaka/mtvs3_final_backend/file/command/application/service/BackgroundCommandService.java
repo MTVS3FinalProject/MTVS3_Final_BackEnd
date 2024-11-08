@@ -41,7 +41,7 @@ public class BackgroundCommandService {
                 .build();
         background = backgroundCommandRepository.save(background);
 
-        fileCommandService.saveAIBackgroundImage(background, backgroundImageData);
+        fileCommandService.saveAIBackgroundImage(background.getId(), backgroundImageData);
 
         return new TicketCustomCommandResponseDTO.generateAIBackgroundDTO(
                 background.getId().intValue(),
