@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.jwt.JWTTokenProvider;
-import ticketaka.mtvs3_final_backend.file.command.application.service.FileService;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthDTO;
@@ -38,7 +38,7 @@ import java.util.Optional;
 @Service
 public class MemberAuthService {
 
-    private final FileService fileService;
+    private final FileCommandService fileCommandService;
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
@@ -69,7 +69,7 @@ public class MemberAuthService {
         memberRepository.save(member);
 
         // File 객체 생성
-        fileService.newFile(RelationType.MEMBER, member.getId(), fileUploadDTO.imgUrl(), FilePurpose.SIGNUP);
+        fileCommandService.newFile(RelationType.MEMBER, member.getId(), fileUploadDTO.imgUrl(), FilePurpose.SIGNUP);
     }
 
     // 이메일 중복 확인

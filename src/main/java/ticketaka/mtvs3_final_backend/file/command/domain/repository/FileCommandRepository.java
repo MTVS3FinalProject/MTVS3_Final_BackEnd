@@ -11,7 +11,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.Relation
 import java.util.Optional;
 
 @Repository
-public interface FileRepository extends JpaRepository<File, Long> {
+public interface FileCommandRepository extends JpaRepository<File, Long> {
 
     @Query("SELECT f FROM File f WHERE f.relationType = :relationType AND f.relationId = :relationId AND f.filePurpose = :filePurpose")
     Optional<File> findByMemberForVerification(@Param("relationType") RelationType relationType, @Param("relationId") Long relationId, @Param("filePurpose") FilePurpose filePurpose);

@@ -12,7 +12,7 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRespon
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
-import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileCommandRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.service.FaceAuthFeignClient;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
@@ -25,10 +25,10 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 @Service
 public class FaceAuthService {
 
-    private final FileService fileService;
+    private final FileCommandService fileCommandService;
 
     private final MemberRepository memberRepository;
-    private final FileRepository fileRepository;
+    private final FileCommandRepository fileCommandRepository;
     private final FaceAuthFeignClient faceAuthFeignClient;
     private final PasswordEncoder passwordEncoder;
 
@@ -37,7 +37,7 @@ public class FaceAuthService {
      */
     public void recognizeMember(FaceAuthRequestDTO.recognizeMemberDTO requestDTO) {
 
-        String imgUrl = fileService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
+        String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
 
         FaceAuthResponseDTO.recognizeFaceDTO responseDTO = faceAuthFeignClient.recognizeFace(new FaceAuthRequestDTO.recognizeFaceDTO(imgUrl));
 
@@ -45,7 +45,7 @@ public class FaceAuthService {
             throw new Exception400(responseDTO.message());
         }
 
-        fileService.setFileUploadForSignUp(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
+        fileCommandService.setFileUploadForSignUp(requestDTO.email(), requestDTO.secondPwd(), imgUrl);
     }
     
     /*
@@ -54,7 +54,7 @@ public class FaceAuthService {
     public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
         // FileUploadForAuth 확인
-        FileUploadForAuth fileUpload = fileService.uploadImgForVerification(requestDTO);
+        FileUploadForAuth fileUpload = fileCommandService.uploadImgForVerification(requestDTO);
 
         Long currentMemberId = Long.parseLong(fileUpload.getCode());
 
@@ -85,7 +85,7 @@ public class FaceAuthService {
         if (responseDTO.match_result() == 0) {
 
             fileUpload.setUploadStatus(UploadStatus.FAIL);
-            fileService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
+            fileCommandService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
 
             throw new Exception401("얼굴 인식에 실패하였습니다.");
         }
@@ -93,13 +93,13 @@ public class FaceAuthService {
         fileUpload.setUploadStatus(UploadStatus.SUCCESS);
 
         // File 생성
-        fileService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
+        fileCommandService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
     }
 
     // 회원 인증 파일 이미지 조회
     private File getOriginImgUrl(Long currentMemberId) {
 
-        return fileRepository.findByMemberForVerification(RelationType.MEMBER, currentMemberId, FilePurpose.SIGNUP)
+        return fileCommandRepository.findByMemberForVerification(RelationType.MEMBER, currentMemberId, FilePurpose.SIGNUP)
                 .orElseThrow(() -> new Exception401("해당 회원에게는 인증용 사진이 없습니다."));
     }
 }

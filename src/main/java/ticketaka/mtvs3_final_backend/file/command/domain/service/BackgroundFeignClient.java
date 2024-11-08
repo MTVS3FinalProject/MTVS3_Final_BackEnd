@@ -9,6 +9,6 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundResp
 @FeignClient(name = "background-service", url = "https://adapted-charmed-panda.ngrok-free.app")
 public interface BackgroundFeignClient {
 
-    @PostMapping("/generate")
-    BackgroundResponseDTO.generateBackgroundDTO generateBackground(@RequestBody BackgroundRequestDTO.generateBackgroundDTO requestDTO);
+    @PostMapping("/img_random")
+    BackgroundResponseDTO.generateBackgroundDTO generateBackground();//@RequestBody BackgroundRequestDTO.generateBackgroundDTO requestDTO);
 }

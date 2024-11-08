@@ -37,6 +37,7 @@ public class TicketCustomCommandService {
     /*
         AI 배경 생성
      */
+    @Transactional
     public TicketCustomCommandResponseDTO.generateAIBackgroundDTO generateAIBackground(Long memberId, Long ticketId) {
 
         // Member 조회
@@ -65,7 +66,7 @@ public class TicketCustomCommandService {
 
         // AI 배경 생성, 저장 및 반환
         return backgroundCommandService.generateBackground(new BackgroundRequestDTO.generateBackgroundDTO(
-                concert.getName()
+                concert
         ));
     }
 

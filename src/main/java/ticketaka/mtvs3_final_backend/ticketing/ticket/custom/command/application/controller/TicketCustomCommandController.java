@@ -21,7 +21,7 @@ public class TicketCustomCommandController {
     /*
         배경 생성
      */
-    @PostMapping("/{ticketId}/sticker")
+    @PostMapping("/{ticketId}/background")
     public ResponseEntity<?> generateAIBackground(@PathVariable("ticketId") Long ticketId) {
 
         log.info("createAISticker Request: ticketId = {}", ticketId);

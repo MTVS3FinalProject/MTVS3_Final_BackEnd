@@ -11,10 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.Background;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
-import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileCommandRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
@@ -25,13 +26,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class FileService {
+public class FileCommandService {
 
-    private final FileRepository fileRepository;
+    private final FileCommandRepository fileCommandRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
+
+    private static final String IMAGE_CONTENT_TYPE = "image/png";
+    private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_FILENAME_";
 
     /*
         파일 업로드 - 회원 인증 용
@@ -41,6 +45,16 @@ public class FileService {
         String imgUrl = uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
 
         return setFileUploadForAuth(requestDTO.code(), imgUrl);
+    }
+
+    // AI 배경 이미지 저장
+    public void saveAIBackgroundImage(Background background, byte[] backgroundImage) {
+
+        String fileName = AI_BACKGROUND_FILENAME_PREFIX + System.currentTimeMillis();
+        String fileUrl = uploadImgByByte(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
+
+        // File 생성 및 저장
+        newFile(RelationType.BACKGROUND, background.getId(), fileUrl, FilePurpose.CUSTOM);
     }
 
     // 회원 가입 용 FileUploadForAuth 수정
@@ -86,6 +100,21 @@ public class FileService {
         }
     }
 
+    // 파일 업로드 기능 - byte[]
+    protected String uploadImgByByte(byte[] imageData, String fileName, String contentType) {
+
+        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+        Blob blob = bucket.create(fileName,
+                imageData, contentType);
+
+        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+
+        log.info("File Url : {}", fileUrl);
+
+        return fileUrl;
+    }
+
     // File 객체 생성
     public void newFile(RelationType relationType, Long id, String imgUrl, FilePurpose filePurpose) {
 
@@ -96,7 +125,7 @@ public class FileService {
                 .filePurpose(filePurpose)
                 .build();
 
-        fileRepository.save(file);
+        fileCommandRepository.save(file);
     }
 
     // 파일 삭제
