@@ -35,7 +35,8 @@ public class FileCommandService {
     private String firebaseStorageUrl;
 
     private static final String IMAGE_CONTENT_TYPE = "image/png";
-    private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_FILENAME_";
+    private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_";
+    private static final String CUSTOM_TICKET_FILENAME_PREFIX = "AI_BACKGROUND_";
 
     /*
         파일 업로드 - 회원 인증 용
@@ -55,6 +56,16 @@ public class FileCommandService {
 
         // File 생성 및 저장
         newFile(RelationType.BACKGROUND, background.getId(), fileUrl, FilePurpose.CUSTOM);
+    }
+
+    // Custom Ticket 이미지 저장
+    public void saveCustomTicketImage(Long customTicketId, byte[] customTicketImage) {
+
+        String fileName = CUSTOM_TICKET_FILENAME_PREFIX + System.currentTimeMillis();
+        String fileUrl = uploadImgByByte(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
+
+        // File 생성 및 저장
+        newFile(RelationType.CUSTOM_TICKET, customTicketId, fileUrl, FilePurpose.CUSTOM);
     }
 
     // 회원 가입 용 FileUploadForAuth 수정

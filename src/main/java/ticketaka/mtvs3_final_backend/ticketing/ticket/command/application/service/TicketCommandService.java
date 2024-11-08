@@ -60,6 +60,7 @@ public class TicketCommandService {
     /*
         Custom Ticket 저장
      */
+    @Transactional
     public void saveCustomTicket(Long memberId, Long ticketId, TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
 
         getMember(memberId);

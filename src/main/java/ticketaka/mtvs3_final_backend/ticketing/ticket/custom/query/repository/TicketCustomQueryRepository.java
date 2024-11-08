@@ -5,8 +5,11 @@ import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TicketCustomQueryRepository extends JpaRepository<CustomTicket, Long> {
     List<CustomTicket> findAllByTicketIdIn(List<Long> ticketList);
+
+    Optional<CustomTicket> findByTicketId(Long ticketId);
 }

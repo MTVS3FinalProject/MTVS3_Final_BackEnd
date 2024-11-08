@@ -1,12 +1,10 @@
 package ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,16 +20,18 @@ public class CustomTicket extends BaseTimeEntity {
     @Column(nullable = false)
     private Long ticketId;
 
+    @Setter
     @Column
     @ElementCollection
     private List<Long> stickerIdList;
-    @Column(nullable = false)
+    @Setter
+    @Column
     private Long backgroundId;
 
     @Builder
-    public CustomTicket(Long ticketId, List<Long> stickerIdList, Long backgroundId) {
+    public CustomTicket(Long ticketId) {
         this.ticketId = ticketId;
-        this.stickerIdList = stickerIdList;
-        this.backgroundId = backgroundId;
+        this.stickerIdList = new ArrayList<>();
+        this.backgroundId = null;
     }
 }

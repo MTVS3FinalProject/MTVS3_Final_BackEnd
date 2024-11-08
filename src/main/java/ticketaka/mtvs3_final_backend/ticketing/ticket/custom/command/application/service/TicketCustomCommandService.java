@@ -8,14 +8,21 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.BackgroundCommandService;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
 import ticketaka.mtvs3_final_backend.redis.daily.background.repository.DailyBackgroundRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.dto.TicketCustomCommandResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.repository.TicketCustomCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.repository.TicketCustomQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 import java.time.LocalDate;
@@ -26,11 +33,16 @@ import java.time.LocalDate;
 @Service
 public class TicketCustomCommandService {
 
+    private final FileCommandService fileCommandService;
+
     private final BackgroundCommandService backgroundCommandService;
+
+    private final TicketCustomCommandRepository ticketCustomCommandRepository;
 
     private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
     private final TicketQueryRepository ticketQueryRepository;
+    private final TicketCustomQueryRepository ticketCustomQueryRepository;
 
     private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
 
@@ -70,6 +82,29 @@ public class TicketCustomCommandService {
         ));
     }
 
+    /*
+        Custom Ticket 저장
+     */
+    @Transactional
+    public void saveCustomTicket(Long ticketId, TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
+
+        CustomTicket customTicket = getCustomTicket(ticketId);
+
+        // Custom Ticket Update
+        if (!requestDTO.stickerIdList().isEmpty()) {
+            customTicket.setStickerIdList(requestDTO.stickerIdList().stream().map(Long::valueOf).toList());
+        }
+
+        if (requestDTO.backgroundId() != null) {
+            customTicket.setBackgroundId(requestDTO.backgroundId().longValue());
+        }
+
+        customTicket = ticketCustomCommandRepository.save(customTicket);
+
+        // Image 저장
+        fileCommandService.saveCustomTicketImage(customTicket.getId(), requestDTO.customTicketImage());
+    }
+
     // Member 조회
     private Member getMember(Long memberId) {
         return memberQueryRepository.findById(memberId)
@@ -86,6 +121,12 @@ public class TicketCustomCommandService {
     private Ticket getTicket(Long ticketId) {
         return ticketQueryRepository.findById(ticketId)
                 .orElseThrow(() -> new Exception400("해당 티켓을 찾을 수 없습니다."));
+    }
+
+    // CustomTicket 조회 - TicketId
+    private CustomTicket getCustomTicket(Long ticketId) {
+        return ticketCustomQueryRepository.findByTicketId(ticketId)
+                .orElse(new CustomTicket(ticketId));
     }
 
     // DailyBackground 생성
