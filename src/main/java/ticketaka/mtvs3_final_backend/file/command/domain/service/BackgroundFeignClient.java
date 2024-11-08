@@ -10,5 +10,5 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundResp
 public interface BackgroundFeignClient {
 
     @PostMapping("/img_random")
-    BackgroundResponseDTO.generateBackgroundDTO generateBackground();//@RequestBody BackgroundRequestDTO.generateBackgroundDTO requestDTO);
+    byte[] generateBackground();//@RequestBody BackgroundRequestDTO.generateBackgroundDTO requestDTO);
 }

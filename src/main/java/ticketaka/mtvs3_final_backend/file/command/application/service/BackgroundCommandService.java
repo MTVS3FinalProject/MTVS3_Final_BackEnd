@@ -33,7 +33,7 @@ public class BackgroundCommandService {
     @Transactional
     public TicketCustomCommandResponseDTO.generateAIBackgroundDTO generateBackground(BackgroundRequestDTO.generateBackgroundDTO requestDTO) {
 
-        BackgroundResponseDTO.generateBackgroundDTO responseDTO = backgroundFeignClient.generateBackground();//requestDTO);
+        byte[] backgroundImageData = backgroundFeignClient.generateBackground();//requestDTO);
 
         // Background 생성
         Background background = Background.builder()
@@ -41,11 +41,11 @@ public class BackgroundCommandService {
                 .build();
         background = backgroundCommandRepository.save(background);
 
-        fileCommandService.saveAIBackgroundImage(background, responseDTO.backgroundImage());
+        fileCommandService.saveAIBackgroundImage(background, backgroundImageData);
 
         return new TicketCustomCommandResponseDTO.generateAIBackgroundDTO(
                 background.getId().intValue(),
-                responseDTO.backgroundImage()
+                backgroundImageData
         );
     }
 }
