@@ -20,8 +20,6 @@ public class CustomTicket extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Long memberId;
-    @Column(nullable = false)
     private Long ticketId;
 
     @Column
@@ -31,8 +29,7 @@ public class CustomTicket extends BaseTimeEntity {
     private Long backgroundId;
 
     @Builder
-    public CustomTicket(Long memberId, Long ticketId, List<Long> stickerIdList, Long backgroundId) {
-        this.memberId = memberId;
+    public CustomTicket(Long ticketId, List<Long> stickerIdList, Long backgroundId) {
         this.ticketId = ticketId;
         this.stickerIdList = stickerIdList;
         this.backgroundId = backgroundId;

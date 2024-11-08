@@ -144,7 +144,7 @@ public class TicketCustomQueryService {
 
     // Custom Ticket List 조회
     private List<CustomTicket> getCustomTicketList(List<Long> ticketList) {
-        return ticketCustomQueryRepository.findAllById(ticketList);
+        return ticketCustomQueryRepository.findAllByTicketIdIn(ticketList);
     }
 
     // Ticket List 로 ConcertMap 조회
