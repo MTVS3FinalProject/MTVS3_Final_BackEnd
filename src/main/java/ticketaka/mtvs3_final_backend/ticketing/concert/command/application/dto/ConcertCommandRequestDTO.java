@@ -1,9 +1,14 @@
 package ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto;
 
-public class ConcertRequestDTO {
+public class ConcertCommandRequestDTO {
 
     public record entranceConcertDTO(
             String concertName
+    ) {
+    }
+
+    public record acquireStickerFromPuzzleResultDTO(
+            int rank
     ) {
     }
 

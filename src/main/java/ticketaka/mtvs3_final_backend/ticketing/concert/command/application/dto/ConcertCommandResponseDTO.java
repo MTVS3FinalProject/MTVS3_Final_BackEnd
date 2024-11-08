@@ -2,7 +2,7 @@ package ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto;
 
 import java.util.List;
 
-public class ConcertResponseDTO {
+public class ConcertCommandResponseDTO {
 
     // 모든 공연 정보 조회
     public record getConcertListDTO(
@@ -33,6 +33,14 @@ public class ConcertResponseDTO {
             int seatId,
             String seatName,
             String drawingTime
+    ) {
+    }
+
+    public record acquireStickerFromPuzzleResultDTO(
+            int stickerId,
+            String stickerName,
+            String stickerScript,
+            String stickerRarity
     ) {
     }
 
