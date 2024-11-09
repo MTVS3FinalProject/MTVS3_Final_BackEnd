@@ -16,7 +16,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/custom")
+@RequestMapping("/api/member/tickets")
 public class TicketCustomQueryController {
 
     private final TicketCustomQueryService ticketCustomQueryService;
@@ -24,7 +24,7 @@ public class TicketCustomQueryController {
     /*
         커스텀 티켓 목록 조회
      */
-    @GetMapping("/tickets")
+    @GetMapping
     public ResponseEntity<?> getCustomizableTicketList() {
 
         log.info("getCustomizableTicketList Request");
@@ -39,7 +39,7 @@ public class TicketCustomQueryController {
     /*
         티켓 커스텀 제작 입장 - 스티커 조회
      */
-    @GetMapping("/tickets/{ticketId}")
+    @GetMapping("/{ticketId}/custom")
     public ResponseEntity<?> getTicketCustomObject(@PathVariable("ticketId") Long ticketId) {
 
         log.info("getTicketCustomInfo Request");

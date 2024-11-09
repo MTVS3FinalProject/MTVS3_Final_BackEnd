@@ -13,7 +13,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/api/member/tickets")
 public class TicketCustomCommandController {
 
     private final TicketCustomCommandService ticketCustomCommandService;

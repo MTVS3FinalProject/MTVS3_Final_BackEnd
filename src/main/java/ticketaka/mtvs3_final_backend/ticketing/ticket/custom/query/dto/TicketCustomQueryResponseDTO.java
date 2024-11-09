@@ -15,7 +15,7 @@ public class TicketCustomQueryResponseDTO {
     public record getTicketDTO(
             ticketConcertDTO concertInfo,
             String seatInfo,
-            Long ticketId,
+            int ticketId,
             byte[] ticketImage
     ) {
     }

@@ -14,7 +14,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/api/member/tickets")
 @Tag(name = "08_TicketCommandController")
 public class TicketCommandController {
 

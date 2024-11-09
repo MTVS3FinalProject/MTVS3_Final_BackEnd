@@ -86,7 +86,7 @@ public class TicketCustomQueryService {
                                             concert.getConcertDate().toLocalTime().toString()
                                     ),
                                     seatInfo,
-                                    ticket.getId(),
+                                    ticket.getId().intValue(),
                                     ticketImage
                             );
                         })
