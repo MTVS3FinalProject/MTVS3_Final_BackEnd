@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.service.MemberQueryService;
 
@@ -28,9 +29,9 @@ public class MemberQueryController {
     @GetMapping("/address")
     public ResponseEntity<?> getRecentMemberAddress() {
 
-        memberQueryService.
 
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+        MemberQueryResponseDTO.getRecentMemberAddressDTO responseDTO = memberQueryService.getRecentMemberAddress(getCurrentMemberId());
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
     /*
