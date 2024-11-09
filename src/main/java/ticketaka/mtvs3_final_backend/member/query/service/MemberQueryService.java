@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
@@ -39,8 +41,37 @@ public class MemberQueryService {
 
     private final TicketQueryRepository ticketQueryRepository;
     private final MemberTitleQueryRepository memberTitleQueryRepository;
+    private final AddressRepository addressRepository;
 //    private final MemberStickerQueryRepository;
+    
+    /*
+        최근 배송지 조회
+     */
+    public MemberQueryResponseDTO.getRecentMemberAddressDTO getRecentMemberAddress(Long memberId) {
 
+        Address address = addressRepository.findFirstByMemberIdOrderByCreatedAtDesc(memberId)
+                .orElse(null);
+
+        if (address == null) {
+            return new MemberQueryResponseDTO.getRecentMemberAddressDTO(
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        return new MemberQueryResponseDTO.getRecentMemberAddressDTO(
+                address.getUserName(),
+                address.getPhoneNumber(),
+                address.getAddress(),
+                address.getDetail()
+        );
+    }
+    
+    /*
+        인벤토리 조회
+     */
     public MemberQueryResponseDTO.getMemberInventoryDTO getMemberInventory(Long memberId) {
 
         // Member 조회
@@ -125,4 +156,5 @@ public class MemberQueryService {
     private List<Ticket> getTicketList(Long memberId) {
         return ticketQueryRepository.findAllByMemberId(memberId);
     }
+
 }
