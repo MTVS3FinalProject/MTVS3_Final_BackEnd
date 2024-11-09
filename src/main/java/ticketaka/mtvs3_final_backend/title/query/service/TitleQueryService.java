@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class TitleQueryService {
 
     private final TitleQueryRepository titleQueryRepository;
+    private final MemberTitleQueryRepository memberTitleQueryRepository;
 
     // Inventory Title 조회
     public Map<Long, Title> getMemberTitleMap(List<MemberTitle> memberTitleList) {
@@ -31,5 +33,19 @@ public class TitleQueryService {
 
         return titleList.stream()
                 .collect(Collectors.toMap(Title::getId, title -> title));
+    }
+
+    // 현재 장착 중인 Title 조회
+    public Title getMemberTitle(Long memberId) {
+
+        MemberTitle memberTitle = memberTitleQueryRepository.findByMemberIdAndIsRepresentative(memberId, true)
+                .orElse(null);
+
+        if (memberTitle == null) {
+            return null;
+        }
+
+        return titleQueryRepository.findById(memberTitle.getTitleId())
+                .orElse(null);
     }
 }
