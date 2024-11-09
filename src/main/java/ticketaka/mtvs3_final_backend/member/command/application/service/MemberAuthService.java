@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.jwt.JWTTokenProvider;
-import ticketaka.mtvs3_final_backend.file.command.application.service.FileService;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthDTO;
@@ -27,6 +27,9 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
+import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +41,9 @@ import java.util.Optional;
 @Service
 public class MemberAuthService {
 
-    private final FileService fileService;
+    private final FileCommandService fileCommandService;
+    private final TitleQueryService titleQueryService;
+
     private final MemberRepository memberRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
@@ -69,7 +74,7 @@ public class MemberAuthService {
         memberRepository.save(member);
 
         // File 객체 생성
-        fileService.newFile(RelationType.MEMBER, member.getId(), fileUploadDTO.imgUrl(), FilePurpose.SIGNUP);
+        fileCommandService.newFile(RelationType.MEMBER, member.getId(), fileUploadDTO.imgUrl(), FilePurpose.SIGNUP);
     }
 
     // 이메일 중복 확인
@@ -167,12 +172,17 @@ public class MemberAuthService {
     // 반환할 회원 정보 구성
     private MemberAuthResponseDTO.memberInfoDTO getMemberInfo(Member member) {
 
-        // TODO: userCoin 조회, 아바타 data 조회 필요
+        Title title = titleQueryService.getMemberTitle(member.getId());
+
+        // TODO: userCoin 조회, 아바타 data 조회 필요, Title 이 비어있을 경우
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
                 member.getBirth().toString(),
                 member.getCoin(),
-                1
+                1,
+                title.getId().intValue(),
+                title.getTitleName(),
+                title.getTitleRarity().toString()
         );
     }
 

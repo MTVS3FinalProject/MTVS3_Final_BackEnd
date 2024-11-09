@@ -20,6 +20,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.query.dto.SeatQueryResponseD
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -59,7 +60,7 @@ public class SeatQueryService {
     /*
         현재 회원이 접수한 모든 좌석 조회
     */
-    public SeatQueryResponseDTO.getMyConcertReceptionsDTO getMyConcertReceptions(Long concertId, Long memberId) {
+    public SeatQueryResponseDTO.getMyConcertReceptionsDTO getMyConcertReceptions(Long memberId, Long concertId) {
 
         // Member 조회
         getMember(memberId);
@@ -84,6 +85,11 @@ public class SeatQueryService {
                         })
                         .toList()
         );
+    }
+
+    // SeatInfoList 조회
+    public List<Seat> getSeatInfoList(List<Long> seatIdList) {
+        return seatQueryRepository.findAllById(seatIdList);
     }
 
     // Member 조회
@@ -142,7 +148,7 @@ public class SeatQueryService {
     }
 
     // SeatInfo 생성
-    private String formatSeatInfo(Seat seat) {
+    public String formatSeatInfo(Seat seat) {
         return seat.getSection() + "구역 " + seat.getNumber() + "번";
     }
 

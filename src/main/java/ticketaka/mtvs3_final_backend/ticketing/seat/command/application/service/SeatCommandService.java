@@ -11,6 +11,7 @@ import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryReq
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
+import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
@@ -28,6 +29,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.repository.MemberSeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.service.TicketCommandService;
 
 import java.util.List;
 
@@ -37,8 +39,10 @@ import java.util.List;
 @Service
 public class SeatCommandService {
 
+    private final MemberCommandService memberCommandService;
     private final SeatReceptionService seatReceptionService;
     private final SeatDrawingService seatDrawingService;
+    private final TicketCommandService ticketCommandService;
     private final CoinHistoryService coinHistoryService;
 
     private final ConcertQueryRepository concertQueryRepository;
@@ -133,10 +137,10 @@ public class SeatCommandService {
         좌석 결제
      */
     @Transactional
-    public SeatCommandResponseDTO.reserveSeatDTO reserveSeat(Long concertId, Long seatId, Long currentMemberId) {
+    public SeatCommandResponseDTO.reserveSeatDTO reserveSeat(Long memberId, Long concertId, Long seatId) {
 
         // Member 확인
-        Member member = getMember(currentMemberId);
+        Member member = getMember(memberId);
         // 배송지 정보 조회
         Address address = getAddress(member);
         // Concert 조회
@@ -155,7 +159,13 @@ public class SeatCommandService {
         seat.setSeatStatus(SeatStatus.RESERVED);
         seatCommandRepository.save(seat);
 
-        // TODO: 티켓 생성, seatNum
+        // Ticket 생성
+        Long ticketId = ticketCommandService.createTicket(memberId, concertId, seatId).ticketId();
+
+        // 주소지 티켓 매핑
+        memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
+
+        // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(
                 seat.getId().intValue(),
                 formatSeatName(concert, seat),
@@ -165,7 +175,8 @@ public class SeatCommandService {
                 member.getCoin(),
                 address.getUserName(),
                 address.getPhoneNumber(),
-                formatUserAddress(address)
+                formatUserAddress(address),
+                ticketId.intValue()
         );
     }
 
@@ -186,10 +197,10 @@ public class SeatCommandService {
     /*
         좌석 결제 - 치트
      */
-    public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long concertId, Long currentMemberId) {
+    public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long memberId, Long concertId) {
 
         // Member 확인
-        Member member = getMember(currentMemberId);
+        Member member = getMember(memberId);
 
         // Concert & Seat 조회
         Concert concert = getReservingConcert(concertId);
@@ -204,8 +215,9 @@ public class SeatCommandService {
 
         // 배송지 정보 조회
         Address address = getAddress(member);
+        
+        Long ticketId = ticketCommandService.createTicket(memberId, concertId, seat.getId()).ticketId();
 
-        // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(
                 seat.getId().intValue(),
                 concert.getConcertDate().getYear() + formatSeatInfo(seat),
@@ -215,7 +227,8 @@ public class SeatCommandService {
                 member.getCoin(),
                 address.getUserName(),
                 address.getPhoneNumber(),
-                formatUserAddress(address)
+                formatUserAddress(address),
+                ticketId.intValue()
         );
     }
 

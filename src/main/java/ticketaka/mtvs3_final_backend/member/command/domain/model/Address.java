@@ -20,6 +20,9 @@ public class Address extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Long memberId;
+    @Column
+    private Long ticketId;
+
     @Column(nullable = false)
     private String userName;
     @Column(nullable = false)
@@ -31,8 +34,9 @@ public class Address extends BaseTimeEntity {
     private String detail;
 
     @Builder
-    public Address(Long memberId, String userName, String phoneNumber, String address, String detail) {
+    public Address(Long memberId, Long ticketId, String userName, String phoneNumber, String address, String detail) {
         this.memberId = memberId;
+        this.ticketId = ticketId;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
         this.address = address;

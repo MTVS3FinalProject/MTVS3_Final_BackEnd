@@ -14,7 +14,7 @@ import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
-import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileRepository;
+import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileCommandRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
@@ -39,7 +39,7 @@ public class Mtvs3FinalBackendApplication {
     @Profile("local")
     @Bean
     CommandLineRunner localServerStart(MemberRepository memberRepository,
-                                       FileRepository fileRepository,
+                                       FileCommandRepository fileCommandRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
                                        SeatCommandRepository seatCommandRepository) {
@@ -63,7 +63,7 @@ public class Mtvs3FinalBackendApplication {
             memberRepository.saveAll(Arrays.asList(
                     member1, member2, member3, member4, member5, member6, member7, member8
             ));
-            fileRepository.saveAll(Arrays.asList(
+            fileCommandRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
                     newFile(RelationType.MEMBER, 4L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024181004.png?generation=1729761005300338&alt=media", FilePurpose.SIGNUP),
                     newFile(RelationType.MEMBER, 5L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163356.png?generation=1729755237994884&alt=media", FilePurpose.SIGNUP),

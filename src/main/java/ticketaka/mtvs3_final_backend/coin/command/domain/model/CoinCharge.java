@@ -20,12 +20,12 @@ public class CoinCharge extends BaseTimeEntity {
     @Column
     private String name;
     @Column
-    private int amount;
+    private Integer amount;
     @Column
-    private int price;
+    private Integer price;
 
     @Builder
-    public CoinCharge(String name, int amount, int price) {
+    public CoinCharge(String name, Integer amount, Integer price) {
         this.name = name;
         this.amount = amount;
         this.price = price;

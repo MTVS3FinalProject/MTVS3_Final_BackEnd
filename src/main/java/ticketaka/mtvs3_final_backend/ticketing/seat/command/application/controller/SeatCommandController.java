@@ -102,7 +102,7 @@ public class SeatCommandController {
 
         log.info("reserveSeat_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.reserveSeat(concertId, seatId, getCurrentMemberId());
+        SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.reserveSeat(getCurrentMemberId(), concertId, seatId);
 
         log.info("reserveSeat_response: {}", responseDTO);
 
@@ -115,7 +115,7 @@ public class SeatCommandController {
     @PostMapping("/{concertId}/payment-cheat")
     public ResponseEntity<?> cheatReserveSeat(@PathVariable("concertId") Long concertId) {
 
-        SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.cheatReserveSeat(concertId, getCurrentMemberId());
+        SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.cheatReserveSeat(getCurrentMemberId(), concertId);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

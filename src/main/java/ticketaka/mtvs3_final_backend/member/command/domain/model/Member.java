@@ -41,7 +41,7 @@ public class Member extends BaseTimeEntity {
 
     @Setter
     @Column
-    private int coin;
+    private Integer coin;
 
     @Builder
     public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Authority authority, Status status) {
