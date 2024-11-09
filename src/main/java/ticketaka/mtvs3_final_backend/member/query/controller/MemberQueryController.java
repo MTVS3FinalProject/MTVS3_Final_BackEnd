@@ -28,7 +28,7 @@ public class MemberQueryController {
     @GetMapping("/address")
     public ResponseEntity<?> getRecentMemberAddress() {
 
-
+        memberQueryService.
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
