@@ -15,22 +15,21 @@ public class TicketAddress {
     @Id
     private String id;
 
-    private Long concertId;
-    private Long seatId;
-
     private String userName;
     private String userPhoneNumber;
     private String userAddress1;
     private String userAddress2;
 
     @Builder
-    public TicketAddress(String id, Long concertId, Long seatId, String userName, String userPhoneNumber, String userAddress1, String userAddress2) {
+    public TicketAddress(String id, String userName, String userPhoneNumber, String userAddress1, String userAddress2) {
         this.id = id;
-        this.concertId = concertId;
-        this.seatId = seatId;
         this.userName = userName;
         this.userPhoneNumber = userPhoneNumber;
         this.userAddress1 = userAddress1;
         this.userAddress2 = userAddress2;
+    }
+
+    public static String generateTicketAddressId(Long memberId, Long concertId, Long seatId) {
+        return memberId + "_" + concertId + "_" + seatId;
     }
 }

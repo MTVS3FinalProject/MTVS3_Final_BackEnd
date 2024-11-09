@@ -11,6 +11,7 @@ import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryReq
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
+import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
@@ -38,6 +39,7 @@ import java.util.List;
 @Service
 public class SeatCommandService {
 
+    private final MemberCommandService memberCommandService;
     private final SeatReceptionService seatReceptionService;
     private final SeatDrawingService seatDrawingService;
     private final TicketCommandService ticketCommandService;
@@ -161,7 +163,7 @@ public class SeatCommandService {
         Long ticketId = ticketCommandService.createTicket(memberId, concertId, seatId).ticketId();
 
         // 주소지 티켓 매핑
-
+        memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(

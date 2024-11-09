@@ -9,6 +9,8 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
+import ticketaka.mtvs3_final_backend.redis.ticketaddress.domain.TicketAddress;
+import ticketaka.mtvs3_final_backend.redis.ticketaddress.repository.TicketAddressRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
@@ -52,6 +54,7 @@ public class ConcertCommandService {
     private final MemberStickerCommandRepository memberStickerCommandRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
+    private final TicketAddressRedisRepository ticketAddressRedisRepository;
 
     /*
         공연장 정보 조회
@@ -133,16 +136,15 @@ public class ConcertCommandService {
     /*
         예매자 정보 입력
      */
-    public ConcertCommandResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long currentMemberId, Long concertId, Long seatId, ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO) {
+    public ConcertCommandResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long memberId, Long concertId, Long seatId, ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
-        Member member = getMember(currentMemberId);
+        Member member = getMember(memberId);
 
-        DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(currentMemberId))
+        DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(memberId))
                 .orElseThrow(() -> new Exception403("해당 좌석에 대한 결제 권한이 없습니다."));
 
-        Address address = newAddress(requestDTO, currentMemberId);
-
-        addressRepository.save(address);
+        TicketAddress ticketAddress = newTicketAddress(memberId, concertId, seatId, requestDTO);
+        ticketAddressRedisRepository.save(ticketAddress);
 
         drawResult.setPaymentStatus(PaymentStatus.IN_PROGRESS);
         drawResultRedisRepository.save(drawResult);
@@ -176,15 +178,14 @@ public class ConcertCommandService {
                 .orElseThrow(() -> new Exception400("해당 이름의 공연은 현재 존재하지 않습니다."));
     }
 
-    // Address 생성
-    // TODO: MemberController 로 이동할 예정
-    private Address newAddress(ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO, Long memberId) {
-        return Address.builder()
-                .memberId(memberId)
+    // TicketAddress 생성
+    private TicketAddress newTicketAddress(Long memberId, Long concertId, Long seatId, ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO) {
+        return TicketAddress.builder()
+                .id(TicketAddress.generateTicketAddressId(memberId, concertId, seatId))
                 .userName(requestDTO.userName())
-                .phoneNumber(requestDTO.userPhoneNumber())
-                .address(requestDTO.userAddress1())
-                .detail(requestDTO.userAddress2())
+                .userPhoneNumber(requestDTO.userPhoneNumber())
+                .userAddress1(requestDTO.userAddress1())
+                .userAddress2(requestDTO.userAddress2())
                 .build();
     }
 
