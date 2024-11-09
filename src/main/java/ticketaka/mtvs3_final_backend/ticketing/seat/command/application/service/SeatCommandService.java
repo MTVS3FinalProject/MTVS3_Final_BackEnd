@@ -160,6 +160,9 @@ public class SeatCommandService {
         // Ticket 생성
         Long ticketId = ticketCommandService.createTicket(memberId, concertId, seatId).ticketId();
 
+        // 주소지 티켓 매핑
+
+
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(
                 seat.getId().intValue(),

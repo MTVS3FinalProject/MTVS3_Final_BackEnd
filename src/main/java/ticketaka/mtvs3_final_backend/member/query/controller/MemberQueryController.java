@@ -23,9 +23,20 @@ public class MemberQueryController {
     private final MemberQueryService memberQueryService;
 
     /*
+        최근 배송 정보 조회
+     */
+    @GetMapping("/address")
+    public ResponseEntity<?> getRecentMemberAddress() {
+
+
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
         인벤토리 조회
      */
-    @GetMapping
+    @GetMapping("/inventory")
     public ResponseEntity<?> getMemberInventory() {
 
         MemberQueryResponseDTO.getMemberInventoryDTO responseDTO = memberQueryService.getMemberInventory(getCurrentMemberId());
