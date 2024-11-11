@@ -22,6 +22,10 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
+import ticketaka.mtvs3_final_backend.title.command.domain.repository.TitleCommandRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,8 +46,11 @@ public class Mtvs3FinalBackendApplication {
                                        FileCommandRepository fileCommandRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
-                                       SeatCommandRepository seatCommandRepository) {
+                                       SeatCommandRepository seatCommandRepository,
+                                       TitleCommandRepository titleCommandRepository) {
         return args -> {
+            
+            // Member 저장
             Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
             Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
             Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder);
@@ -71,11 +78,15 @@ public class Mtvs3FinalBackendApplication {
                     newFile(RelationType.MEMBER, 7L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/signup-20241028175000.png?generation=1730105402094670&alt=media", FilePurpose.SIGNUP),
                     newFile(RelationType.MEMBER, 8L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/signup-20241028175534.png?generation=1730105736125941&alt=media", FilePurpose.SIGNUP)
                     ));
-            Concert concert01 = newConcert("Concert01", LocalDateTime.of(2024, 11, 1, 19, 0), 18, 2);
+            
+            // Concert 저장
+            Concert concert01 = newConcert("NewJeans Bunnies Camp", LocalDateTime.of(2024, 11, 1, 19, 0), 18, 2);
             concert01.setConcertStatus(ConcertStatus.RESERVING);
             concertRepository.saveAll(Arrays.asList(
                     concert01
             ));
+            
+            // Seat 저장
             seatCommandRepository.saveAll(Arrays.asList(
                     newSeat(2, "A1", "13", 19999, LocalDateTime.of(2024, 10, 22, 17, 30), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "A1", "15", 29999, LocalDateTime.of(2024, 10, 22, 17, 45), concert01, SeatStatus.AVAILABLE),
@@ -107,6 +118,40 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D2", "67", 24999, LocalDateTime.of(2024, 10, 23, 00, 15), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "69", 29999, LocalDateTime.of(2024, 10, 23, 00, 30), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE)
+            ));
+
+            // Title 저장
+            titleCommandRepository.saveAll(Arrays.asList(
+                    newTitle("Concert", concert01.getId(), "토끼단의 리더", "뉴진스 팬덤 버니즈의 리더로 인정받은 팬", "Unique"),
+                    newTitle("Concert", concert01.getId(), "하입보이 지니", "뉴진스 곡 'Hype Boy'의 열렬한 팬", "Unique"),
+                    newTitle("Concert", concert01.getId(), "디토의 수호자", "Ditto'를 지키는 뉴진스 팬", "Unique"),
+                    newTitle("Concert", concert01.getId(), "Cookie Run의 Master", "뉴진스 곡 'Cookie'를 사랑하는 팬", "Unique"),
+                    newTitle("Concert", concert01.getId(), "OMG의 전설", "OMG' 곡에 완벽히 매료된 팬", "Unique"),
+                    newTitle("Concert", concert01.getId(), "Super Shy Champion", "뉴진스 곡 'Super Shy'를 완벽히 아는 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "ETA의 시간여행자", "ETA'를 통해 뉴진스와 시간 여행을 즐기는 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "뉴진스의 큐레이터", "뉴진스의 모든 곡을 큐레이팅한 진정한 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "버니즈의 수호천사", "버니즈 팬덤을 지키는 수호천사", "Rare"),
+                    newTitle("Concert", concert01.getId(), "Get Up 얼리버드", "뉴진스 콘서트에 가장 일찍 참여한 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "뉴진스의 포토그래퍼", "뉴진스의 모든 순간을 포착하는 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "Cool With You 마스터", "뉴진스의 'Cool With You'에 완전히 빠진 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "New Jeans 창단멤버", "뉴진스 팬덤의 초기 멤버로 활동 중인 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "Attention 셀러브리티", "Attention' 곡에 대한 특별한 애정을 가진 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "Zero to Hero", "뉴진스 팬덤의 성장과 함께하는 팬", "Rare"),
+                    newTitle("Concert", concert01.getId(), "뉴진스의 뮤즈", "뉴진스의 영감을 불어넣는 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "ASAP 스피드스터", "뉴진스와 함께 신속하게 참여하는 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "뉴진스 패션 아이콘", "뉴진스 스타일을 대표하는 패셔니스타", "Common"),
+                    newTitle("Concert", concert01.getId(), "글로벌 버니즈", "글로벌 팬덤 버니즈의 일원", "Common"),
+                    newTitle("Concert", concert01.getId(), "뉴진스 트렌드세터", "뉴진스 트렌드와 함께하는 진정한 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "Billboard Hot 100", "뉴진스의 빌보드 진입을 자랑스러워하는 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "뉴진스 아카데미", "뉴진스의 모든 곡을 공부한 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "버니즈 메이커", "뉴진스 팬덤 버니즈의 창조자", "Common"),
+                    newTitle("Concert", concert01.getId(), "뉴진스 앰버서더", "뉴진스를 전 세계에 알리는 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "Dance Breaker", "뉴진스 콘서트에서 춤을 즐기는 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "버니즈 스토리텔러", "뉴진스의 이야기를 전하는 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "뉴진스 히스토리안", "뉴진스의 역사를 아는 진정한 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "음원강자", "뉴진스의 모든 음원을 섭렵한 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "버니즈 아티스트", "뉴진스 팬 아트를 즐기는 아티스트 팬", "Common"),
+                    newTitle("Concert", concert01.getId(), "레전드 버니즈", "뉴진스 팬덤 내에서 전설이 된 팬", "Common")
             ));
         };
     }
@@ -150,6 +195,16 @@ public class Mtvs3FinalBackendApplication {
                 .drawingTime(drawingTime)
                 .concert(concert)
                 .seatStatus(seatStatus)
+                .build();
+    }
+
+    private Title newTitle(String titleType, Long concertId, String titleName, String titleScript, String titleRarity) {
+        return Title.builder()
+                .titleType(TitleType.fromString(titleType))
+                .concertId(concertId)
+                .titleName(titleName)
+                .titleScript(titleScript)
+                .titleRarity(TitleRarity.fromString(titleRarity))
                 .build();
     }
 }
