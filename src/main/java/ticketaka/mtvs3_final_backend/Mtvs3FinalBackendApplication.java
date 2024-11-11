@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
+import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
@@ -47,7 +52,8 @@ public class Mtvs3FinalBackendApplication {
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
                                        SeatCommandRepository seatCommandRepository,
-                                       TitleCommandRepository titleCommandRepository) {
+                                       TitleAdminCommandRepository titleAdminCommandRepository,
+                                       StickerAdminCommandRepository stickerAdminCommandRepository) {
         return args -> {
             
             // Member 저장
@@ -121,7 +127,7 @@ public class Mtvs3FinalBackendApplication {
             ));
 
             // Title 저장
-            titleCommandRepository.saveAll(Arrays.asList(
+            titleAdminCommandRepository.saveAll(Arrays.asList(
                     newTitle("Concert", concert01.getId(), "토끼단의 리더", "뉴진스 팬덤 버니즈의 리더로 인정받은 팬", "Unique"),
                     newTitle("Concert", concert01.getId(), "하입보이 지니", "뉴진스 곡 'Hype Boy'의 열렬한 팬", "Unique"),
                     newTitle("Concert", concert01.getId(), "디토의 수호자", "Ditto'를 지키는 뉴진스 팬", "Unique"),
@@ -152,6 +158,40 @@ public class Mtvs3FinalBackendApplication {
                     newTitle("Concert", concert01.getId(), "음원강자", "뉴진스의 모든 음원을 섭렵한 팬", "Common"),
                     newTitle("Concert", concert01.getId(), "버니즈 아티스트", "뉴진스 팬 아트를 즐기는 아티스트 팬", "Common"),
                     newTitle("Concert", concert01.getId(), "레전드 버니즈", "뉴진스 팬덤 내에서 전설이 된 팬", "Common")
+            ));
+
+            // Sticker 저장
+            stickerAdminCommandRepository.saveAll(Arrays.asList(
+                    newSticker(concert01.getId(), "Attention!", "뉴진스의 히트곡 'Attention' 로고 스티커", "Collection", "Unique"),
+                    newSticker(concert01.getId(), "Supernatural!", "무라카미 스티커", "Collection", "Unique"),
+                    newSticker(concert01.getId(), "Hype Up", "팬들이 좋아하는 ‘Hype Boy’의 상징 스티커", "Collection", "Unique"),
+                    newSticker(concert01.getId(), "Ditto Forever", "‘Ditto’ 테마로 디자인된 심플 스티커", "Collection", "Unique"),
+                    newSticker(concert01.getId(), "Bunny Ears", "뉴진스 팬덤의 귀여운 토끼 귀 스티커", "Collection", "Unique"),
+                    newSticker(concert01.getId(), "Super Shy Star", "‘Super Shy’ 곡의 수줍은 별모양 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "ETA Clock", "‘ETA’를 의미하는 아이콘 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "OMG Shock", "‘OMG’의 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "Disco Lights", "디스코 느낌의 반짝이는 조명 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "Cool With Heart", "‘Cool With You’ 테마의 하트 모양 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "Get Up", "Get Up' 곡의 테마 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "New Jeans", "뉴진스의 시그니처 청바지 로고 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "BunBun Love", "팬덤을 상징하는 귀여운 토끼 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "Cookie Heart", "쿠키 모양의 하트 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "Hype Vibes", "‘Hype Boy’ 느낌의 에너지 넘치는 스티커", "Collection", "Rare"),
+                    newSticker(concert01.getId(), "bunnies LOGO 1", "버니즈 로고 1", "Collection", "Common"),
+                    newSticker(concert01.getId(), "bunnies LOGO 2", "버니즈 로고 2", "Collection", "Common"),
+                    newSticker(concert01.getId(), "bunnies concert", "콘서트 응원봉", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Heartbeat Bunny", "팬덤을 위한 심장 박동 모양 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Fan's Camera", "팬들의 셀카 모드를 위한 카메라 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Starstruck", "별이 쏟아지는 느낌의 반짝이는 별 스티커", "Common", "Common"),
+                    newSticker(concert01.getId(), "Retro Bunny", "뉴진스의 레트로 느낌을 반영한 토끼 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Groove On", "리듬에 맞춰 춤추는 팬들을 위한 스티커", "Common", "Common"),
+                    newSticker(concert01.getId(), "New Era", "뉴진스를 대표하는 뉴 제너레이션 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Bunnies Hug", "팬덤을 대표하는 토끼가 포옹하는 스티커", "Common", "Common"),
+                    newSticker(concert01.getId(), "Dreamy Day", "꿈 같은 뉴진스의 공연을 표현한 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "City Lights", "도심의 야경과 뉴진스 공연 느낌을 담은 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Starry Night", "콘서트 밤하늘을 연상케 하는 별 스티커", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Debut CD", "뉴진스 데뷔앨범 CD", "Collection", "Common"),
+                    newSticker(concert01.getId(), "Cheers Together", "팬들과의 축배를 의미하는 건배 스티커", "Collection", "Common")
             ));
         };
     }
@@ -205,6 +245,16 @@ public class Mtvs3FinalBackendApplication {
                 .titleName(titleName)
                 .titleScript(titleScript)
                 .titleRarity(TitleRarity.fromString(titleRarity))
+                .build();
+    }
+
+    private Sticker newSticker(Long concertId, String stickerName, String stickerScript, String stickerType, String stickerRarity) {
+        return Sticker.builder()
+                .concertId(concertId)
+                .stickerName(stickerName)
+                .stickerScript(stickerScript)
+                .stickerType(StickerType.fromString(stickerType))
+                .stickerRarity(StickerRarity.fromString(stickerRarity))
                 .build();
     }
 }
