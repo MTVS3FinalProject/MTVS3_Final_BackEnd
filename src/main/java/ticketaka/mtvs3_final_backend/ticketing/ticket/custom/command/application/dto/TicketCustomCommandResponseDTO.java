@@ -4,7 +4,7 @@ public class TicketCustomCommandResponseDTO {
 
     public record generateAIBackgroundDTO(
             int backgroundId,
-            byte[] backgroundImage
+            String backgroundImage
     ) {
     }
 }

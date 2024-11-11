@@ -44,7 +44,7 @@ public class MemberQueryResponseDTO {
             String stickerName,
             String stickerScript,
             String stickerRarity,
-            byte[] stickerImage
+            String stickerImage
     ) {
     }
 
@@ -53,7 +53,7 @@ public class MemberQueryResponseDTO {
             int ticketId,
             String concertName,
             String seatInfo,
-            byte[] ticketImage
+            String ticketImage
     ) {
     }
 }

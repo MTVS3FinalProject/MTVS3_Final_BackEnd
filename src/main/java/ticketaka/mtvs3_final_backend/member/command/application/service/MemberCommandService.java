@@ -9,6 +9,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.redis.ticketaddress.domain.TicketAddress;
 import ticketaka.mtvs3_final_backend.redis.ticketaddress.repository.TicketAddressRedisRepository;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleCommandRepository;
+import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -16,14 +19,16 @@ import ticketaka.mtvs3_final_backend.redis.ticketaddress.repository.TicketAddres
 @Service
 public class MemberCommandService {
 
+    private final AddressRepository addressRepository;
+    private final MemberTitleCommandRepository memberTitleCommandRepository;
+    private final MemberTitleQueryRepository memberTitleQueryRepository;
 
     private final TicketAddressRedisRepository ticketAddressRedisRepository;
-    private final AddressRepository addressRepository;
 
     /*
             티켓 주소지 입력
          */
-    public void saveTicketAddress(Long memberId, Long concertId, Long seatId, Long ticketId) {
+    public Address saveTicketAddress(Long memberId, Long concertId, Long seatId, Long ticketId) {
         TicketAddress ticketAddress = ticketAddressRedisRepository.findById(TicketAddress.generateTicketAddressId(
                 memberId, concertId, seatId)
         ).orElseThrow(() -> new Exception400("주소지 입력이 되지 않았습니다."));
@@ -32,6 +37,23 @@ public class MemberCommandService {
         addressRepository.save(address);
 
         ticketAddressRedisRepository.delete(ticketAddress);
+
+        return address;
+    }
+
+    /*
+        메인 타이틀 변경
+     */
+    public void changeMainTitle(Long memberId, Long titleId) {
+
+        // 기존 Main Title 해제
+        memberTitleCommandRepository.clearRepresentativeTitle(memberId);
+
+        // Main Title 설정
+        MemberTitle memberTitle = memberTitleQueryRepository.findByMemberIdAndTitleId(memberId, titleId)
+                .orElseThrow(() -> new Exception400("해당 Title 을 소유하고 있지 않습니다."));
+        memberTitle.setIsRepresentative(true);
+        memberTitleCommandRepository.save(memberTitle);
     }
 
     // Address 생성

@@ -1,8 +1,8 @@
-package ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto;
+package ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto;
 
 import java.util.List;
 
-public class TicketCustomQueryResponseDTO {
+public class TicketQueryResponseDTO {
 
     /*
         커스텀 티켓 목록 조회
@@ -16,7 +16,7 @@ public class TicketCustomQueryResponseDTO {
             ticketConcertDTO concertInfo,
             String seatInfo,
             int ticketId,
-            byte[] ticketImage
+            String ticketImage
     ) {
     }
 
@@ -42,7 +42,7 @@ public class TicketCustomQueryResponseDTO {
     // Sticker
     public record stickerDTO(
             int stickerId,
-            byte[] stickerImage
+            String stickerImage
     ) {
     }
 }

@@ -41,7 +41,7 @@ public class ConcertCommandResponseDTO {
             String stickerName,
             String stickerScript,
             String stickerRarity,
-            byte[] stickerImage
+            String stickerImage
     ) {
     }
 

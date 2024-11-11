@@ -41,11 +41,11 @@ public class BackgroundCommandService {
                 .build();
         background = backgroundCommandRepository.save(background);
 
-        fileCommandService.saveAIBackgroundImage(background.getId(), backgroundImageData);
+        File file = fileCommandService.saveAIBackgroundImage(background.getId(), backgroundImageData);
 
         return new TicketCustomCommandResponseDTO.generateAIBackgroundDTO(
                 background.getId().intValue(),
-                backgroundImageData
+                file.getFileUrl()
         );
     }
 }

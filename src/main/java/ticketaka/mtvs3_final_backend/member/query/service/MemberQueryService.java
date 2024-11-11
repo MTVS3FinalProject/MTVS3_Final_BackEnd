@@ -12,8 +12,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
-import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleQueryRepository;
+import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
@@ -36,7 +37,7 @@ public class MemberQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final TitleQueryService titleQueryService;
     private final StickerQueryService stickerQueryService;
-    private final TicketCustomQueryService ticketCustomQueryService;
+    private final TicketQueryService ticketQueryService;
     private final FileQueryService fileQueryService;
 
     private final TicketQueryRepository ticketQueryRepository;
@@ -98,7 +99,7 @@ public class MemberQueryService {
 //        List<MemberSticker> memberStickerList = memberStickerQueryRepository.findAllByMemberId(memberId);
         List<Sticker> stickerList = stickerQueryService.getMemberStickerList(memberId);
         // Sticker 에 대응하는 ImgUrl 조회
-        Map<Long, byte[]> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
+        Map<Long, String> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
                 .map(Sticker::getId)
                 .toList());
         List<MemberQueryResponseDTO.getMemberStickerDTO> memberStickerDTOList = stickerList.stream()
@@ -116,17 +117,17 @@ public class MemberQueryService {
         List<Ticket> ticketList = getTicketList(memberId);
 
         // ConcertIdList 조회
-        Map<Long, Concert> concertMap = ticketCustomQueryService.getConcertMap(ticketList);
+        Map<Long, Concert> concertMap = ticketQueryService.getConcertMap(ticketList);
         // SeatInfoList 조회
-        Map<Long, String> seatInfoMap = ticketCustomQueryService.getSeatInfoMap(ticketList);
+        Map<Long, String> seatInfoMap = ticketQueryService.getSeatInfoMap(ticketList);
         // Custom Ticket 조회
-        Map<Long, CustomTicket> customTicketMap = ticketCustomQueryService.getCustomTicketMap(ticketList);
+        Map<Long, CustomTicket> customTicketMap = ticketQueryService.getCustomTicketMap(ticketList);
         List<MemberQueryResponseDTO.getMemberTicketDTO> memberTicketDTOList = ticketList.stream()
                 .map(ticket -> {
                     Concert concert = concertMap.get(ticket.getConcertId());
                     String seatInfo = seatInfoMap.get(ticket.getSeatId());
                     CustomTicket customTicket = customTicketMap.get(ticket.getId());
-                    byte[] ticketImage = customTicket != null ?
+                    String ticketImage = customTicket != null ?
                             fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
                             fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
 

@@ -141,8 +141,6 @@ public class SeatCommandService {
 
         // Member 확인
         Member member = getMember(memberId);
-        // 배송지 정보 조회
-        Address address = getAddress(member);
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
         // Seat 조회
@@ -163,7 +161,7 @@ public class SeatCommandService {
         Long ticketId = ticketCommandService.createTicket(memberId, concertId, seatId).ticketId();
 
         // 주소지 티켓 매핑
-        memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
+        Address address = memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(

@@ -122,7 +122,7 @@ public class ConcertCommandService {
         memberStickerCommandRepository.save(memberSticker);
 
         // Sticker image 조회
-        byte[] stickerImage = fileQueryService.getFileImage(RelationType.STICKER, sticker.getId());
+        String stickerImage = fileQueryService.getFileImage(RelationType.STICKER, sticker.getId());
 
         return new ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO(
                 sticker.getId().intValue(),
