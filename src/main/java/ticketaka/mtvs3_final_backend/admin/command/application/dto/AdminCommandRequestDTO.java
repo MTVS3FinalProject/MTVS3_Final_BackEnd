@@ -4,6 +4,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class AdminCommandRequestDTO {
 
+    // Title 업로드
+    public record uploadTitleDTO(
+            String titleName,
+            String titleScript,
+            String titleRarity
+    ) {
+    }
+
     // Sticker 업로드
     public record uploadStickerDTO(
             String stickerName,
