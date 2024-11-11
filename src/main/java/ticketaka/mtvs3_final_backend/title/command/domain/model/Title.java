@@ -17,6 +17,13 @@ public class Title extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TitleType titleType;
+    @Column
+    private Long concertId;
+
     @Column(nullable = false, unique = true)
     private String titleName;
     @Column(nullable = false)
@@ -27,7 +34,9 @@ public class Title extends BaseTimeEntity {
     private TitleRarity titleRarity;
 
     @Builder
-    public Title(String titleName, String titleScript, TitleRarity titleRarity) {
+    public Title(TitleType titleType, Long concertId, String titleName, String titleScript, TitleRarity titleRarity) {
+        this.titleType = titleType;
+        this.concertId = concertId;
         this.titleName = titleName;
         this.titleScript = titleScript;
         this.titleRarity = titleRarity;
