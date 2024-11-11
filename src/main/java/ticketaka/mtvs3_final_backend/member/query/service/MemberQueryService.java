@@ -13,7 +13,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRep
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
-import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleQueryRepository;
+import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;

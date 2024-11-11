@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
-import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleQueryRepository;
+import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
 import java.util.List;
