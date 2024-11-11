@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.title.member.command.domain.repository;
+package ticketaka.mtvs3_final_backend.title.member.query.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,4 +13,6 @@ public interface MemberTitleQueryRepository extends JpaRepository<MemberTitle, L
     List<MemberTitle> findAllByMemberId(Long memberId);
 
     Optional<MemberTitle> findByMemberIdAndIsRepresentative(Long memberId, boolean b);
+
+    Optional<MemberTitle> findByMemberIdAndTitleId(Long memberId, Long titleId);
 }
