@@ -29,8 +29,8 @@ public class MemberQueryController {
     @GetMapping("/address")
     public ResponseEntity<?> getRecentMemberAddress() {
 
-
         MemberQueryResponseDTO.getRecentMemberAddressDTO responseDTO = memberQueryService.getRecentMemberAddress(getCurrentMemberId());
+
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 

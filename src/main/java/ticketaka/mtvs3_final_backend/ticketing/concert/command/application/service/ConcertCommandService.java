@@ -113,6 +113,7 @@ public class ConcertCommandService {
     /*
         Puzzle 결과 Title, Sticker 획득
      */
+    @Transactional
     public ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO acquireStickerFromPuzzleResult(Long memberId, Long concertId, ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
 
         // Title 할당
@@ -150,6 +151,7 @@ public class ConcertCommandService {
     /*
         예매자 정보 입력
      */
+    @Transactional
     public ConcertCommandResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long memberId, Long concertId, Long seatId, ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
         Member member = getMember(memberId);

@@ -21,6 +21,7 @@ public class StickerAdminCommandService {
     /*
         Sticker 추가
      */
+    @Transactional
     public Sticker saveSticker(Long concertId, AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
         return stickerAdminCommandRepository.save(newSticker(concertId, requestDTO));
     }

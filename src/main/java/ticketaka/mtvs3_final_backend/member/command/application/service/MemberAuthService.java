@@ -149,6 +149,7 @@ public class MemberAuthService {
     /*
         기본 로그인
      */
+    @Transactional
     public MemberAuthResponseDTO.loginDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
 
         // 1. 이메일 확인
@@ -209,6 +210,7 @@ public class MemberAuthService {
     /*
         토큰 재발급
      */
+    @Transactional
     public MemberAuthResponseDTO.authTokenDTO reissueToken(HttpServletRequest httpServletRequest) {
 
         // Request Header 에서 JWT Token 추출
@@ -249,6 +251,7 @@ public class MemberAuthService {
     /*
         로그아웃
      */
+    @Transactional
     public void logout(HttpServletRequest httpServletRequest) {
 
         log.info("로그아웃 - Refresh Token 확인");

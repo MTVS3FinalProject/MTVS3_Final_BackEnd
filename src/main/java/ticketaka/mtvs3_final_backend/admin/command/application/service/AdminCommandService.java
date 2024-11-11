@@ -26,6 +26,7 @@ public class AdminCommandService {
     /*
         Title 추가
      */
+    @Transactional
     public void uploadTitle(Long concertId, AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
 
         titleAdminCommandService.saveTitle(concertId, requestDTO);
@@ -34,6 +35,7 @@ public class AdminCommandService {
     /*
         Sticker 추가
      */
+    @Transactional
     public void uploadSticker(Long concertId, AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
 
         getConcert(concertId);

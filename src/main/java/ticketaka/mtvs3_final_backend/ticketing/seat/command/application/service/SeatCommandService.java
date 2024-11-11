@@ -96,6 +96,7 @@ public class SeatCommandService {
     /*
         추첨 시작 알림
      */
+    @Transactional
     public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long concertId, Long seatId) {
 
         // Concert 조회
@@ -198,6 +199,7 @@ public class SeatCommandService {
     /*
         좌석 결제 - 치트
      */
+    @Transactional
     public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long memberId, Long concertId) {
 
         // Member 확인

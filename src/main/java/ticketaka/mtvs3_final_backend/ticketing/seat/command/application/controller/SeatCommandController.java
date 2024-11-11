@@ -77,7 +77,7 @@ public class SeatCommandController {
 
         log.info("createDrawResult_request: concertId={}, seatId={}", concertId, seatId);
 
-        seatCommandService.processDrawResult(concertId, seatId, getCurrentMemberId());
+        seatCommandService.processDrawResult(getCurrentMemberId(), concertId, seatId);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

@@ -51,6 +51,7 @@ public class QRService {
     /*
         회원 가입 용 QR 생성
      */
+    @Transactional
     public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         // 이메일 중복 확인
@@ -70,6 +71,7 @@ public class QRService {
     /*
         회원 가입 용 사진 업로드 성공 확인
      */
+    @Transactional
     public void checkSignUpQR(QRRequestDTO.checkSignUpQRDTO requestDTO) {
 
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.email())
@@ -81,6 +83,7 @@ public class QRService {
     /*
         회원 인증 용 QR 생성
      */
+    @Transactional
     public QRResponseDTO.generateVerificationQRDTO generateVerificationQR(Long currentMemberId) {
 
         validateMember(currentMemberId);
@@ -100,6 +103,7 @@ public class QRService {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
+    @Transactional
     public QRResponseDTO.checkVerificationQR checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
 
         validateMember(currentMemberId);

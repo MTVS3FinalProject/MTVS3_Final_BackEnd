@@ -19,8 +19,9 @@ public class TitleAdminCommandService {
     private final TitleAdminCommandRepository titleAdminCommandRepository;
 
     /*
-            Title 추가
-         */
+        Title 추가
+     */
+    @Transactional
     public Title saveTitle(Long concertId, AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
         return titleAdminCommandRepository.save(newTitle(concertId, requestDTO));
     }
