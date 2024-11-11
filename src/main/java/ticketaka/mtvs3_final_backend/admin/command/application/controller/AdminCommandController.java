@@ -17,6 +17,17 @@ public class AdminCommandController {
     private final AdminCommandService adminCommandService;
 
     /*
+        Title 추가
+     */
+    @PostMapping("/title")
+    public ResponseEntity<?> uploadTitle(@RequestBody AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
+
+        adminCommandService.uploadTitle(requestDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
         Sticker 추가
      */
     @PostMapping("/concerts/{concertId}/sticker")
