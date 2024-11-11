@@ -181,9 +181,10 @@ public class SeatCommandService {
     /*
         추첨 결과 치트
      */
-    public void cheatDrawResult(Long concertId, Long currentMemberId) {
+    @Transactional
+    public void cheatDrawResult(Long memberId, Long concertId) {
 
-        Member member = getMember(currentMemberId);
+        Member member = getMember(memberId);
         Concert concert = getReservingConcert(concertId);
 
         MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
@@ -191,7 +192,7 @@ public class SeatCommandService {
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         memberSeatCommandRepository.save(memberSeat);
 
-        newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
+        newDrawResult(memberId, concert.getId(), memberSeat.getSeatId());
     }
 
     /*
