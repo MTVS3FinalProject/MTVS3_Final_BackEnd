@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -76,8 +77,9 @@ public class FileCommandService {
     }
 
     // Custom Ticket 이미지 저장
-    public void saveCustomTicketImage(Long customTicketId, byte[] customTicketImage) {
+    public void saveCustomTicketImage(Long customTicketId, String encodedCustomTicketImageData) {
 
+        byte[] customTicketImage = Base64.getDecoder().decode(encodedCustomTicketImageData);
         String fileName = CUSTOM_TICKET_FILENAME_PREFIX + System.currentTimeMillis();
         String fileUrl = uploadImgByByte(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
 
