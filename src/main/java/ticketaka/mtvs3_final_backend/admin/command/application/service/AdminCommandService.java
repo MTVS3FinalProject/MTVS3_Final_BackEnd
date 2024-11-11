@@ -26,9 +26,9 @@ public class AdminCommandService {
     /*
         Title 추가
      */
-    public void uploadTitle(AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
+    public void uploadTitle(Long concertId, AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
 
-        titleAdminCommandService.saveTitle(requestDTO);
+        titleAdminCommandService.saveTitle(concertId, requestDTO);
     }
 
     /*

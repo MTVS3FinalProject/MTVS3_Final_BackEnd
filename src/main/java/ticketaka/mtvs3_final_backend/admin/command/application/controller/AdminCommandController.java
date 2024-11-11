@@ -19,10 +19,10 @@ public class AdminCommandController {
     /*
         Title 추가
      */
-    @PostMapping("/title")
-    public ResponseEntity<?> uploadTitle(@RequestBody AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
+    @PostMapping("/concerts/{concertId}/title")
+    public ResponseEntity<?> uploadTitle(@PathVariable("concertId") Long concertId, @RequestBody AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
 
-        adminCommandService.uploadTitle(requestDTO);
+        adminCommandService.uploadTitle(concertId, requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
