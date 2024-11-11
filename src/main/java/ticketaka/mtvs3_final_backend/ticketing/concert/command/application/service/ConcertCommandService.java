@@ -108,13 +108,8 @@ public class ConcertCommandService {
      */
     public ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO acquireStickerFromPuzzleResult(Long memberId, Long concertId, ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
 
-        // Sticker Rarity 계산
-        StickerRarity stickerRarity = calculateStickerRarity(requestDTO.rank());
-
-        log.info("stickerRarity: {}", stickerRarity);
-
         // Sticker 할당
-        Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, stickerRarity);
+        Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
 
         // Member Sticker 생성
         MemberSticker memberSticker = newMemberSticker(memberId, sticker.getId());
@@ -233,18 +228,5 @@ public class ConcertCommandService {
         if(memberAge < ageRestriction) {
             throw new Exception400("해당 공연의 연령 제한을 충족하지 못합니다.");
         }
-    }
-
-    // Sticker Rarity 계산
-    private StickerRarity calculateStickerRarity(int rank) {
-
-        StickerRarity[] stickerRarities = StickerRarity.values();
-
-        // rank 유효성 검사
-        if (rank < 1 || rank > stickerRarities.length) {
-            throw new Exception400("아쉽게도 Sticker 를 획득하지 못하였습니다.");
-        }
-
-        return stickerRarities[stickerRarities.length - rank];
     }
 }
