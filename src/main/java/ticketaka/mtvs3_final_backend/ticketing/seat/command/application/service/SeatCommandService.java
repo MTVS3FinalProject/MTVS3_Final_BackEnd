@@ -188,6 +188,8 @@ public class SeatCommandService {
 
         MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
+        memberSeatCommandRepository.save(memberSeat);
 
         newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
     }
