@@ -88,7 +88,7 @@ public class SeatCommandController {
     @PostMapping("/{concertId}/draw-cheat")
     public ResponseEntity<?> cheatDrawResult(@PathVariable("concertId") Long concertId) {
 
-        seatCommandService.cheatDrawResult(concertId, getCurrentMemberId());
+        seatCommandService.cheatDrawResult(getCurrentMemberId(), concertId);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
