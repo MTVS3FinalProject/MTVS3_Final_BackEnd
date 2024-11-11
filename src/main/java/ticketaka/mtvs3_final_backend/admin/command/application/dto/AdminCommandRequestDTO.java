@@ -10,7 +10,7 @@ public class AdminCommandRequestDTO {
             String stickerScript,
             String stickerType,
             String stickerRarity,
-            byte[] stickerImage
+            MultipartFile stickerImage
     ) {
     }
 }

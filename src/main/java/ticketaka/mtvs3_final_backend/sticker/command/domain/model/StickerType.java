@@ -4,11 +4,12 @@ public enum StickerType {
     COMMON, COLLECTION, UNKNOWN;
 
     public static StickerType fromString(String stickerType) {
+
         if (stickerType == null) {
             return UNKNOWN;
         }
 
-        return switch (stickerType) {
+        return switch (stickerType.toLowerCase()) {
             case "common" -> COMMON;
             case "collection" -> COLLECTION;
             default -> UNKNOWN;

@@ -17,10 +17,10 @@ public class AdminCommandController {
     private final AdminCommandService adminCommandService;
 
     /*
-            Sticker 추가
-         */
+        Sticker 추가
+     */
     @PostMapping("/concerts/{concertId}/sticker")
-    public ResponseEntity<?> uploadSticker(@PathVariable Long concertId, @ModelAttribute AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
+    public ResponseEntity<?> uploadSticker(@PathVariable("concertId") Long concertId, @ModelAttribute AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
 
         adminCommandService.uploadSticker(concertId, requestDTO);
 

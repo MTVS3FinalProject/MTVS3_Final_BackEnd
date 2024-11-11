@@ -9,7 +9,7 @@ public enum StickerRarity {
             return COMMON;
         }
 
-        return switch (stickerRarity) {
+        return switch (stickerRarity.toLowerCase()) {
             case "rare" -> RARE;
             case "unique" -> UNIQUE;
             default -> COMMON;

@@ -56,10 +56,10 @@ public class FileCommandService {
     }
 
     // Sticker 이미지 저장
-    public File saveStickerImage(Long stickerId, byte[] stickerImage) {
+    public File saveStickerImage(Long stickerId, MultipartFile stickerImage) {
 
         String fileName = STICKER_FILENAME_PREFIX + stickerId + System.currentTimeMillis();
-        String fileUrl = uploadImgByByte(stickerImage, fileName, IMAGE_CONTENT_TYPE);
+        String fileUrl = uploadImg(stickerImage, fileName);
 
         // File 생성 및 저장
         return newFile(RelationType.STICKER, stickerId, fileUrl, FilePurpose.UPLOAD);
