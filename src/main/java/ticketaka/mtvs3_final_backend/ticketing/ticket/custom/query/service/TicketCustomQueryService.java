@@ -46,55 +46,6 @@ public class TicketCustomQueryService {
     private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
 
     /*
-        커스텀 티켓 목록 조회
-     */
-    public TicketCustomQueryResponseDTO.getCustomizableTicketListDTO getCustomizableTicketList(Long memberId) {
-
-        // Member 조회
-        getMember(memberId);
-        // Ticket 조회
-        List<Ticket> ticketList = getTicketList(memberId);
-
-        // Custom 가능한 Ticket 이 없는 경우 빈 리스트 반환
-        if(ticketList.isEmpty()) {
-            return new TicketCustomQueryResponseDTO.getCustomizableTicketListDTO(List.of());
-        }
-
-        // ConcertIdList 조회
-        Map<Long, Concert> concertMap = getConcertMap(ticketList);
-        // SeatInfoList 조회
-        Map<Long, String> seatInfoMap = getSeatInfoMap(ticketList);
-        // Custom Ticket 조회
-        Map<Long, CustomTicket> customTicketMap = getCustomTicketMap(ticketList);
-
-        return new TicketCustomQueryResponseDTO.getCustomizableTicketListDTO(
-                ticketList.stream()
-                        .map(ticket -> {
-                            Concert concert = concertMap.get(ticket.getConcertId());
-                            String seatInfo = seatInfoMap.get(ticket.getSeatId());
-                            CustomTicket customTicket = customTicketMap.get(ticket.getId());
-                            byte[] ticketImage = customTicket != null ?
-                                    fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
-                                    fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
-
-                            return new TicketCustomQueryResponseDTO.getTicketDTO(
-                                    new TicketCustomQueryResponseDTO.ticketConcertDTO(
-                                            concert.getName(),
-                                            concert.getConcertDate().getYear(),
-                                            concert.getConcertDate().getMonthValue(),
-                                            concert.getConcertDate().getDayOfMonth(),
-                                            concert.getConcertDate().toLocalTime().toString()
-                                    ),
-                                    seatInfo,
-                                    ticket.getId().intValue(),
-                                    ticketImage
-                            );
-                        })
-                        .toList()
-        );
-    }
-
-    /*
         티켓 커스텀 입장 - 스티커 정보 조회
      */
     public TicketCustomQueryResponseDTO.getTicketCustomObjectDTO getTicketCustomObject(Long memberId, Long ticketId) {

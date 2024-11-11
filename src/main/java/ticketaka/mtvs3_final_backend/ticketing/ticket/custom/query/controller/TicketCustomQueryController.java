@@ -22,21 +22,6 @@ public class TicketCustomQueryController {
     private final TicketCustomQueryService ticketCustomQueryService;
 
     /*
-        커스텀 티켓 목록 조회
-     */
-    @GetMapping
-    public ResponseEntity<?> getCustomizableTicketList() {
-
-        log.info("getCustomizableTicketList Request");
-
-        TicketCustomQueryResponseDTO.getCustomizableTicketListDTO responseDTO = ticketCustomQueryService.getCustomizableTicketList(getCurrentMemberId());
-
-        log.info("getCustomizableTicketList Response: {}", responseDTO);
-
-        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
-    }
-
-    /*
         티켓 커스텀 제작 입장 - 스티커 조회
      */
     @GetMapping("/{ticketId}/custom")

@@ -10,15 +10,25 @@ public class TicketQueryResponseDTO {
         커스텀 티켓 목록 조회
      */
     public record getCustomizableTicketListDTO(
-            List<TicketCustomQueryResponseDTO.getTicketDTO> ticketDTOList
+            List<getTicketDTO> ticketDTOList
     ) {
     }
 
     public record getTicketDTO(
-            TicketCustomQueryResponseDTO.ticketConcertDTO concertInfo,
+            ticketConcertDTO concertInfo,
             String seatInfo,
             int ticketId,
             byte[] ticketImage
+    ) {
+    }
+
+    // 공연 날짜
+    public record ticketConcertDTO(
+            String concertName,
+            int year,
+            int month,
+            int day,
+            String time
     ) {
     }
 }
