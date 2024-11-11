@@ -20,9 +20,7 @@ import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.C
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
-import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
@@ -47,7 +45,6 @@ public class ConcertCommandService {
     private final FileQueryService fileQueryService;
 
     private final MemberRepository memberRepository;
-    private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
     private final SeatCommandRepository seatCommandRepository;
     private final SeatQueryRepository seatQueryRepository;
@@ -113,6 +110,8 @@ public class ConcertCommandService {
 
         // Sticker Rarity 계산
         StickerRarity stickerRarity = calculateStickerRarity(requestDTO.rank());
+
+        log.info("stickerRarity: {}", stickerRarity);
 
         // Sticker 할당
         Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, stickerRarity);
@@ -246,6 +245,6 @@ public class ConcertCommandService {
             throw new Exception400("아쉽게도 Sticker 를 획득하지 못하였습니다.");
         }
 
-        return stickerRarities[rank - 1];
+        return stickerRarities[stickerRarities.length - rank];
     }
 }
