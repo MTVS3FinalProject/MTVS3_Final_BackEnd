@@ -20,9 +20,7 @@ import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.C
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
-import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
@@ -32,6 +30,11 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleCommandRepository;
+import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +50,6 @@ public class ConcertCommandService {
     private final FileQueryService fileQueryService;
 
     private final MemberRepository memberRepository;
-    private final AddressRepository addressRepository;
     private final ConcertRepository concertRepository;
     private final SeatCommandRepository seatCommandRepository;
     private final SeatQueryRepository seatQueryRepository;
@@ -55,6 +57,8 @@ public class ConcertCommandService {
 
     private final DrawResultRedisRepository drawResultRedisRepository;
     private final TicketAddressRedisRepository ticketAddressRedisRepository;
+    private final TitleQueryService titleQueryService;
+    private final MemberTitleCommandRepository memberTitleCommandRepository;
 
     /*
         공연장 정보 조회
@@ -107,16 +111,19 @@ public class ConcertCommandService {
     }
 
     /*
-        Puzzle 결과 Sticker 획득
+        Puzzle 결과 Title, Sticker 획득
      */
+    @Transactional
     public ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO acquireStickerFromPuzzleResult(Long memberId, Long concertId, ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
 
-        // Sticker Rarity 계산
-        StickerRarity stickerRarity = calculateStickerRarity(requestDTO.rank());
-
+        // Title 할당
+        Title title = titleQueryService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
         // Sticker 할당
-        Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, stickerRarity);
+        Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
 
+        // Member Title 할당
+        MemberTitle memberTitle = newMemberTitle(memberId, title.getId());
+        memberTitleCommandRepository.save(memberTitle);
         // Member Sticker 생성
         MemberSticker memberSticker = newMemberSticker(memberId, sticker.getId());
         memberStickerCommandRepository.save(memberSticker);
@@ -125,17 +132,26 @@ public class ConcertCommandService {
         String stickerImage = fileQueryService.getFileImage(RelationType.STICKER, sticker.getId());
 
         return new ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO(
-                sticker.getId().intValue(),
-                sticker.getStickerName(),
-                sticker.getStickerScript(),
-                sticker.getStickerRarity().toString(),
-                stickerImage
+                new ConcertCommandResponseDTO.titleInfoDTO(
+                        title.getId().intValue(),
+                        title.getTitleName(),
+                        title.getTitleScript(),
+                        title.getTitleRarity().toString()
+                ),
+                new ConcertCommandResponseDTO.stickerInfoDTO(
+                        sticker.getId().intValue(),
+                        sticker.getStickerName(),
+                        sticker.getStickerScript(),
+                        sticker.getStickerRarity().toString(),
+                        stickerImage
+                )
         );
     }
 
     /*
         예매자 정보 입력
      */
+    @Transactional
     public ConcertCommandResponseDTO.enterDeliveryAddressDTO enterDeliveryAddress(Long memberId, Long concertId, Long seatId, ConcertCommandRequestDTO.enterDeliveryAddressDTO requestDTO) {
 
         Member member = getMember(memberId);
@@ -189,6 +205,14 @@ public class ConcertCommandService {
                 .build();
     }
 
+    // MemberTitle 생성
+    private MemberTitle newMemberTitle(Long memberId, Long titleId) {
+        return MemberTitle.builder()
+                .memberId(memberId)
+                .titleId(titleId)
+                .build();
+    }
+
     // MemberSticker 생성
     private MemberSticker newMemberSticker(Long memberId, Long stickerId) {
         return MemberSticker.builder()
@@ -234,18 +258,5 @@ public class ConcertCommandService {
         if(memberAge < ageRestriction) {
             throw new Exception400("해당 공연의 연령 제한을 충족하지 못합니다.");
         }
-    }
-
-    // Sticker Rarity 계산
-    private StickerRarity calculateStickerRarity(int rank) {
-
-        StickerRarity[] stickerRarities = StickerRarity.values();
-
-        // rank 유효성 검사
-        if (rank < 1 || rank > stickerRarities.length) {
-            throw new Exception400("아쉽게도 Sticker 를 획득하지 못하였습니다.");
-        }
-
-        return stickerRarities[rank - 1];
     }
 }

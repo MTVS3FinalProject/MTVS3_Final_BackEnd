@@ -35,6 +35,7 @@ public class FaceAuthService {
     /*
         얼굴 인식
      */
+    @Transactional
     public void recognizeMember(FaceAuthRequestDTO.recognizeMemberDTO requestDTO) {
 
         String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
@@ -51,6 +52,7 @@ public class FaceAuthService {
     /*
         얼굴 인증
      */
+    @Transactional
     public void verificationMember(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
         // FileUploadForAuth 확인

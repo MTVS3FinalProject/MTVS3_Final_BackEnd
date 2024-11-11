@@ -77,7 +77,7 @@ public class SeatCommandController {
 
         log.info("createDrawResult_request: concertId={}, seatId={}", concertId, seatId);
 
-        seatCommandService.processDrawResult(concertId, seatId, getCurrentMemberId());
+        seatCommandService.processDrawResult(getCurrentMemberId(), concertId, seatId);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -88,7 +88,7 @@ public class SeatCommandController {
     @PostMapping("/{concertId}/draw-cheat")
     public ResponseEntity<?> cheatDrawResult(@PathVariable("concertId") Long concertId) {
 
-        seatCommandService.cheatDrawResult(concertId, getCurrentMemberId());
+        seatCommandService.cheatDrawResult(getCurrentMemberId(), concertId);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

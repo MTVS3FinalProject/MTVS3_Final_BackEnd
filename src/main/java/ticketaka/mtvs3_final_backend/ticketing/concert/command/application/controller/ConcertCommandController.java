@@ -50,7 +50,11 @@ public class ConcertCommandController {
     public ResponseEntity<?> acquireStickerFromPuzzleResult(@PathVariable("concertId") Long concertId,
                                                             @RequestBody ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
 
+        log.info("acquireStickerFromPuzzleResult requestDTO = {}", requestDTO);
+
         ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO responseDTO = concertCommandService.acquireStickerFromPuzzleResult(getCurrentMemberId(), concertId, requestDTO);
+
+        log.info("acquireStickerFromPuzzleResult responseDTO = {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

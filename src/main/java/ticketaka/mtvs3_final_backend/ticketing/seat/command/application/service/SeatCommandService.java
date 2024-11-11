@@ -96,6 +96,7 @@ public class SeatCommandService {
     /*
         추첨 시작 알림
      */
+    @Transactional
     public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long concertId, Long seatId) {
 
         // Concert 조회
@@ -116,19 +117,19 @@ public class SeatCommandService {
         좌석 추첨 결과 반영
      */
     @Transactional
-    public void processDrawResult(Long concertId, Long seatId, Long currentMemberId) {
+    public void processDrawResult(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
-        getMember(currentMemberId);
+        getMember(memberId);
         // Concert 조회
         getReservingConcert(concertId);
         // Seat 조회
         getSeat(seatId);
         // MemberSeat 조회
-        MemberSeat memberSeat = getMemberSeat(currentMemberId, concertId, seatId, MemberSeatStatus.RECEIVED);
+        MemberSeat memberSeat = getMemberSeat(memberId, concertId, seatId, MemberSeatStatus.RECEIVED);
 
         // 임시 결제 권한 획득
-        newDrawResult(currentMemberId, concertId, seatId);
+        newDrawResult(memberId, concertId, seatId);
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         memberSeatCommandRepository.save(memberSeat);
     }
@@ -181,20 +182,24 @@ public class SeatCommandService {
     /*
         추첨 결과 치트
      */
-    public void cheatDrawResult(Long concertId, Long currentMemberId) {
+    @Transactional
+    public void cheatDrawResult(Long memberId, Long concertId) {
 
-        Member member = getMember(currentMemberId);
+        Member member = getMember(memberId);
         Concert concert = getReservingConcert(concertId);
 
         MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
+        memberSeatCommandRepository.save(memberSeat);
 
-        newDrawResult(currentMemberId, concert.getId(), memberSeat.getSeatId());
+        newDrawResult(memberId, concert.getId(), memberSeat.getSeatId());
     }
 
     /*
         좌석 결제 - 치트
      */
+    @Transactional
     public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long memberId, Long concertId) {
 
         // Member 확인
@@ -255,8 +260,8 @@ public class SeatCommandService {
     }
 
     // MemberSeat 조회
-    private MemberSeat getMemberSeat(Long currentMemberId, Long concertId, Long seatId, MemberSeatStatus memberSeatStatus) {
-        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(currentMemberId, concertId, seatId, memberSeatStatus)
+    private MemberSeat getMemberSeat(Long memberId, Long concertId, Long seatId, MemberSeatStatus memberSeatStatus) {
+        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(memberId, concertId, seatId, memberSeatStatus)
                 .orElseThrow(() -> new Exception400("해당 좌석을 접수한 내역을 찾을 수 없습니다."));
     }
 

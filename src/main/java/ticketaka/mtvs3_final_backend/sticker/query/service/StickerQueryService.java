@@ -92,7 +92,7 @@ public class StickerQueryService {
     }
 
     // 랜덤으로 하나 선택
-    private static Sticker getRandomSticker(List<Sticker> stickerList) {
+    private Sticker getRandomSticker(List<Sticker> stickerList) {
 
         if (stickerList.isEmpty()) {
             throw new Exception400("더 이상 해당 공연에서 얻을 수 있는 스티커가 없습니다.");

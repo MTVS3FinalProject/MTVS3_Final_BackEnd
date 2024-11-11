@@ -44,6 +44,7 @@ public class MemberCommandService {
     /*
         메인 타이틀 변경
      */
+    @Transactional
     public void changeMainTitle(Long memberId, Long titleId) {
 
         // 기존 Main Title 해제

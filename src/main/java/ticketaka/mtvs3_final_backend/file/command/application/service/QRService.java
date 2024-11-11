@@ -51,6 +51,7 @@ public class QRService {
     /*
         회원 가입 용 QR 생성
      */
+    @Transactional
     public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         // 이메일 중복 확인
@@ -70,6 +71,7 @@ public class QRService {
     /*
         회원 가입 용 사진 업로드 성공 확인
      */
+    @Transactional
     public void checkSignUpQR(QRRequestDTO.checkSignUpQRDTO requestDTO) {
 
         FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.email())
@@ -81,6 +83,7 @@ public class QRService {
     /*
         회원 인증 용 QR 생성
      */
+    @Transactional
     public QRResponseDTO.generateVerificationQRDTO generateVerificationQR(Long currentMemberId) {
 
         validateMember(currentMemberId);
@@ -100,6 +103,7 @@ public class QRService {
     /*
         회원 인증 용 사진 업로드 성공 확인
      */
+    @Transactional
     public QRResponseDTO.checkVerificationQR checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
 
         validateMember(currentMemberId);
@@ -107,17 +111,17 @@ public class QRService {
         DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(currentMemberId))
                 .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
 
-        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
-                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
-
-        if(!fileUpload.getCode().equals(String.valueOf(currentMemberId))) {
-            throw new Exception401("인증 요청 대상과 일치하지 않습니다.");
-        }
-
-        validateFileUpload(fileUpload);
-
-        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
-        fileUploadRedisRepository.save(fileUpload);
+//        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
+//                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
+//
+//        if(!fileUpload.getCode().equals(String.valueOf(currentMemberId))) {
+//            throw new Exception401("인증 요청 대상과 일치하지 않습니다.");
+//        }
+//
+//        validateFileUpload(fileUpload);
+//
+//        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
+//        fileUploadRedisRepository.save(fileUpload);
 
         Seat seat =  seatQueryRepository.findById(drawResult.getSeatId())
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));

@@ -36,7 +36,22 @@ public class ConcertCommandResponseDTO {
     ) {
     }
 
+    // Puzzle 결과 할당
     public record acquireStickerFromPuzzleResultDTO(
+            titleInfoDTO titleInfo,
+            stickerInfoDTO stickerInfo
+    ) {
+    }
+
+    public record titleInfoDTO(
+            int titleId,
+            String titleName,
+            String titleScript,
+            String titleRarity
+    ) {
+    }
+
+    public record stickerInfoDTO(
             int stickerId,
             String stickerName,
             String stickerScript,
