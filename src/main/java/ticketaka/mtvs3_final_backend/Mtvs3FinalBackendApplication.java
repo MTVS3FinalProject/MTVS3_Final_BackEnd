@@ -22,6 +22,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.command.domain.repository.TitleCommandRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,7 +44,8 @@ public class Mtvs3FinalBackendApplication {
                                        FileCommandRepository fileCommandRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
-                                       SeatCommandRepository seatCommandRepository) {
+                                       SeatCommandRepository seatCommandRepository,
+                                       TitleCommandRepository titleCommandRepository) {
         return args -> {
             Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
             Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
