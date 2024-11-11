@@ -12,6 +12,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
@@ -36,7 +37,7 @@ public class MemberQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final TitleQueryService titleQueryService;
     private final StickerQueryService stickerQueryService;
-    private final TicketCustomQueryService ticketCustomQueryService;
+    private final TicketQueryService ticketQueryService;
     private final FileQueryService fileQueryService;
 
     private final TicketQueryRepository ticketQueryRepository;
@@ -116,11 +117,11 @@ public class MemberQueryService {
         List<Ticket> ticketList = getTicketList(memberId);
 
         // ConcertIdList 조회
-        Map<Long, Concert> concertMap = ticketCustomQueryService.getConcertMap(ticketList);
+        Map<Long, Concert> concertMap = ticketQueryService.getConcertMap(ticketList);
         // SeatInfoList 조회
-        Map<Long, String> seatInfoMap = ticketCustomQueryService.getSeatInfoMap(ticketList);
+        Map<Long, String> seatInfoMap = ticketQueryService.getSeatInfoMap(ticketList);
         // Custom Ticket 조회
-        Map<Long, CustomTicket> customTicketMap = ticketCustomQueryService.getCustomTicketMap(ticketList);
+        Map<Long, CustomTicket> customTicketMap = ticketQueryService.getCustomTicketMap(ticketList);
         List<MemberQueryResponseDTO.getMemberTicketDTO> memberTicketDTOList = ticketList.stream()
                 .map(ticket -> {
                     Concert concert = concertMap.get(ticket.getConcertId());
