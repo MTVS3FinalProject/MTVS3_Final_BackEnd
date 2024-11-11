@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 
 @Repository
-public interface StickerAdminRepository extends JpaRepository<Sticker, Long> {
+public interface StickerAdminCommandRepository extends JpaRepository<Sticker, Long> {
 }

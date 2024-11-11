@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
-import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminRepository;
+import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
@@ -14,15 +14,15 @@ import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class StickerAdminService {
+public class StickerAdminCommandService {
 
-    private final StickerAdminRepository stickerAdminRepository;
+    private final StickerAdminCommandRepository stickerAdminCommandRepository;
 
     /*
         Sticker 추가
      */
     public Sticker saveSticker(Long concertId, AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
-        return stickerAdminRepository.save(newSticker(concertId, requestDTO));
+        return stickerAdminCommandRepository.save(newSticker(concertId, requestDTO));
     }
 
     // Sticker 생성

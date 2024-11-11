@@ -1,0 +1,43 @@
+package ticketaka.mtvs3_final_backend.admin.command.application.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
+import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
+
+@Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Service
+public class AdminCommandService {
+
+    private final StickerAdminCommandService stickerAdminCommandService;
+    private final FileCommandService fileCommandService;
+
+    private final ConcertQueryRepository concertQueryRepository;
+
+    /*
+        Sticker 추가
+     */
+    public void uploadSticker(Long concertId, AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
+
+        getConcert(concertId);
+
+        Sticker sticker = stickerAdminCommandService.saveSticker(concertId, requestDTO);
+        fileCommandService.saveStickerImage(sticker.getId(), requestDTO.stickerImage());
+    }
+
+    // Concert 조회
+    private Concert getConcert(Long concertId) {
+        return concertQueryRepository.findById(concertId)
+                .orElseThrow(() -> new Exception400("해당 공연을 찾을 수 없습니다."));
+    }
+}

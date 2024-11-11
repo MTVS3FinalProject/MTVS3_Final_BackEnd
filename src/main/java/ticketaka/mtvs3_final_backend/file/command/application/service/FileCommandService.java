@@ -41,6 +41,7 @@ public class FileCommandService {
     private String firebaseStorageUrl;
 
     private static final String IMAGE_CONTENT_TYPE = "image/png";
+    private static final String STICKER_FILENAME_PREFIX = "AI_BACKGROUND_";
     private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_";
     private static final String CUSTOM_TICKET_FILENAME_PREFIX = "AI_BACKGROUND_";
 
@@ -54,10 +55,20 @@ public class FileCommandService {
         return setFileUploadForAuth(requestDTO.code(), imgUrl);
     }
 
+    // Sticker 이미지 저장
+    public File saveStickerImage(Long stickerId, byte[] stickerImage) {
+
+        String fileName = STICKER_FILENAME_PREFIX + stickerId + System.currentTimeMillis();
+        String fileUrl = uploadImgByByte(stickerImage, fileName, IMAGE_CONTENT_TYPE);
+
+        // File 생성 및 저장
+        return newFile(RelationType.STICKER, stickerId, fileUrl, FilePurpose.UPLOAD);
+    }
+
     // AI 배경 이미지 저장
     public File saveAIBackgroundImage(Long backgroundId, byte[] backgroundImage) {
 
-        String fileName = AI_BACKGROUND_FILENAME_PREFIX + System.currentTimeMillis();
+        String fileName = AI_BACKGROUND_FILENAME_PREFIX + backgroundId + System.currentTimeMillis();
         String fileUrl = uploadImgByByte(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
