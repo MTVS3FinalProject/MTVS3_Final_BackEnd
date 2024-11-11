@@ -20,7 +20,13 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -113,17 +119,42 @@ public class FileCommandService {
 
     // 파일 업로드 기능 - byte[]
     protected String uploadImgByByte(byte[] imageData, String fileName, String contentType) {
+        
+        // 이미지 압축
+        byte[] compressedData = compressImageData(imageData);
 
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         Blob blob = bucket.create(fileName,
-                imageData, contentType);
+                compressedData, contentType);
 
         String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
         log.info("File Url : {}", fileUrl);
 
         return fileUrl;
+    }
+
+    // 이미지 압축
+    private byte[] compressImageData(byte[] imageData) {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageData);
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+            // BufferedImage 로 변환
+            BufferedImage image = ImageIO.read(byteArrayInputStream);
+            ImageIO.write(image, "png", byteArrayOutputStream);
+
+            // 압축 수행
+            ByteArrayOutputStream compressedOutputStream = new ByteArrayOutputStream();
+            try (DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(compressedOutputStream, new Deflater(Deflater.BEST_COMPRESSION))) {
+                deflaterOutputStream.write(byteArrayOutputStream.toByteArray());
+            }
+
+            return compressedOutputStream.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error during image compression", e);
+        }
     }
 
     // File 객체 생성

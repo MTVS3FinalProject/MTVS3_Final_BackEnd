@@ -28,7 +28,7 @@ public class MemberCommandService {
     /*
             티켓 주소지 입력
          */
-    public void saveTicketAddress(Long memberId, Long concertId, Long seatId, Long ticketId) {
+    public Address saveTicketAddress(Long memberId, Long concertId, Long seatId, Long ticketId) {
         TicketAddress ticketAddress = ticketAddressRedisRepository.findById(TicketAddress.generateTicketAddressId(
                 memberId, concertId, seatId)
         ).orElseThrow(() -> new Exception400("주소지 입력이 되지 않았습니다."));
@@ -37,6 +37,8 @@ public class MemberCommandService {
         addressRepository.save(address);
 
         ticketAddressRedisRepository.delete(ticketAddress);
+
+        return address;
     }
 
     /*
