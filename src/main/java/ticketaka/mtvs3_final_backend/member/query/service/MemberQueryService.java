@@ -129,7 +129,7 @@ public class MemberQueryService {
                     CustomTicket customTicket = customTicketMap.get(ticket.getId());
                     String ticketImage = customTicket != null ?
                             fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
-                            fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
+                            fileQueryService.getFileImage(RelationType.CONCERT, concert.getId());
 
                     return new MemberQueryResponseDTO.getMemberTicketDTO(
                             ticket.getId().intValue(),
