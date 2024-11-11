@@ -4,18 +4,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
+import ticketaka.mtvs3_final_backend.redis.daily.background.repository.DailyBackgroundRedisRepository;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.service.ConcertQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.service.SeatQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.TicketCustomQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.repository.TicketCustomQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.TicketQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
@@ -32,12 +36,17 @@ public class TicketQueryService {
 
     private final ConcertQueryService concertQueryService;
     private final SeatQueryService seatQueryService;
+    private final StickerQueryService stickerQueryService;
     private final FileQueryService fileQueryService;
 
     private final MemberQueryRepository memberQueryRepository;
     private final TicketQueryRepository ticketQueryRepository;
     private final TicketCustomQueryRepository ticketCustomQueryRepository;
+    private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
 
+    /*
+        보유 티켓 조회
+     */
     public TicketQueryResponseDTO.getCustomizableTicketListDTO getCustomizableTicketList(Long memberId) {
 
         // Member 조회
@@ -84,6 +93,37 @@ public class TicketQueryService {
         );
     }
 
+    /*
+        티켓 커스텀 입장
+     */
+    public TicketQueryResponseDTO.getTicketCustomObjectDTO getTicketCustomObject(Long memberId, Long ticketId) {
+
+        // Member 조회
+        getMember(memberId);
+        // Ticket 조회
+        Ticket ticket = getTicket(ticketId);
+
+        // DailyBackgroundRefreshCount 조회
+        Integer dailyBackgroundRefreshCount = getDailyBackgroundRefreshCount(memberId);
+
+        // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
+        List<Sticker> stickerList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
+        // Sticker 에 대응하는 ImgUrl 조회
+        Map<Long, byte[]> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
+                .map(Sticker::getId)
+                .toList());
+
+        return new TicketQueryResponseDTO.getTicketCustomObjectDTO(
+                dailyBackgroundRefreshCount,
+                stickerList.stream()
+                        .map(sticker -> new TicketQueryResponseDTO.stickerDTO(
+                                sticker.getId().intValue(),
+                                stickerImgMap.getOrDefault(sticker.getId(), null)
+                        ))
+                        .toList()
+        );
+    }
+
     // Member 조회
     private Member getMember(Long memberId) {
         return memberQueryRepository.findById(memberId)
@@ -93,6 +133,12 @@ public class TicketQueryService {
     // 보유 Ticket List 조회
     private List<Ticket> getTicketList(Long memberId) {
         return ticketQueryRepository.findAllByMemberId(memberId);
+    }
+
+    // Ticket 조회
+    private Ticket getTicket(Long ticketId) {
+        return ticketQueryRepository.findById(ticketId)
+                .orElseThrow(() -> new Exception400("해당 티켓을 찾을 수 없습니다."));
     }
 
     // Custom Ticket List 조회
@@ -130,5 +176,12 @@ public class TicketQueryService {
                         .toList()
         ).stream()
                 .collect(Collectors.toMap(CustomTicket::getTicketId, customTicket -> customTicket));
+    }
+
+    // DailyBackgroundRefreshCount
+    private Integer getDailyBackgroundRefreshCount(Long memberId) {
+        return dailyBackgroundRedisRepository.findById(String.valueOf(memberId))
+                .map(dailyBackground -> DailyBackground.DAILY_BACKGROUND_GENERATION_LIMIT - dailyBackground.getRefreshCount())
+                .orElse(DailyBackground.DAILY_BACKGROUND_GENERATION_LIMIT);
     }
 }

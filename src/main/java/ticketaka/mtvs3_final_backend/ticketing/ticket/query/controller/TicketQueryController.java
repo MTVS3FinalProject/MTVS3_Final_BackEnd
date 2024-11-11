@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
@@ -31,6 +32,21 @@ public class TicketQueryController {
         TicketQueryResponseDTO.getCustomizableTicketListDTO responseDTO = ticketQueryService.getCustomizableTicketList(getCurrentMemberId());
 
         log.info("getCustomizableTicketList Response: {}", responseDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        티켓 커스텀 제작 입장 - 스티커 조회
+     */
+    @GetMapping("/{ticketId}/custom")
+    public ResponseEntity<?> getTicketCustomObject(@PathVariable("ticketId") Long ticketId) {
+
+        log.info("getTicketCustomInfo Request");
+
+        TicketQueryResponseDTO.getTicketCustomObjectDTO responseDTO = ticketQueryService.getTicketCustomObject(getCurrentMemberId(), ticketId);
+
+        log.info("getTicketCustomInfo Response : {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
