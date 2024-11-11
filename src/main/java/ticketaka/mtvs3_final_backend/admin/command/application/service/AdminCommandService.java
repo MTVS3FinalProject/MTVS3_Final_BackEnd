@@ -17,10 +17,19 @@ import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQ
 @Service
 public class AdminCommandService {
 
+    private final TitleAdminCommandService titleAdminCommandService;
     private final StickerAdminCommandService stickerAdminCommandService;
     private final FileCommandService fileCommandService;
 
     private final ConcertQueryRepository concertQueryRepository;
+
+    /*
+        Title 추가
+     */
+    public void uploadTitle(AdminCommandRequestDTO.uploadTitleDTO requestDTO) {
+
+        titleAdminCommandService.saveTitle(requestDTO);
+    }
 
     /*
         Sticker 추가

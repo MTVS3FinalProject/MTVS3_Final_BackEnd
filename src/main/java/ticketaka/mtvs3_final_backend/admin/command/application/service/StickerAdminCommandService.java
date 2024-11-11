@@ -26,7 +26,7 @@ public class StickerAdminCommandService {
     }
 
     // Sticker 생성
-    private static Sticker newSticker(Long concertId, AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
+    private Sticker newSticker(Long concertId, AdminCommandRequestDTO.uploadStickerDTO requestDTO) {
         return Sticker.builder()
                 .concertId(concertId)
                 .stickerName(requestDTO.stickerName())
