@@ -180,7 +180,7 @@ public class MemberAuthService {
                 member.getBirth().toString(),
                 member.getCoin(),
                 1,
-                title != null ? title.getId().intValue() : null,
+                title != null ? title.getId().intValue() : 1,
                 title != null ? title.getTitleName() : null,
                 title != null ? title.getTitleRarity().toString() : null
         );
