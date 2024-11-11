@@ -99,7 +99,7 @@ public class MemberQueryService {
 //        List<MemberSticker> memberStickerList = memberStickerQueryRepository.findAllByMemberId(memberId);
         List<Sticker> stickerList = stickerQueryService.getMemberStickerList(memberId);
         // Sticker 에 대응하는 ImgUrl 조회
-        Map<Long, byte[]> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
+        Map<Long, String> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
                 .map(Sticker::getId)
                 .toList());
         List<MemberQueryResponseDTO.getMemberStickerDTO> memberStickerDTOList = stickerList.stream()
@@ -127,7 +127,7 @@ public class MemberQueryService {
                     Concert concert = concertMap.get(ticket.getConcertId());
                     String seatInfo = seatInfoMap.get(ticket.getSeatId());
                     CustomTicket customTicket = customTicketMap.get(ticket.getId());
-                    byte[] ticketImage = customTicket != null ?
+                    String ticketImage = customTicket != null ?
                             fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
                             fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
 

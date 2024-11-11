@@ -16,7 +16,7 @@ public class TicketQueryResponseDTO {
             ticketConcertDTO concertInfo,
             String seatInfo,
             int ticketId,
-            byte[] ticketImage
+            String ticketImage
     ) {
     }
 
@@ -42,7 +42,7 @@ public class TicketQueryResponseDTO {
     // Sticker
     public record stickerDTO(
             int stickerId,
-            byte[] stickerImage
+            String stickerImage
     ) {
     }
 }

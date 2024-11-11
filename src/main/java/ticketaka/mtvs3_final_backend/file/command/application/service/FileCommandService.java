@@ -55,13 +55,13 @@ public class FileCommandService {
     }
 
     // AI 배경 이미지 저장
-    public void saveAIBackgroundImage(Long backgroundId, byte[] backgroundImage) {
+    public File saveAIBackgroundImage(Long backgroundId, byte[] backgroundImage) {
 
         String fileName = AI_BACKGROUND_FILENAME_PREFIX + System.currentTimeMillis();
         String fileUrl = uploadImgByByte(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
-        newFile(RelationType.BACKGROUND, backgroundId, fileUrl, FilePurpose.CUSTOM);
+        return newFile(RelationType.BACKGROUND, backgroundId, fileUrl, FilePurpose.CUSTOM);
     }
 
     // Custom Ticket 이미지 저장
@@ -158,7 +158,7 @@ public class FileCommandService {
     }
 
     // File 객체 생성
-    public void newFile(RelationType relationType, Long id, String imgUrl, FilePurpose filePurpose) {
+    public File newFile(RelationType relationType, Long id, String imgUrl, FilePurpose filePurpose) {
 
         File file = File.builder()
                 .relationType(relationType)
@@ -168,6 +168,8 @@ public class FileCommandService {
                 .build();
 
         fileCommandRepository.save(file);
+
+        return file;
     }
 
     // 파일 삭제

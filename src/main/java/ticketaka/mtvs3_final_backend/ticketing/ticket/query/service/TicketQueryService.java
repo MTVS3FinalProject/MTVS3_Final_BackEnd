@@ -72,7 +72,7 @@ public class TicketQueryService {
                             Concert concert = concertMap.get(ticket.getConcertId());
                             String seatInfo = seatInfoMap.get(ticket.getSeatId());
                             CustomTicket customTicket = customTicketMap.get(ticket.getId());
-                            byte[] ticketImage = customTicket != null ?
+                            String ticketImage = customTicket != null ?
                                     fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
                                     fileQueryService.getFileImage(RelationType.TICKET, ticket.getId());
 
@@ -109,7 +109,7 @@ public class TicketQueryService {
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
         List<Sticker> stickerList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
         // Sticker 에 대응하는 ImgUrl 조회
-        Map<Long, byte[]> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
+        Map<Long, String> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
                 .map(Sticker::getId)
                 .toList());
 

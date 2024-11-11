@@ -27,7 +27,7 @@ public class FileQueryService {
 
     private final FileQueryRepository fileQueryRepository;
 
-    public Map<Long, byte[]> getStickerImgMap(List<Long> stickerIdList) {
+    public Map<Long, String> getStickerImgMap(List<Long> stickerIdList) {
 
         // File 조회
         List<File> stickerFileList = fileQueryRepository.findAllByRelationTypeAndRelationIdIn(RelationType.STICKER, stickerIdList);
@@ -35,18 +35,18 @@ public class FileQueryService {
         return stickerFileList.stream()
                 .collect(Collectors.toMap(
                         File::getRelationId,
-                        file -> getImageFromUrl(file.getFileUrl()),
+                        File::getFileUrl,
                         (existing, replacement) -> existing,
                         LinkedHashMap::new
                 ));
     }
 
     // File Image 조회
-    public byte[] getFileImage(RelationType relationType, Long id) {
+    public String getFileImage(RelationType relationType, Long id) {
 
         File file = fileQueryRepository.findByRelationTypeAndRelationId(relationType, id)
                 .orElseThrow(() -> new Exception400("해당 Ticket 이미지를 찾을 수 없습니다."));
-        return getImageFromUrl(file.getFileUrl());
+        return file.getFileUrl();//getImageFromUrl(file.getFileUrl());
     }
 
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
