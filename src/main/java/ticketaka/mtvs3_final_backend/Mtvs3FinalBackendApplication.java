@@ -126,6 +126,11 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE)
             ));
 
+            // Ticket 기본 이미지 저장
+            fileCommandRepository.save(
+                    newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
+            );
+
             // Title 저장
             titleAdminCommandRepository.saveAll(Arrays.asList(
                     newTitle("Concert", concert01.getId(), "토끼단의 리더", "뉴진스 팬덤 버니즈의 리더로 인정받은 팬", "Unique"),
