@@ -193,6 +193,38 @@ public class Mtvs3FinalBackendApplication {
                     newSticker(concert01.getId(), "Debut CD", "뉴진스 데뷔앨범 CD", "Collection", "Common"),
                     newSticker(concert01.getId(), "Cheers Together", "팬들과의 축배를 의미하는 건배 스티커", "Collection", "Common")
             ));
+            fileCommandRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.STICKER, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314172778?generation=1731314174220905&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 2L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314197978?generation=1731314198818242&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_321731314235021?generation=1731314235828811&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 4L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_331731314269429?generation=1731314270261170&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 5L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_341731314281176?generation=1731314282047164&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 6L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_351731314293011?generation=1731314293858227&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 7L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_361731314305493?generation=1731314306341966&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 8L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_371731314317168?generation=1731314318026682&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 9L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_381731314330131?generation=1731314331013958&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 10L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_391731314342416?generation=1731314343231197&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 11L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314518795?generation=1731314520199212&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 12L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_321731314544618?generation=1731314545489330&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 13L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_331731314556220?generation=1731314557098669&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 14L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_341731314573194?generation=1731314574100004&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 15L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_351731314584590?generation=1731314585431093&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 16L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_361731314594469?generation=1731314595267553&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 17L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_371731314606039?generation=1731314606896366&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 18L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_381731314615814?generation=1731314616605083&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 19L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_391731314627329?generation=1731314628116024&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 20L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_401731314638852?generation=1731314639789702&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 21L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314819620?generation=1731314820867318&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 22L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_321731314829218?generation=1731314830079395&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 23L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_331731314839527?generation=1731314840340037&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 24L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_341731314853401?generation=1731314854214331&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 25L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_351731314865873?generation=1731314866722053&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 26L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_361731314882059?generation=1731314883004981&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 27L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_371731314901208?generation=1731314902117492&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 28L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_381731314913585?generation=1731314914395823&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 29L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_391731314924500?generation=1731314925429674&alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 30L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_401731314940147?generation=1731314941100197&alt=media", FilePurpose.CUSTOM)
+            ));
         };
     }
 
