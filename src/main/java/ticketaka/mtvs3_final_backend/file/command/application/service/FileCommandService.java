@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
@@ -119,7 +120,8 @@ public class FileCommandService {
             Blob blob = bucket.create(fileName,
                     image.getInputStream(), image.getContentType());
 
-            String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+            String fileUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
+                    bucket.getName(), java.net.URLEncoder.encode(blob.getName(), StandardCharsets.UTF_8));
 
             log.info("File Url : {}", fileUrl);
 
