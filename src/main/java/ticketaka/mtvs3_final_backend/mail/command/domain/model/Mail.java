@@ -25,19 +25,12 @@ public class Mail extends BaseTimeEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private MailStatus mailStatus;
-    @Column
-    @Enumerated(EnumType.STRING)
-    private MailCategory mailCategory;
-    @Column
-    private Long targetId;
 
     @Builder
-    public Mail(Long memberId, String subject, String content, MailStatus mailStatus, MailCategory mailCategory, Long targetId) {
+    public Mail(Long memberId, String subject, String content, MailStatus mailStatus) {
         this.memberId = memberId;
         this.subject = subject;
         this.content = content;
         this.mailStatus = mailStatus;
-        this.mailCategory = mailCategory;
-        this.targetId = targetId;
     }
 }
