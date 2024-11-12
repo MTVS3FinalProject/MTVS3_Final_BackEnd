@@ -42,7 +42,7 @@ public class TicketQueryController {
     @GetMapping("/{ticketId}/custom")
     public ResponseEntity<?> getTicketCustomObject(@PathVariable("ticketId") Long ticketId) {
 
-        log.info("getTicketCustomInfo Request");
+        log.info("getTicketCustomInfo Request : {}", ticketId);
 
         TicketQueryResponseDTO.getTicketCustomObjectDTO responseDTO = ticketQueryService.getTicketCustomObject(getCurrentMemberId(), ticketId);
 
