@@ -27,10 +27,10 @@ public class Mail extends BaseTimeEntity {
     private MailStatus mailStatus;
 
     @Builder
-    public Mail(Long memberId, String subject, String content, MailStatus mailStatus) {
+    public Mail(Long memberId, String subject, String content) {
         this.memberId = memberId;
         this.subject = subject;
         this.content = content;
-        this.mailStatus = mailStatus;
+        this.mailStatus = MailStatus.UNREAD;
     }
 }

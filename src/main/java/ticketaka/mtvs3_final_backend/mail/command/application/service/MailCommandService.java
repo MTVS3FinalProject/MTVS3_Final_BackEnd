@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
 
 @Slf4j
@@ -13,4 +14,15 @@ import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandR
 public class MailCommandService {
 
     private final MailCommandRepository mailCommandRepository;
+
+    // Mail 생성
+    public void sendMail(Long memberId, String subject, String content) {
+        Mail mail = Mail.builder()
+                .memberId(memberId)
+                .subject(subject)
+                .content(content)
+                .build();
+
+        mailCommandRepository.save(mail);
+    }
 }
