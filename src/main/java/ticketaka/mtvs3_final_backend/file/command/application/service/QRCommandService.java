@@ -1,6 +1,7 @@
 package ticketaka.mtvs3_final_backend.file.command.application.service;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -24,16 +25,20 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class QRService {
+public class QRCommandService {
 
     private final SeatQueryRepository seatQueryRepository;
 
@@ -134,7 +139,7 @@ public class QRService {
     }
 
     // QR 생성
-    private static ByteArrayOutputStream getByteArrayOutputStream(String targetUrl) {
+    private ByteArrayOutputStream getByteArrayOutputStream(String targetUrl) {
 
         try {
             // QR Code - BitMatrix: qr 정보 생성
@@ -146,6 +151,30 @@ public class QRService {
             MatrixToImageWriter.writeToStream(bitMatrix, QR_FORMAT, outputStream);
 
             return outputStream;
+
+        } catch (WriterException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Ticket Barcode Image 생성
+    public String generateBarcodeImage(Long memberId, Long concertId, TicketStatus ticketStatus) {
+
+        try {
+            // 바코드 데이터 포맷팅
+            String barcodeData = String.format("%d-%d-%s", memberId, concertId, ticketStatus);
+
+            // 바코드 포맷 및 설정
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+
+            // 바코드 생성
+            BitMatrix matrix = new MultiFormatWriter().encode(barcodeData, BarcodeFormat.CODE_128, 300, 500, hints);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(matrix, QR_FORMAT, outputStream);
+
+            // 바코드 데이터 인코딩
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
 
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);

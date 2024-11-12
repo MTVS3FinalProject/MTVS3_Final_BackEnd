@@ -86,7 +86,8 @@ public class TicketQueryService {
                                     ),
                                     seatInfo,
                                     ticket.getId().intValue(),
-                                    ticketImage
+                                    ticketImage,
+                                    ticket.getBarcodeImage()
                             );
                         })
                         .toList()

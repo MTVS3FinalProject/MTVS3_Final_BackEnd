@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
-import ticketaka.mtvs3_final_backend.file.command.application.service.QRService;
+import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
 
@@ -21,7 +21,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Tag(name = "02_QRController")
 public class QRController {
 
-    private final QRService qrService;
+    private final QRCommandService qrCommandService;
 
     /*
         회원 가입 용 QR 생성
@@ -31,7 +31,7 @@ public class QRController {
 
         System.out.println("requestDTO = " + requestDTO);
 
-        byte[] responseDTO = qrService.generateSignUpQR(requestDTO);
+        byte[] responseDTO = qrCommandService.generateSignUpQR(requestDTO);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
@@ -46,7 +46,7 @@ public class QRController {
 
         System.out.println("requestDTO = " + requestDTO);
 
-        qrService.checkSignUpQR(requestDTO);
+        qrCommandService.checkSignUpQR(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -57,7 +57,7 @@ public class QRController {
     @GetMapping( "/verification")
     public ResponseEntity<?> generateVerificationQR() {
 
-        QRResponseDTO.generateVerificationQRDTO responseDTO = qrService.generateVerificationQR(getCurrentMemberId());
+        QRResponseDTO.generateVerificationQRDTO responseDTO = qrCommandService.generateVerificationQR(getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -68,7 +68,7 @@ public class QRController {
     @PostMapping(value = "/verification/success")
     public ResponseEntity<?> checkVerificationQR(@RequestBody QRRequestDTO.checkVerificationQRDTO requestDTO) {
 
-        QRResponseDTO.checkVerificationQR responseDTO = qrService.checkVerificationQR(requestDTO, getCurrentMemberId());
+        QRResponseDTO.checkVerificationQR responseDTO = qrCommandService.checkVerificationQR(requestDTO, getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

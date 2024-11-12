@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
@@ -16,6 +17,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRe
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.service.TicketCustomCommandService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
@@ -30,6 +32,7 @@ import java.util.UUID;
 public class TicketCommandService {
 
     private final TicketCustomCommandService ticketCustomCommandService;
+    private final QRCommandService qrCommandService;
 
     private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
@@ -78,6 +81,7 @@ public class TicketCommandService {
                 .seatId(seatId)
                 .ticketNumber(ticketNumber)
                 .ticketPrice(ticketPrice)
+                .barcodeImage(qrCommandService.generateBarcodeImage(memberId, concertId, TicketStatus.RESERVE))
                 .build();
 
         return ticketCommandRepository.save(ticket);

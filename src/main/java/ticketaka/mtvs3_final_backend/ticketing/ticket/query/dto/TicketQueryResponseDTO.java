@@ -16,7 +16,8 @@ public class TicketQueryResponseDTO {
             ticketConcertDTO concertInfo,
             String seatInfo,
             int ticketId,
-            String ticketImage
+            String ticketImage,
+            String barcodeImage
     ) {
     }
 
