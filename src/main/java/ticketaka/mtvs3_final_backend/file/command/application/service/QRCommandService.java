@@ -40,8 +40,9 @@ import java.util.UUID;
 @Service
 public class QRCommandService {
 
-    private final SeatQueryRepository seatQueryRepository;
+    private final FileCommandService fileCommandService;
 
+    private final SeatQueryRepository seatQueryRepository;
     private final MemberRepository memberRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
@@ -52,6 +53,7 @@ public class QRCommandService {
     private static final String QR_FORMAT = "PNG";
     private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/signup/guide";
     private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
+    private static final String TICKET_BARCODE_PREFIX = "BARCODE_";
 
     /*
         회원 가입 용 QR 생성
@@ -169,12 +171,13 @@ public class QRCommandService {
             hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
 
             // 바코드 생성
-            BitMatrix matrix = new MultiFormatWriter().encode(barcodeData, BarcodeFormat.CODE_128, 300, 500, hints);
+            BitMatrix matrix = new MultiFormatWriter().encode(barcodeData, BarcodeFormat.CODE_128, 500, 300, hints);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(matrix, QR_FORMAT, outputStream);
 
-            // 바코드 데이터 인코딩
-            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+            String barcodeName = TICKET_BARCODE_PREFIX + memberId + "_" + concertId + "_" + ticketStatus;
+
+            return fileCommandService.uploadBarcodeImgByByte(outputStream.toByteArray(), barcodeName, "image/png");
 
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);

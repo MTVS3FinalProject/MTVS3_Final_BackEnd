@@ -150,6 +150,21 @@ public class FileCommandService {
         return fileUrl;
     }
 
+    // 바코드 업로드
+    public String uploadBarcodeImgByByte(byte[] byteArray, String barcodeName, String contentType) {
+
+        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
+
+        Blob blob = bucket.create(barcodeName,
+                byteArray, contentType);
+
+        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
+
+        log.info("File Url : {}", fileUrl);
+
+        return fileUrl;
+    }
+
     // 이미지 압축
     private byte[] compressImageData(byte[] imageData) {
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageData);
