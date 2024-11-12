@@ -135,6 +135,13 @@ public class SeatCommandService {
     }
 
     /*
+        좌석 결제 연기
+     */
+    public void postponeSeat(Long memberId, Long concertId, Long seatId) {
+
+    }
+
+    /*
         좌석 결제
      */
     @Transactional

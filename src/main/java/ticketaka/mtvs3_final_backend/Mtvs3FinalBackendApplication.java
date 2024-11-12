@@ -27,6 +27,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
@@ -52,6 +54,7 @@ public class Mtvs3FinalBackendApplication {
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
                                        SeatCommandRepository seatCommandRepository,
+                                       TicketCommandRepository ticketCommandRepository,
                                        TitleAdminCommandRepository titleAdminCommandRepository,
                                        StickerAdminCommandRepository stickerAdminCommandRepository) {
         return args -> {
@@ -124,6 +127,12 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D2", "67", 24999, LocalDateTime.of(2024, 10, 23, 00, 15), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "69", 29999, LocalDateTime.of(2024, 10, 23, 00, 30), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE)
+            ));
+
+            // Ticket 추가
+            ticketCommandRepository.saveAll(Arrays.asList(
+                    newTicket(2L, 1L, 1L, "TICKET_123451", 19999),
+                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999)
             ));
 
             // Ticket 기본 이미지 저장
@@ -272,6 +281,16 @@ public class Mtvs3FinalBackendApplication {
                 .drawingTime(drawingTime)
                 .concert(concert)
                 .seatStatus(seatStatus)
+                .build();
+    }
+
+    private Ticket newTicket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
+        return Ticket.builder()
+                .memberId(memberId)
+                .concertId(concertId)
+                .seatId(seatId)
+                .ticketNumber(ticketNumber)
+                .ticketPrice(ticketPrice)
                 .build();
     }
 
