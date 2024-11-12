@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,10 @@ public class FileQueryService {
         return stickerFileList.stream()
                 .collect(Collectors.toMap(
                         File::getRelationId,
-                        File::getFileUrl,
+                        file -> {
+                            byte[] imageData = getImageFromUrl(file.getFileUrl());
+                            return Base64.getEncoder().encodeToString(imageData);
+                        },
                         (existing, replacement) -> existing,
                         LinkedHashMap::new
                 ));
@@ -46,7 +50,10 @@ public class FileQueryService {
 
         File file = fileQueryRepository.findByRelationTypeAndRelationId(relationType, id)
                 .orElseThrow(() -> new Exception400("해당 Ticket 이미지를 찾을 수 없습니다."));
-        return file.getFileUrl();//getImageFromUrl(file.getFileUrl());
+
+        byte[] imageData = getImageFromUrl(file.getFileUrl());
+
+        return Base64.getEncoder().encodeToString(imageData);
     }
 
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
