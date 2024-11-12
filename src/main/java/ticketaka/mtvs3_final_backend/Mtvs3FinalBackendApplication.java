@@ -14,6 +14,8 @@ import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandS
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.repository.MemberStickerCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
@@ -59,7 +61,8 @@ public class Mtvs3FinalBackendApplication {
                                        QRCommandService qrCommandService,
                                        TicketCommandRepository ticketCommandRepository,
                                        TitleAdminCommandRepository titleAdminCommandRepository,
-                                       StickerAdminCommandRepository stickerAdminCommandRepository) {
+                                       StickerAdminCommandRepository stickerAdminCommandRepository,
+                                       MemberStickerCommandRepository memberStickerCommandRepository) {
         return args -> {
             
             // Member 저장
@@ -243,6 +246,16 @@ public class Mtvs3FinalBackendApplication {
                     newFile(RelationType.STICKER, 29L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_491731386674993?alt=media", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 30L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_501731386685660?alt=media", FilePurpose.CUSTOM)
             ));
+
+            // Sticker 할당
+            memberStickerCommandRepository.saveAll(Arrays.asList(
+                    newMemberSticker(4L, 2L),
+                    newMemberSticker(4L, 7L),
+                    newMemberSticker(4L, 12L),
+                    newMemberSticker(4L, 15L),
+                    newMemberSticker(4L, 21L),
+                    newMemberSticker(4L, 28L)
+            ));
         };
     }
 
@@ -316,6 +329,13 @@ public class Mtvs3FinalBackendApplication {
                 .stickerScript(stickerScript)
                 .stickerType(StickerType.fromString(stickerType))
                 .stickerRarity(StickerRarity.fromString(stickerRarity))
+                .build();
+    }
+
+    private MemberSticker newMemberSticker(Long memberId, Long stickerId) {
+        return MemberSticker.builder()
+                .memberId(memberId)
+                .stickerId(stickerId)
                 .build();
     }
 }
