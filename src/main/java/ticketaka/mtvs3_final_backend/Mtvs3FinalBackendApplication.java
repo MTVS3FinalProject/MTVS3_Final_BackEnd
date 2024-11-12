@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
+import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
@@ -28,6 +29,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
@@ -54,6 +56,7 @@ public class Mtvs3FinalBackendApplication {
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
                                        SeatCommandRepository seatCommandRepository,
+                                       QRCommandService qrCommandService,
                                        TicketCommandRepository ticketCommandRepository,
                                        TitleAdminCommandRepository titleAdminCommandRepository,
                                        StickerAdminCommandRepository stickerAdminCommandRepository) {
@@ -131,9 +134,9 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 추가
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(2L, 1L, 1L, "TICKET_123451", 19999),
-                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999),
-                    newTicket(2L, 1L, 5L, "TICKET_1234578", 29999)
+                    newTicket(2L, 1L, 1L, "TICKET_123451", 19999, qrCommandService),
+                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999, qrCommandService),
+                    newTicket(2L, 1L, 5L, "TICKET_1234578", 29999, qrCommandService)
             ));
 
             // Ticket 기본 이미지 저장
@@ -285,13 +288,14 @@ public class Mtvs3FinalBackendApplication {
                 .build();
     }
 
-    private Ticket newTicket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
+    private Ticket newTicket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice, QRCommandService qrCommandService) {
         return Ticket.builder()
                 .memberId(memberId)
                 .concertId(concertId)
                 .seatId(seatId)
                 .ticketNumber(ticketNumber)
                 .ticketPrice(ticketPrice)
+                .barcodeImage(qrCommandService.generateBarcodeImage(memberId, concertId, TicketStatus.RESERVE))
                 .build();
     }
 
