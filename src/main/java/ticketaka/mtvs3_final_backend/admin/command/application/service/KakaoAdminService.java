@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientRequestDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
@@ -25,12 +27,14 @@ public class KakaoAdminService {
     private static final String ACCESS_TOKEN_GRANT_TYPE = "authorization_code";
     private static final String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
     private final KakaoAPIFeignClient kakaoAPIFeignClient;
-    @Value(("${KAKAO.CLIENT.ID}"))
+    @Value("${KAKAO.CLIENT.ID}")
     private String CLIENT_ID;
-    @Value(("${KAKAO.REDIRECT.URI}"))
+    @Value("${KAKAO.REDIRECT.URI}")
     private String REDIRECT_URI;
 
     private static final String AUTHORIZATION_GRANT_TYPE = "Bearer ";
+    @Value("${KAKAO.MESSAGE.TEMPLATE.ID}")
+    private String KAKAO_MESSAGE_TEMPLATE;
 
     // Kakao Token 발급
     public KakaoFeignClientResponseDTO.KakaoTokenDTO getKakaoToken(String code) {
@@ -45,17 +49,15 @@ public class KakaoAdminService {
 
     // Kakao 친구 목록 조회
     public KakaoFeignClientResponseDTO.KakaoFriendListDTO getKakaoFriendList(KakaoToken kakaoToken) {
-
         try {
             String accessToken = AUTHORIZATION_GRANT_TYPE + kakaoToken.getAccessToken();
-
-            log.info("accessToken: {}", accessToken);
+            log.info("getKakaoFriendList_accessToken: {}", accessToken);
 
             return kakaoAPIFeignClient.getKakaoFriends(accessToken);
         } catch (FeignException e) {
-            log.error("Kakao API error: {}", e.content());
+            log.error("getKakaoFriendList_Kakao API error: {}", e.content());
             if (e.status() == 401) {
-                log.warn("Kakao token is expired");
+                log.warn("getKakaoFriendList_Kakao token is expired");
 
                 KakaoFeignClientResponseDTO.KakaoTokenDTO kakaoTokenDTO = kakaoAuthFeignClient.reissueKakaoToken(
                         REFRESH_TOKEN_GRANT_TYPE,
@@ -72,6 +74,35 @@ public class KakaoAdminService {
         }
     }
 
+    // Kakao 친구 메세지 전송
+    public void sendKakaoMessage(KakaoToken kakaoToken) {
+        try {
+            String accessToken = AUTHORIZATION_GRANT_TYPE + kakaoToken.getAccessToken();
+            log.info("sendKakaoMessage_accessToken: {}", accessToken);
+
+            // 친구 목록 조회
+            KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAPIFeignClient.getKakaoFriends(accessToken);
+
+            // 친구 목록에서 UUID 추출
+            kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageDTO(kakaoFriendListDTO));
+        } catch (FeignException e) {
+
+            if (e.status() == 401) {
+                KakaoFeignClientResponseDTO.KakaoTokenDTO kakaoTokenDTO = kakaoAuthFeignClient.reissueKakaoToken(
+                        REFRESH_TOKEN_GRANT_TYPE,
+                        CLIENT_ID,
+                        kakaoToken.getRefreshToken()
+                );
+                KakaoToken newKakaoToken = saveKakaoToken(kakaoTokenDTO);
+
+                String accessToken = AUTHORIZATION_GRANT_TYPE + newKakaoToken.getAccessToken();
+                kakaoAPIFeignClient.sendKakaoMessage(accessToken, formatSendKakaoMessageDTO(kakaoAPIFeignClient.getKakaoFriends(accessToken)));
+            } else {
+                throw new Exception401("sendKakaoMessage_Kakao token is expired");
+            }
+        }
+    }
+
     public KakaoToken saveKakaoToken(KakaoFeignClientResponseDTO.KakaoTokenDTO responseDTO) {
         // Kakao Token 저장
         KakaoToken kakaoToken = KakaoToken.builder()
@@ -82,5 +113,28 @@ public class KakaoAdminService {
                 .refreshTokenExpiresIn(responseDTO.refresh_token_expires_in())
                 .build();
         return kakaoTokenRepository.save(kakaoToken);
+    }
+
+    private KakaoFeignClientRequestDTO.sendKakaoMessageDTO formatSendKakaoMessageDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
+
+        if (kakaoFriendListDTO == null || kakaoFriendListDTO.elements().isEmpty()) {
+            throw new Exception400("Kakao 친구 목록이 비어있습니다.");
+        }
+
+        StringBuilder uuidList = new StringBuilder();
+        uuidList.append("[");
+
+        for (KakaoFeignClientResponseDTO.Friend friend : kakaoFriendListDTO.elements()) {
+            if (uuidList.length() > 1) {
+                uuidList.append(",");
+            }
+            uuidList.append("\"").append(friend.uuid()).append("\"");
+        }
+        uuidList.append("]");
+
+        return new KakaoFeignClientRequestDTO.sendKakaoMessageDTO(
+                uuidList.toString(),
+                KAKAO_MESSAGE_TEMPLATE
+        );
     }
 }

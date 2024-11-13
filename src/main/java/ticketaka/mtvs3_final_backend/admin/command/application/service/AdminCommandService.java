@@ -85,4 +85,15 @@ public class AdminCommandService {
 
         return null;
     }
+
+    /*
+        Kakao 친구 메세지 전송
+     */
+    public void sendKakaoMessage() {
+
+        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new Exception401("저장된 Kakao Token 값이 없습니다."));
+
+        kakaoAdminService.sendKakaoMessage(kakaoToken);
+    }
 }

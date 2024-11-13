@@ -39,6 +39,17 @@ public class AdminMessageController {
     }
 
     /*
+        Kakao 친구 메세지 전송
+     */
+    @PostMapping("/kakao/friends/message")
+    public ResponseEntity<?> sendKakaoMessage() {
+
+       adminCommandService.sendKakaoMessage();
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
         Kakao Message Callback
      */
     @GetMapping("/message/callback")
