@@ -58,6 +58,8 @@ public class AdminCommandService {
         // Kakao Token 발급
         KakaoFeignClientResponseDTO.KakaoTokenDTO responseDTO = kakaoAdminService.getKakaoToken(code);
 
+        log.info("Kakao token: {}", responseDTO);
+
         // Kakao Token 저장
 
     }
