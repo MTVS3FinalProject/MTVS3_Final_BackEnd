@@ -1,11 +1,9 @@
 package ticketaka.mtvs3_final_backend.admin.command.domain.service;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 
 @FeignClient(name = "kakao-auth-service", url = "https://kauth.kakao.com")
 public interface KakaoAuthFeignClient {

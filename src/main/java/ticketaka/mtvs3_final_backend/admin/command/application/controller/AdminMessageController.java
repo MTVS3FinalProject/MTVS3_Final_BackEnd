@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
-import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.application.service.AdminCommandService;
 
 @Slf4j

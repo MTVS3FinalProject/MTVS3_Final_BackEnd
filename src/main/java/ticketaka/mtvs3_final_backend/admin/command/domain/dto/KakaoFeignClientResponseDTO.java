@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.admin.command.application.dto;
+package ticketaka.mtvs3_final_backend.admin.command.domain.dto;
 
 import java.util.List;
 
