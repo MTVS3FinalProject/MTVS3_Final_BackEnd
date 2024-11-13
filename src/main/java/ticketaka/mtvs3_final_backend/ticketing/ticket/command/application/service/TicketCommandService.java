@@ -81,7 +81,7 @@ public class TicketCommandService {
                 .seatId(seatId)
                 .ticketNumber(ticketNumber)
                 .ticketPrice(ticketPrice)
-                .barcodeImage(qrCommandService.generateBarcodeImage(memberId, concertId, TicketStatus.RESERVE))
+                .barcodeImage(qrCommandService.generateBarcodeImage(memberId, concertId, seatId, TicketStatus.RESERVE))
                 .build();
 
         return ticketCommandRepository.save(ticket);
