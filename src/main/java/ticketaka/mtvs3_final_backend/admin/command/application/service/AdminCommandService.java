@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
@@ -55,7 +56,9 @@ public class AdminCommandService {
                 .orElseThrow(() -> new Exception400("해당 공연을 찾을 수 없습니다."));
     }
 
-    // Kakao Token 발급 및 저장
+    /*
+        Kakao Token 발급 및 저장
+     */
     public void saveKakaoToken(String code) {
 
         // Kakao Token 발급
@@ -64,13 +67,20 @@ public class AdminCommandService {
         log.info("Kakao token: {}", responseDTO);
 
         // Kakao Token 저장
-        KakaoToken kakaoToken = KakaoToken.builder()
-                .tokenType(responseDTO.token_type())
-                .accessToken(responseDTO.access_token())
-                .expiresIn(responseDTO.expires_in())
-                .refreshToken(responseDTO.refresh_token())
-                .refreshTokenExpiresIn(responseDTO.refresh_token_expires_in())
-                .build();
-        kakaoTokenRepository.save(kakaoToken);
+        kakaoAdminService.saveKakaoToken(responseDTO);
+    }
+
+
+    /*
+        Kakao 친구 목록 조회
+     */
+    public KakaoFeignClientResponseDTO.KakaoFriendListDTO getKakaoFriendList() {
+
+        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new Exception401("저장된 Kakao Token 값이 없습니다."));
+
+        KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAdminService.getKakaoFriendList(kakaoToken);
+
+        return null;
     }
 }

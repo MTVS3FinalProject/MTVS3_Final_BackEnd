@@ -16,6 +16,11 @@ public interface KakaoFeignClient {
                                                             @RequestParam("redirect_uri") String redirectUri,
                                                             @RequestParam("code") String code);
 
+    @PostMapping(value = "/oauth/token", consumes = "application/x-www-form-urlencoded")
+    KakaoFeignClientResponseDTO.KakaoTokenDTO reissueKakaoToken(@RequestParam("grant_type") String grantType,
+                                                                @RequestParam("client_id") String clientId,
+                                                                @RequestParam("refresh_token") String refreshToken);
+
     @GetMapping(value = "/v1/api/talk/friends")
     KakaoFeignClientResponseDTO.KakaoFriendListDTO getKakaoFriends(@RequestHeader("Authorization") String accessToken);
 }
