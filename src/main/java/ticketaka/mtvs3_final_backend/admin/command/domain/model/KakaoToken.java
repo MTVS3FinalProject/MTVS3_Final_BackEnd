@@ -29,11 +29,11 @@ public class KakaoToken extends BaseTimeEntity {
     private Long refreshTokenExpiresIn;
 
     @Builder
-    public KakaoToken(String tokenType, String accessToken, Long expiresIn, Long refreshTokenExpiresIn) {
+    public KakaoToken(String tokenType, String accessToken, Long expiresIn, String refreshToken, Long refreshTokenExpiresIn) {
         this.tokenType = tokenType;
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
-        this.refreshToken = refreshTokenExpiresIn.toString();
+        this.refreshToken = refreshToken;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
+import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
@@ -24,6 +26,7 @@ public class AdminCommandService {
     private final KakaoAdminService kakaoAdminService;
 
     private final ConcertQueryRepository concertQueryRepository;
+    private final KakaoTokenRepository kakaoTokenRepository;
 
     /*
         Title 추가
@@ -61,6 +64,13 @@ public class AdminCommandService {
         log.info("Kakao token: {}", responseDTO);
 
         // Kakao Token 저장
-
+        KakaoToken kakaoToken = KakaoToken.builder()
+                .tokenType(responseDTO.token_type())
+                .accessToken(responseDTO.access_token())
+                .expiresIn(responseDTO.expires_in())
+                .refreshToken(responseDTO.refresh_token())
+                .refreshTokenExpiresIn(responseDTO.refresh_token_expires_in())
+                .build();
+        kakaoTokenRepository.save(kakaoToken);
     }
 }
