@@ -10,6 +10,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
+import ticketaka.mtvs3_final_backend.admin.command.domain.service.KakaoAPIFeignClient;
 import ticketaka.mtvs3_final_backend.admin.command.domain.service.KakaoAuthFeignClient;
 
 @Slf4j
@@ -23,6 +24,7 @@ public class KakaoAdminService {
 
     private static final String ACCESS_TOKEN_GRANT_TYPE = "authorization_code";
     private static final String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
+    private final KakaoAPIFeignClient kakaoAPIFeignClient;
     @Value(("${KAKAO.CLIENT.ID}"))
     private String CLIENT_ID;
     @Value(("${KAKAO.REDIRECT.URI}"))
@@ -49,7 +51,7 @@ public class KakaoAdminService {
 
             log.info("accessToken: {}", accessToken);
 
-            return kakaoAuthFeignClient.getKakaoFriends(accessToken);
+            return kakaoAPIFeignClient.getKakaoFriends(accessToken);
         } catch (FeignException e) {
             log.error("Kakao API error: {}", e.content());
             if (e.status() == 401) {
@@ -63,7 +65,7 @@ public class KakaoAdminService {
                 KakaoToken newKakaoToken = saveKakaoToken(kakaoTokenDTO);
 
                 String accessToken = AUTHORIZATION_GRANT_TYPE + newKakaoToken.getAccessToken();
-                return kakaoAuthFeignClient.getKakaoFriends(accessToken);
+                return kakaoAPIFeignClient.getKakaoFriends(accessToken);
             } else {
                 throw new Exception401("Kakao token is expired");
             }
