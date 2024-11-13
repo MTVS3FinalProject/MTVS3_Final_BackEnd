@@ -160,11 +160,11 @@ public class QRCommandService {
     }
 
     // Ticket Barcode Image 생성
-    public String generateBarcodeImage(Long memberId, Long concertId, TicketStatus ticketStatus) {
+    public String generateBarcodeImage(Long memberId, Long concertId, Long seatId, TicketStatus ticketStatus) {
 
         try {
             // 바코드 데이터 포맷팅
-            String barcodeData = String.format("%d-%d-%s", memberId, concertId, ticketStatus);
+            String barcodeData = String.format("%d-%d-%d-%s", memberId, concertId, seatId, ticketStatus);
 
             // 바코드 포맷 및 설정
             Map<EncodeHintType, Object> hints = new HashMap<>();
