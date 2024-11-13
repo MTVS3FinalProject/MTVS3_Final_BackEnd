@@ -81,6 +81,8 @@ public class AdminCommandService {
 
         KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAdminService.getKakaoFriendList(kakaoToken);
 
+        log.info("Kakao friend list: {}", kakaoFriendListDTO);
+
         return null;
     }
 }

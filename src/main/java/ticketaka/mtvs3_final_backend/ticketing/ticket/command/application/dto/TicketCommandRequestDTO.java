@@ -5,7 +5,7 @@ import java.util.List;
 public class TicketCommandRequestDTO {
 
     public record saveCustomTicketDTO(
-            String encodedCustomTicketImageData,
+            String customTicketImage,
             List<Integer> stickerIdList,
             Integer backgroundId
     ) {
