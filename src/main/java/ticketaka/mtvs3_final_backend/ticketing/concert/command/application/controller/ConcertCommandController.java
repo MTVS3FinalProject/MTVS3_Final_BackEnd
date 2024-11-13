@@ -37,6 +37,8 @@ public class ConcertCommandController {
      */
     @GetMapping("/{concertId}")
     public ResponseEntity<?> entranceConcert(@PathVariable("concertId") Long concertId) {
+
+        log.info("entranceConcert concertId: {}", concertId);
         
         ConcertCommandResponseDTO.entranceConcertDTO responseDTO = concertCommandService.entranceConcert(concertId, getCurrentMemberId());
         

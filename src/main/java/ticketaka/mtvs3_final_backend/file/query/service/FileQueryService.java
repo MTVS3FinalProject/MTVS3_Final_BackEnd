@@ -56,6 +56,11 @@ public class FileQueryService {
         return Base64.getEncoder().encodeToString(imageData);
     }
 
+    // Encoding
+    public String encodingImageUrl(String imageUrl) {
+        return Base64.getEncoder().encodeToString(getImageFromUrl(imageUrl));
+    }
+
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)
     protected byte[] getImageFromUrl(String imageUrl) {
         try {

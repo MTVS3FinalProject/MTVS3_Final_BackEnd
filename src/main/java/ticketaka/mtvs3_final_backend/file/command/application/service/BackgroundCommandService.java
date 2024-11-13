@@ -13,6 +13,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.Relation
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.BackgroundCommandRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileCommandRepository;
 import ticketaka.mtvs3_final_backend.file.command.domain.service.BackgroundFeignClient;
+import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.dto.TicketCustomCommandResponseDTO;
 
 @Slf4j
@@ -26,6 +27,7 @@ public class BackgroundCommandService {
     private final BackgroundCommandRepository backgroundCommandRepository;
 
     private final BackgroundFeignClient backgroundFeignClient;
+    private final FileQueryService fileQueryService;
 
     /*
         AI 배경 생성
@@ -45,7 +47,7 @@ public class BackgroundCommandService {
 
         return new TicketCustomCommandResponseDTO.generateAIBackgroundDTO(
                 background.getId().intValue(),
-                file.getFileUrl()
+                fileQueryService.encodingImageUrl(file.getFileUrl())
         );
     }
 }

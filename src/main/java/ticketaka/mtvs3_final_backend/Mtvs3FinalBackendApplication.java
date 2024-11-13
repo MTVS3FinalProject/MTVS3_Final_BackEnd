@@ -253,7 +253,7 @@ public class Mtvs3FinalBackendApplication {
                     newMemberSticker(4L, 7L),
                     newMemberSticker(4L, 12L),
                     newMemberSticker(4L, 15L),
-                    newMemberSticker(4L, 21L),
+                    newMemberSticker(4L, 17L),
                     newMemberSticker(4L, 28L)
             ));
         };

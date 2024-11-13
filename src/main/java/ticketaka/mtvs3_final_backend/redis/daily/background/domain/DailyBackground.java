@@ -25,5 +25,5 @@ public class DailyBackground {
         this.lastRefreshDate = lastRefreshDate;
     }
 
-    public static final Integer DAILY_BACKGROUND_GENERATION_LIMIT = 2;
+    public static final Integer DAILY_BACKGROUND_GENERATION_LIMIT = 20;
 }
