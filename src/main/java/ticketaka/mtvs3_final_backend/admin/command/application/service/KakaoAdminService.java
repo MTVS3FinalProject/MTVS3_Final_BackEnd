@@ -10,7 +10,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
-import ticketaka.mtvs3_final_backend.admin.command.domain.service.KakaoFeignClient;
+import ticketaka.mtvs3_final_backend.admin.command.domain.service.KakaoAuthFeignClient;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ import ticketaka.mtvs3_final_backend.admin.command.domain.service.KakaoFeignClie
 @Service
 public class KakaoAdminService {
 
-    private final KakaoFeignClient kakaoFeignClient;
+    private final KakaoAuthFeignClient kakaoAuthFeignClient;
     private final KakaoTokenRepository kakaoTokenRepository;
 
     private static final String ACCESS_TOKEN_GRANT_TYPE = "authorization_code";
@@ -33,7 +33,7 @@ public class KakaoAdminService {
     // Kakao Token 발급
     public KakaoFeignClientResponseDTO.KakaoTokenDTO getKakaoToken(String code) {
 
-        return kakaoFeignClient.getKakaoToken(
+        return kakaoAuthFeignClient.getKakaoToken(
                 ACCESS_TOKEN_GRANT_TYPE,
                 CLIENT_ID,
                 REDIRECT_URI,
@@ -46,12 +46,16 @@ public class KakaoAdminService {
 
         try {
             String accessToken = AUTHORIZATION_GRANT_TYPE + kakaoToken.getAccessToken();
-            return kakaoFeignClient.getKakaoFriends(accessToken);
+
+            log.info("accessToken: {}", accessToken);
+
+            return kakaoAuthFeignClient.getKakaoFriends(accessToken);
         } catch (FeignException e) {
+            log.error("Kakao API error: {}", e.content());
             if (e.status() == 401) {
                 log.warn("Kakao token is expired");
 
-                KakaoFeignClientResponseDTO.KakaoTokenDTO kakaoTokenDTO = kakaoFeignClient.reissueKakaoToken(
+                KakaoFeignClientResponseDTO.KakaoTokenDTO kakaoTokenDTO = kakaoAuthFeignClient.reissueKakaoToken(
                         REFRESH_TOKEN_GRANT_TYPE,
                         CLIENT_ID,
                         kakaoToken.getRefreshToken()
@@ -59,7 +63,7 @@ public class KakaoAdminService {
                 KakaoToken newKakaoToken = saveKakaoToken(kakaoTokenDTO);
 
                 String accessToken = AUTHORIZATION_GRANT_TYPE + newKakaoToken.getAccessToken();
-                return kakaoFeignClient.getKakaoFriends(accessToken);
+                return kakaoAuthFeignClient.getKakaoFriends(accessToken);
             } else {
                 throw new Exception401("Kakao token is expired");
             }

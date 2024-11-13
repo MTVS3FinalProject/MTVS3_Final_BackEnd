@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
 
 @FeignClient(name = "kakao-service", url = "https://kauth.kakao.com")
-public interface KakaoFeignClient {
+public interface KakaoAuthFeignClient {
 
     @PostMapping(value = "/oauth/token", consumes = "application/x-www-form-urlencoded")
     KakaoFeignClientResponseDTO.KakaoTokenDTO getKakaoToken(@RequestParam("grant_type") String grantType,
