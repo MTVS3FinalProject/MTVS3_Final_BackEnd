@@ -137,7 +137,7 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 추가
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(2L, 1L, 1L, "TICKET_123451", 19999, qrCommandService),
+                    newTicket(4L, 1L, 1L, "TICKET_123451", 19999, qrCommandService),
                     newTicket(2L, 1L, 2L, "TICKET_123452", 29999, qrCommandService),
                     newTicket(2L, 1L, 5L, "TICKET_1234578", 29999, qrCommandService)
             ));
