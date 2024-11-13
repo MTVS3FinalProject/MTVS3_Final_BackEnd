@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
-import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientRequestDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
@@ -34,7 +33,7 @@ public class KakaoAdminService {
 
     private static final String AUTHORIZATION_GRANT_TYPE = "Bearer ";
     @Value("${KAKAO.MESSAGE.TEMPLATE.ID}")
-    private String KAKAO_MESSAGE_TEMPLATE;
+    private Long KAKAO_MESSAGE_TEMPLATE;
 
     // Kakao Token 발급
     public KakaoFeignClientResponseDTO.KakaoTokenDTO getKakaoToken(String code) {
@@ -84,7 +83,7 @@ public class KakaoAdminService {
             KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAPIFeignClient.getKakaoFriends(accessToken);
 
             // 친구 목록에서 UUID 추출
-            kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageDTO(kakaoFriendListDTO));
+            kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageDTO(kakaoFriendListDTO), KAKAO_MESSAGE_TEMPLATE);
         } catch (FeignException e) {
 
             if (e.status() == 401) {
@@ -96,7 +95,7 @@ public class KakaoAdminService {
                 KakaoToken newKakaoToken = saveKakaoToken(kakaoTokenDTO);
 
                 String accessToken = AUTHORIZATION_GRANT_TYPE + newKakaoToken.getAccessToken();
-                kakaoAPIFeignClient.sendKakaoMessage(accessToken, formatSendKakaoMessageDTO(kakaoAPIFeignClient.getKakaoFriends(accessToken)));
+                kakaoAPIFeignClient.sendKakaoMessage(accessToken, formatSendKakaoMessageDTO(kakaoAPIFeignClient.getKakaoFriends(accessToken)), KAKAO_MESSAGE_TEMPLATE);
             } else {
                 throw new Exception401("sendKakaoMessage_Kakao token is expired");
             }
@@ -115,7 +114,7 @@ public class KakaoAdminService {
         return kakaoTokenRepository.save(kakaoToken);
     }
 
-    private KakaoFeignClientRequestDTO.sendKakaoMessageDTO formatSendKakaoMessageDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
+    private String formatSendKakaoMessageDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
 
         if (kakaoFriendListDTO == null || kakaoFriendListDTO.elements().isEmpty()) {
             throw new Exception400("Kakao 친구 목록이 비어있습니다.");
@@ -132,9 +131,6 @@ public class KakaoAdminService {
         }
         uuidList.append("]");
 
-        return new KakaoFeignClientRequestDTO.sendKakaoMessageDTO(
-                uuidList.toString(),
-                KAKAO_MESSAGE_TEMPLATE
-        );
+        return uuidList.toString();
     }
 }
