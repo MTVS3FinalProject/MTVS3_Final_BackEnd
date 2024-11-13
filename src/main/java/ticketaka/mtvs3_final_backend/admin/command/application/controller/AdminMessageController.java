@@ -21,6 +21,8 @@ public class AdminMessageController {
     @GetMapping("/kakao/token")
     public ResponseEntity<?> kakaoToken(@RequestParam(name = "code") String code) {
 
+        adminCommandService.saveKakaoToken(code);
+
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
