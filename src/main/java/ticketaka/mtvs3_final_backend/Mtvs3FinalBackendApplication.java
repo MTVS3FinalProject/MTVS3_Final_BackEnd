@@ -66,14 +66,14 @@ public class Mtvs3FinalBackendApplication {
         return args -> {
             
             // Member 저장
-            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
-            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
-            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder);
-            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 0, passwordEncoder);
-            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 0, passwordEncoder);
-            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 0, passwordEncoder);
-            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 0, passwordEncoder);
-            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 0, passwordEncoder);
+            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 1, 0, passwordEncoder);
+            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 2, 0, passwordEncoder);
+            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 3, 0, passwordEncoder);
+            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 1, 0, passwordEncoder);
+            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 2, 0, passwordEncoder);
+            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 3, 0, passwordEncoder);
+            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 1, 0, passwordEncoder);
+            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 2, 0, passwordEncoder);
             member1.setCoin(100000);
             member2.setCoin(100000);
             member3.setCoin(100000);
@@ -259,13 +259,14 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, int authority, PasswordEncoder passwordEncoder) {
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(birth)
+                .avatarData(avatarData)
                 .authority(Authority.fromInt(authority))
                 .status(Status.ACTIVE)
                 .build();
