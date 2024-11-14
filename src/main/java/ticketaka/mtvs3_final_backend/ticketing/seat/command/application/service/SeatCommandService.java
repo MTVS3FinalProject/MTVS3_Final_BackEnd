@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
+import ticketaka.mtvs3_final_backend.admin.command.application.service.AdminCommandService;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
@@ -52,6 +53,7 @@ public class SeatCommandService {
     private final AddressRepository addressRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
+    private final AdminCommandService adminCommandService;
 
     /*
         좌석 접수
@@ -170,6 +172,9 @@ public class SeatCommandService {
 
         // 주소지 티켓 매핑
         Address address = memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
+
+        // Kakao Message 전송
+        adminCommandService.sendKakaoMessage(address.getUserName());
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(

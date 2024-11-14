@@ -141,6 +141,7 @@ public class MemberAuthService {
                 .password(passwordEncoder.encode(requestDTO.password()))
                 .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(getLocalDateBirth(requestDTO.birth()))
+                .avatarData(requestDTO.avatarData())
                 .authority(Authority.fromInt(requestDTO.isHost()))
                 .status(Status.ACTIVE)
                 .build();
@@ -175,12 +176,11 @@ public class MemberAuthService {
 
         Title title = titleQueryService.getMemberTitle(member.getId());
 
-        // TODO: userCoin 조회, 아바타 data 조회 필요, Title 이 비어있을 경우
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getNickname(),
                 member.getBirth().toString(),
                 member.getCoin(),
-                1,
+                member.getAvatarData(),
                 title != null ? title.getId().intValue() : -1,
                 title != null ? title.getTitleName() : null,
                 title != null ? title.getTitleRarity().toString() : null

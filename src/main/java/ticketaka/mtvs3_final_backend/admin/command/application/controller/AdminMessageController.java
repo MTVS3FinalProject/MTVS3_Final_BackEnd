@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
-import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.application.service.AdminCommandService;
 
 @Slf4j
@@ -36,6 +36,17 @@ public class AdminMessageController {
         KakaoFeignClientResponseDTO.KakaoFriendListDTO responseDTO = adminCommandService.getKakaoFriendList();
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        Kakao 친구 메세지 전송
+     */
+    @PostMapping("/kakao/friends/message")
+    public ResponseEntity<?> sendKakaoMessage() {
+
+       adminCommandService.sendKakaoMessage(null);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
     /*

@@ -175,7 +175,7 @@ public class QRCommandService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(matrix, QR_FORMAT, outputStream);
 
-            String barcodeName = TICKET_BARCODE_PREFIX + memberId + "_" + concertId + "_" + ticketStatus;
+            String barcodeName = TICKET_BARCODE_PREFIX + memberId + "_" + concertId + "_" + seatId + "_" + System.currentTimeMillis();
 
             return fileCommandService.uploadBarcodeImgByByte(outputStream.toByteArray(), barcodeName, "image/png");
 

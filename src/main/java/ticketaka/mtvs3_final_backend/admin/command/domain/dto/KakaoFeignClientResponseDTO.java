@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.admin.command.application.dto;
+package ticketaka.mtvs3_final_backend.admin.command.domain.dto;
 
 import java.util.List;
 
@@ -23,7 +23,8 @@ public class KakaoFeignClientResponseDTO {
 
     public record Friend(
             Long id,
-            String uuid
+            String uuid,
+            String profile_nickname
     ) {
     }
 }

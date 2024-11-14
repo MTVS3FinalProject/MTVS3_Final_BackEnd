@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
-import ticketaka.mtvs3_final_backend.admin.command.application.dto.KakaoFeignClientResponseDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
@@ -84,5 +84,16 @@ public class AdminCommandService {
         log.info("Kakao friend list: {}", kakaoFriendListDTO);
 
         return null;
+    }
+
+    /*
+        Kakao 친구 메세지 전송
+     */
+    public void sendKakaoMessage(String userName) {
+
+        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> new Exception401("저장된 Kakao Token 값이 없습니다."));
+
+        kakaoAdminService.sendKakaoMessage(kakaoToken, userName);
     }
 }
