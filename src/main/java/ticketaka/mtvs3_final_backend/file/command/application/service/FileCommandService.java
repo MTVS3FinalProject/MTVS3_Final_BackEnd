@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
-import ticketaka.mtvs3_final_backend.file.command.domain.model.Background;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
@@ -123,7 +122,7 @@ public class FileCommandService {
             String fileUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
                     bucket.getName(), java.net.URLEncoder.encode(blob.getName(), StandardCharsets.UTF_8));
 
-            log.info("File Url : {}", fileUrl);
+            log.info("ByMultipartFile Url : {}", fileUrl);
 
             return fileUrl;
 
@@ -142,24 +141,24 @@ public class FileCommandService {
 
         String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
-        log.info("File Url : {}", fileUrl);
+        log.info("ByByte Url : {}", fileUrl);
 
         return fileUrl;
     }
 
-    // 바코드 업로드
-    public String uploadBarcodeImgByByte(byte[] byteArray, String barcodeName, String contentType) {
+    // TicketQR 업로드
+    public void uploadTicketQRImgByByte(byte[] byteArray, String ticketQRName, String contentType, Long ticketId) {
 
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
-        Blob blob = bucket.create(barcodeName,
+        Blob blob = bucket.create(ticketQRName,
                 byteArray, contentType);
 
         String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
-        log.info("File Url : {}", fileUrl);
+        log.info("TicketQR Url : {}", fileUrl);
 
-        return fileUrl;
+        newFile(RelationType.TICKET, ticketId, fileUrl, FilePurpose.VERIFICATION);
     }
 
     // 이미지 압축

@@ -17,10 +17,8 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRe
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.TicketResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.service.TicketCustomCommandService;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 import java.util.UUID;
@@ -56,7 +54,7 @@ public class TicketCommandService {
         Ticket ticket = newTicket(memberId, concertId, seatId, ticketNumber, ticketPrice);
         
         // Ticket QR Code 생성
-        qrCommandService.generateBarcodeImage(memberId, concertId, seatId, ticket.getId(), ticket.getTicketStatus());
+        qrCommandService.generateQRImage(memberId, concertId, seatId, ticket.getId(), ticket.getTicketStatus());
 
         return new TicketResponseDTO.createTicketDTO(
                 ticket.getId()

@@ -1,7 +1,6 @@
 package ticketaka.mtvs3_final_backend.file.command.application.service;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -29,8 +28,6 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticke
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -52,7 +49,7 @@ public class QRCommandService {
     private static final String QR_FORMAT = "PNG";
     private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/signup/guide";
     private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
-    private static final String TICKET_BARCODE_PREFIX = "BARCODE_";
+    private static final String TICKET_QR_PREFIX = "TICKETAKA_";
 
     /*
         회원 가입 용 QR 생성
@@ -158,29 +155,17 @@ public class QRCommandService {
         }
     }
 
-    // Ticket Barcode Image 생성
-    public void generateBarcodeImage(Long memberId, Long concertId, Long seatId, Long ticketId, TicketStatus ticketStatus) {
+    // Ticket QR Image 생성
+    public void generateQRImage(Long memberId, Long concertId, Long seatId, Long ticketId, TicketStatus ticketStatus) {
 
-        try {
-            // 바코드 데이터 포맷팅
-            String barcodeData = String.format("%d-%d-%d-%s", memberId, concertId, seatId, ticketStatus);
+        // QR 데이터 포맷팅
+        String qrData = String.format("%d-%d-%d-%d-%s", memberId, concertId, seatId, ticketId, ticketStatus);
 
-            // 바코드 포맷 및 설정
-            Map<EncodeHintType, Object> hints = new HashMap<>();
-            hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        ByteArrayOutputStream outputStream = getByteArrayOutputStream(qrData);
 
-            // 바코드 생성
-            BitMatrix matrix = new MultiFormatWriter().encode(barcodeData, BarcodeFormat.CODE_128, 500, 300, hints);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            MatrixToImageWriter.writeToStream(matrix, QR_FORMAT, outputStream);
+        String barcodeName = TICKET_QR_PREFIX + memberId + "_" + ticketId + "_" + System.currentTimeMillis();
 
-            String barcodeName = TICKET_BARCODE_PREFIX + memberId + "_" + concertId + "_" + seatId + "_" + System.currentTimeMillis();
-
-            fileCommandService.uploadBarcodeImgByByte(outputStream.toByteArray(), barcodeName, "image/png");
-
-        } catch (WriterException | IOException e) {
-            throw new RuntimeException(e);
-        }
+        fileCommandService.uploadTicketQRImgByByte(outputStream.toByteArray(), barcodeName, "image/png", ticketId);
     }
 
     // FileUploadForAuth 생성
