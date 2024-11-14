@@ -88,9 +88,9 @@ public class TicketCustomCommandService {
 
         CustomTicket customTicket = getCustomTicket(ticketId);
 
-        // Custom Ticket Update
-        if (!requestDTO.stickerIdList().isEmpty()) {
-            customTicket.setStickerIdList(requestDTO.stickerIdList().stream().map(Long::valueOf).toList());
+        if (requestDTO.stickerIdList() != null && !requestDTO.stickerIdList().isEmpty()) {
+            customTicket.getStickerIdList().clear();
+            customTicket.getStickerIdList().addAll(requestDTO.stickerIdList().stream().map(Long::valueOf).toList());
         }
 
         if (requestDTO.backgroundId() != null) {
