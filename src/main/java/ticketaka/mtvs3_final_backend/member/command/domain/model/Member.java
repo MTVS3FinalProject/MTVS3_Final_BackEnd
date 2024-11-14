@@ -29,6 +29,8 @@ public class Member extends BaseTimeEntity {
     private String secondPwd;
     @Column
     private LocalDate birth;
+    @Column
+    private Integer avatarData;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -44,12 +46,13 @@ public class Member extends BaseTimeEntity {
     private Integer coin;
 
     @Builder
-    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Authority authority, Status status) {
+    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Authority authority, Status status) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.secondPwd = secondPwd;
         this.birth = birth;
+        this.avatarData = avatarData;
         this.authority = authority;
         this.status = status;
         this.coin = 0;
