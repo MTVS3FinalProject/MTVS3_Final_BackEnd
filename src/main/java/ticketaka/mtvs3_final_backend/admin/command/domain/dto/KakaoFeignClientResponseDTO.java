@@ -23,7 +23,8 @@ public class KakaoFeignClientResponseDTO {
 
     public record Friend(
             Long id,
-            String uuid
+            String uuid,
+            String profile_nickname
     ) {
     }
 }

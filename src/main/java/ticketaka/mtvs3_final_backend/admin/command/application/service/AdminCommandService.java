@@ -89,11 +89,11 @@ public class AdminCommandService {
     /*
         Kakao 친구 메세지 전송
      */
-    public void sendKakaoMessage() {
+    public void sendKakaoMessage(String userName) {
 
         KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
                 .orElseThrow(() -> new Exception401("저장된 Kakao Token 값이 없습니다."));
 
-        kakaoAdminService.sendKakaoMessage(kakaoToken);
+        kakaoAdminService.sendKakaoMessage(kakaoToken, userName);
     }
 }

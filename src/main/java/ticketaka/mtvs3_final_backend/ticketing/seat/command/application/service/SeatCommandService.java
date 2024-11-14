@@ -174,7 +174,7 @@ public class SeatCommandService {
         Address address = memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
 
         // Kakao Message 전송
-        adminCommandService.sendKakaoMessage();
+        adminCommandService.sendKakaoMessage(address.getUserName());
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(

@@ -74,7 +74,7 @@ public class KakaoAdminService {
     }
 
     // Kakao 친구 메세지 전송
-    public void sendKakaoMessage(KakaoToken kakaoToken) {
+    public void sendKakaoMessage(KakaoToken kakaoToken, String userName) {
         try {
             String accessToken = AUTHORIZATION_GRANT_TYPE + kakaoToken.getAccessToken();
             log.info("sendKakaoMessage_accessToken: {}", accessToken);
@@ -82,8 +82,16 @@ public class KakaoAdminService {
             // 친구 목록 조회
             KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAPIFeignClient.getKakaoFriends(accessToken);
 
-            // 친구 목록에서 UUID 추출
-            kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageDTO(kakaoFriendListDTO), KAKAO_MESSAGE_TEMPLATE);
+            checkKakaoFriendListDTO(kakaoFriendListDTO);
+
+            if (userName == null) {
+                // 친구 목록에서 UUID 추출
+                kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageToAllDTO(kakaoFriendListDTO), KAKAO_MESSAGE_TEMPLATE);
+            } else {
+                String uuid = formatKakaoFriendUUID(kakaoFriendListDTO, userName);
+                kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), uuid, KAKAO_MESSAGE_TEMPLATE);
+            }
+
         } catch (FeignException e) {
 
             if (e.status() == 401) {
@@ -95,7 +103,7 @@ public class KakaoAdminService {
                 KakaoToken newKakaoToken = saveKakaoToken(kakaoTokenDTO);
 
                 String accessToken = AUTHORIZATION_GRANT_TYPE + newKakaoToken.getAccessToken();
-                kakaoAPIFeignClient.sendKakaoMessage(accessToken, formatSendKakaoMessageDTO(kakaoAPIFeignClient.getKakaoFriends(accessToken)), KAKAO_MESSAGE_TEMPLATE);
+                kakaoAPIFeignClient.sendKakaoMessage(accessToken, formatSendKakaoMessageToAllDTO(kakaoAPIFeignClient.getKakaoFriends(accessToken)), KAKAO_MESSAGE_TEMPLATE);
             } else {
                 throw new Exception401("sendKakaoMessage_Kakao token is expired");
             }
@@ -114,11 +122,7 @@ public class KakaoAdminService {
         return kakaoTokenRepository.save(kakaoToken);
     }
 
-    private String formatSendKakaoMessageDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
-
-        if (kakaoFriendListDTO == null || kakaoFriendListDTO.elements().isEmpty()) {
-            throw new Exception400("Kakao 친구 목록이 비어있습니다.");
-        }
+    private String formatSendKakaoMessageToAllDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
 
         StringBuilder uuidList = new StringBuilder();
         uuidList.append("[");
@@ -132,5 +136,27 @@ public class KakaoAdminService {
         uuidList.append("]");
 
         return uuidList.toString();
+    }
+
+    private String formatKakaoFriendUUID(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO, String userName) {
+
+        StringBuilder userUUID = new StringBuilder();
+        userUUID.append("[\"");
+
+        for (KakaoFeignClientResponseDTO.Friend friend : kakaoFriendListDTO.elements()) {
+            if (friend.profile_nickname().equals(userName)) {
+                userUUID.append(friend.uuid());
+            }
+        }
+
+        userUUID.append("\"]");
+
+        return userUUID.toString();
+    }
+
+    private void checkKakaoFriendListDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
+        if (kakaoFriendListDTO == null || kakaoFriendListDTO.elements().isEmpty()) {
+            throw new Exception400("Kakao 친구 목록이 비어있습니다.");
+        }
     }
 }

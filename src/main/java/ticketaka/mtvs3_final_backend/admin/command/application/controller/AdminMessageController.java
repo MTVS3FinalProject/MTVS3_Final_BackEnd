@@ -44,7 +44,7 @@ public class AdminMessageController {
     @PostMapping("/kakao/friends/message")
     public ResponseEntity<?> sendKakaoMessage() {
 
-       adminCommandService.sendKakaoMessage();
+       adminCommandService.sendKakaoMessage(null);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
