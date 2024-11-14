@@ -77,13 +77,13 @@ public class AdminCommandService {
     public KakaoFeignClientResponseDTO.KakaoFriendListDTO getKakaoFriendList() {
 
         KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new Exception401("저장된 Kakao Token 값이 없습니다."));
+                .orElse(null);
 
         KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAdminService.getKakaoFriendList(kakaoToken);
 
         log.info("Kakao friend list: {}", kakaoFriendListDTO);
 
-        return null;
+        return kakaoFriendListDTO;
     }
 
     /*
@@ -91,9 +91,7 @@ public class AdminCommandService {
      */
     public void sendKakaoMessage(String userName) {
 
-        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
-                .orElseThrow(() -> new Exception401("저장된 Kakao Token 값이 없습니다."));
-
-        kakaoAdminService.sendKakaoMessage(kakaoToken, userName);
+        kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+                .ifPresent(kakaoToken -> kakaoAdminService.sendKakaoMessage(kakaoToken, userName));
     }
 }
