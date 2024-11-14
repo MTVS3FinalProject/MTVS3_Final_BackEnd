@@ -52,6 +52,7 @@ public class SeatQueryService {
                 getTimeDTO(concert.getConcertDate()),
                 getTimeDTO(seat.getDrawingTime()),
                 seat.getSeatStatus().toString(),
+                seat.getPrice(),
                 seat.getSeatStatus().equals(SeatStatus.AVAILABLE) ?
                         getCompetitionRate(receptionMemberCount) : null
         );
