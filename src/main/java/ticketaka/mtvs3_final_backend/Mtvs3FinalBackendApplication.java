@@ -33,6 +33,8 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.Se
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.repository.TicketCustomCommandRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
@@ -59,6 +61,7 @@ public class Mtvs3FinalBackendApplication {
                                        SeatCommandRepository seatCommandRepository,
                                        QRCommandService qrCommandService,
                                        TicketCommandRepository ticketCommandRepository,
+                                       TicketCustomCommandRepository ticketCustomCommandRepository,
                                        TitleAdminCommandRepository titleAdminCommandRepository,
                                        StickerAdminCommandRepository stickerAdminCommandRepository,
                                        MemberStickerCommandRepository memberStickerCommandRepository) {
@@ -136,7 +139,7 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 추가
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(4L, 1L, 1L, "TICKET_123451", 19999),
+                    newTicket(5L, 1L, 3L, "TICKET_123451", 19999),
                     newTicket(2L, 1L, 2L, "TICKET_123452", 29999),
                     newTicket(2L, 1L, 5L, "TICKET_1234578", 29999)
             ));
@@ -145,6 +148,23 @@ public class Mtvs3FinalBackendApplication {
             fileCommandRepository.save(
                     newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
             );
+
+            // Ticket QR Image 저장
+            fileCommandRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.TICKET, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION),
+                    newFile(RelationType.TICKET, 2L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION),
+                    newFile(RelationType.TICKET, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION)
+            ));
+
+            // Custom Ticket 저장
+            ticketCustomCommandRepository.saveAll(Arrays.asList(
+                    newCustomTicket(1L)
+            ));
+
+            // Custom Ticket Image 저장
+            fileCommandRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.CUSTOM_TICKET, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/AI_BACKGROUND_11731603884034?generation=1731603884550372&alt=media", FilePurpose.CUSTOM)
+            ));
 
             // Title 저장
             titleAdminCommandRepository.saveAll(Arrays.asList(
@@ -308,6 +328,12 @@ public class Mtvs3FinalBackendApplication {
                 .seatId(seatId)
                 .ticketNumber(ticketNumber)
                 .ticketPrice(ticketPrice)
+                .build();
+    }
+
+    private CustomTicket newCustomTicket(Long ticketId) {
+        return CustomTicket.builder()
+                .ticketId(ticketId)
                 .build();
     }
 
