@@ -21,6 +21,7 @@ public class SeatQueryResponseDTO {
             timeDTO concertTime,
             timeDTO drawingTime,
             String seatStatus,
+            int seatPrice,
             Integer competitionRate
     ) {
     }

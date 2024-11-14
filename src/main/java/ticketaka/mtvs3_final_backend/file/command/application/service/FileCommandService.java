@@ -134,6 +134,9 @@ public class FileCommandService {
     // 파일 업로드 기능 - byte[]
     protected String uploadImgByByte(byte[] imageData, String fileName, String contentType) {
 
+        // 이미지 압축
+//        byte[] compressedData = compressImageData(imageData);
+
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         Blob blob = bucket.create(fileName,
