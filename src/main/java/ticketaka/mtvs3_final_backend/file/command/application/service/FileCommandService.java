@@ -15,6 +15,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileCommandRepository;
+import ticketaka.mtvs3_final_backend.file.command.domain.service.S3Service;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
@@ -38,6 +39,8 @@ public class FileCommandService {
     private final FileCommandRepository fileCommandRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
+    private final S3Service s3Service;
+
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
 
@@ -60,7 +63,7 @@ public class FileCommandService {
     public File saveStickerImage(Long stickerId, MultipartFile stickerImage) {
 
         String fileName = STICKER_FILENAME_PREFIX + stickerId + System.currentTimeMillis();
-        String fileUrl = uploadImg(stickerImage, fileName);
+        String fileUrl = s3Service.uploadImage(stickerImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
         return newFile(RelationType.STICKER, stickerId, fileUrl, FilePurpose.CUSTOM);
