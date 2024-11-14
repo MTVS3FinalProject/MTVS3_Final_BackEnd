@@ -29,7 +29,6 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticke
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -160,7 +159,7 @@ public class QRCommandService {
     }
 
     // Ticket Barcode Image 생성
-    public String generateBarcodeImage(Long memberId, Long concertId, Long seatId, TicketStatus ticketStatus) {
+    public void generateBarcodeImage(Long memberId, Long concertId, Long seatId, Long ticketId, TicketStatus ticketStatus) {
 
         try {
             // 바코드 데이터 포맷팅
@@ -177,7 +176,7 @@ public class QRCommandService {
 
             String barcodeName = TICKET_BARCODE_PREFIX + memberId + "_" + concertId + "_" + seatId + "_" + System.currentTimeMillis();
 
-            return fileCommandService.uploadBarcodeImgByByte(outputStream.toByteArray(), barcodeName, "image/png");
+            fileCommandService.uploadBarcodeImgByByte(outputStream.toByteArray(), barcodeName, "image/png");
 
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);

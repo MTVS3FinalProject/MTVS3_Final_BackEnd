@@ -36,7 +36,6 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
-import ticketaka.mtvs3_final_backend.title.command.domain.repository.TitleCommandRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -137,9 +136,9 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 추가
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(4L, 1L, 1L, "TICKET_123451", 19999, qrCommandService),
-                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999, qrCommandService),
-                    newTicket(2L, 1L, 5L, "TICKET_1234578", 29999, qrCommandService)
+                    newTicket(4L, 1L, 1L, "TICKET_123451", 19999),
+                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999),
+                    newTicket(2L, 1L, 5L, "TICKET_1234578", 29999)
             ));
 
             // Ticket 기본 이미지 저장
@@ -302,14 +301,13 @@ public class Mtvs3FinalBackendApplication {
                 .build();
     }
 
-    private Ticket newTicket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice, QRCommandService qrCommandService) {
+    private Ticket newTicket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
         return Ticket.builder()
                 .memberId(memberId)
                 .concertId(concertId)
                 .seatId(seatId)
                 .ticketNumber(ticketNumber)
                 .ticketPrice(ticketPrice)
-                .barcodeImage(qrCommandService.generateBarcodeImage(memberId, concertId, seatId, TicketStatus.RESERVE))
                 .build();
     }
 

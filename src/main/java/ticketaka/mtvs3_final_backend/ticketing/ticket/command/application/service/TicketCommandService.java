@@ -54,6 +54,9 @@ public class TicketCommandService {
         Integer ticketPrice = calculateTicketPrice(seat.getPrice());
 
         Ticket ticket = newTicket(memberId, concertId, seatId, ticketNumber, ticketPrice);
+        
+        // Ticket QR Code 생성
+        qrCommandService.generateBarcodeImage(memberId, concertId, seatId, ticket.getId(), ticket.getTicketStatus());
 
         return new TicketResponseDTO.createTicketDTO(
                 ticket.getId()
@@ -81,7 +84,6 @@ public class TicketCommandService {
                 .seatId(seatId)
                 .ticketNumber(ticketNumber)
                 .ticketPrice(ticketPrice)
-                .barcodeImage(qrCommandService.generateBarcodeImage(memberId, concertId, seatId, TicketStatus.RESERVE))
                 .build();
 
         return ticketCommandRepository.save(ticket);

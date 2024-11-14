@@ -38,11 +38,9 @@ public class Ticket extends BaseTimeEntity {
 
     @Column
     private LocalDateTime issuedTime;
-    @Column
-    private String barcodeImage;
 
     @Builder
-    public Ticket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice, String barcodeImage) {
+    public Ticket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
         this.memberId = memberId;
         this.concertId = concertId;
         this.seatId = seatId;
@@ -50,6 +48,5 @@ public class Ticket extends BaseTimeEntity {
         this.ticketNumber = ticketNumber;
         this.ticketPrice = ticketPrice;
         this.issuedTime = null;
-        this.barcodeImage = barcodeImage;
     }
 }
