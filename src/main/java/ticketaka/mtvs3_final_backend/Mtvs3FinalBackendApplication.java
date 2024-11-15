@@ -163,7 +163,7 @@ public class Mtvs3FinalBackendApplication {
 
             // Custom Ticket Image 저장
             fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.CUSTOM_TICKET, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/AI_BACKGROUND_11731603884034?generation=1731603884550372&alt=media", FilePurpose.CUSTOM)
+                    newFile(RelationType.CUSTOM_TICKET, 1L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_311731619599623?alt=media", FilePurpose.CUSTOM)
             ));
 
             // Title 저장

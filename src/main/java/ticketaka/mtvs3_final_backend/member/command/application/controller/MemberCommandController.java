@@ -25,7 +25,7 @@ public class MemberCommandController {
         타이틀 변경
      */
     @PutMapping("/title/{titleId}")
-    public ResponseEntity<?> changeMainTitle(@PathVariable Long titleId) {
+    public ResponseEntity<?> changeMainTitle(@PathVariable("titleId") Long titleId) {
 
         MemberCommandResponseDTO.changeMainTitleDTO responseDTO = memberCommandService.changeMainTitle(getCurrentMemberId(), titleId);
 
