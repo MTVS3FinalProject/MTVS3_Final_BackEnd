@@ -36,10 +36,10 @@ import java.util.zip.DeflaterOutputStream;
 @Service
 public class FileCommandService {
 
+    private final S3Service s3Service;
+
     private final FileCommandRepository fileCommandRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
-
-    private final S3Service s3Service;
 
     @Value("${FIREBASE.STORAGE}")
     private String firebaseStorageUrl;
@@ -70,10 +70,10 @@ public class FileCommandService {
     }
 
     // AI 배경 이미지 저장
-    public File saveAIBackgroundImage(Long backgroundId, byte[] backgroundImage) {
+    public File saveAIBackgroundImage(Long backgroundId, MultipartFile backgroundImage) {
 
         String fileName = AI_BACKGROUND_FILENAME_PREFIX + backgroundId + System.currentTimeMillis();
-        String fileUrl = uploadImgByByte(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
+        String fileUrl = s3Service.uploadImage(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
         return newFile(RelationType.BACKGROUND, backgroundId, fileUrl, FilePurpose.CUSTOM);
