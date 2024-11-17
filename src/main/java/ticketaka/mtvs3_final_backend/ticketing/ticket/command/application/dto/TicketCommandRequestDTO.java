@@ -8,6 +8,8 @@ public class TicketCommandRequestDTO {
 
     public record saveCustomTicketDTO(
             MultipartFile customTicketImage,
+            Integer start_x,
+            Integer start_y,
             List<Integer> stickerIdList,
             Integer backgroundId
     ) {

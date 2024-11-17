@@ -100,7 +100,7 @@ public class TicketCustomCommandService {
         customTicket = ticketCustomCommandRepository.save(customTicket);
 
         // Image 저장
-        fileCommandService.saveCustomTicketImage(customTicket.getId(), requestDTO.customTicketImage());
+        fileCommandService.saveCustomTicketImage(customTicket.getId(), requestDTO);
     }
 
     // Member 조회
