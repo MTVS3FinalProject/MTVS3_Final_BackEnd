@@ -20,16 +20,6 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
-
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,6 +35,7 @@ public class FileCommandService {
     private String firebaseStorageUrl;
 
     private static final String IMAGE_CONTENT_TYPE = "image/png";
+
     private static final String STICKER_FILENAME_PREFIX = "STICKER_";
     private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_";
     private static final String CUSTOM_TICKET_FILENAME_PREFIX = "CUSTOM_TICKET_";
@@ -54,19 +45,19 @@ public class FileCommandService {
     */
     public FileUploadForAuth uploadImgForVerification(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
-        String imgUrl = uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
+        String imgUrl = s3Service.uploadImage(requestDTO.image(), requestDTO.image().getOriginalFilename(), IMAGE_CONTENT_TYPE);
 
         return setFileUploadForAuth(requestDTO.code(), imgUrl);
     }
 
     // Sticker 이미지 저장
-    public File saveStickerImage(Long stickerId, MultipartFile stickerImage) {
+    public void saveStickerImage(Long stickerId, MultipartFile stickerImage) {
 
         String fileName = STICKER_FILENAME_PREFIX + stickerId + System.currentTimeMillis();
         String fileUrl = s3Service.uploadImage(stickerImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
-        return newFile(RelationType.STICKER, stickerId, fileUrl, FilePurpose.CUSTOM);
+        newFile(RelationType.STICKER, stickerId, fileUrl, FilePurpose.CUSTOM);
     }
 
     // AI 배경 이미지 저장
@@ -80,11 +71,10 @@ public class FileCommandService {
     }
 
     // Custom Ticket 이미지 저장
-    public void saveCustomTicketImage(Long customTicketId, String encodedCustomTicketImageData) {
+    public void saveCustomTicketImage(Long customTicketId, MultipartFile customTicketImage) {
 
-        byte[] customTicketImage = Base64.getDecoder().decode(encodedCustomTicketImageData);
         String fileName = CUSTOM_TICKET_FILENAME_PREFIX + System.currentTimeMillis();
-        String fileUrl = uploadImgByByte(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
+        String fileUrl = s3Service.uploadImage(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
         newFile(RelationType.CUSTOM_TICKET, customTicketId, fileUrl, FilePurpose.CUSTOM);
@@ -153,40 +143,18 @@ public class FileCommandService {
     }
 
     // TicketQR 업로드
-    public void uploadTicketQRImgByByte(byte[] byteArray, String ticketQRName, String contentType, Long ticketId) {
+    public void uploadTicketQRImgByByte(byte[] ticketQRData, String ticketQRName, String contentType, Long ticketId) {
 
         Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
 
         Blob blob = bucket.create(ticketQRName,
-                byteArray, contentType);
+                ticketQRData, contentType);
 
         String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
 
         log.info("TicketQR Url : {}", fileUrl);
 
         newFile(RelationType.TICKET, ticketId, fileUrl, FilePurpose.VERIFICATION);
-    }
-
-    // 이미지 압축
-    private byte[] compressImageData(byte[] imageData) {
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageData);
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-
-            // BufferedImage 로 변환
-            BufferedImage image = ImageIO.read(byteArrayInputStream);
-            ImageIO.write(image, "png", byteArrayOutputStream);
-
-            // 압축 수행
-            ByteArrayOutputStream compressedOutputStream = new ByteArrayOutputStream();
-            try (DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(compressedOutputStream, new Deflater(Deflater.BEST_COMPRESSION))) {
-                deflaterOutputStream.write(byteArrayOutputStream.toByteArray());
-            }
-
-            return compressedOutputStream.toByteArray();
-
-        } catch (IOException e) {
-            throw new RuntimeException("Error during image compression", e);
-        }
     }
 
     // File 객체 생성
@@ -202,14 +170,6 @@ public class FileCommandService {
         fileCommandRepository.save(file);
 
         return file;
-    }
-
-    // 파일 삭제
-    public void deleteFirebaseBucket(String key) {
-
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        bucket.get(key).delete();
     }
 
     private FileUploadForAuth getFileUploadForAuth(String id) {

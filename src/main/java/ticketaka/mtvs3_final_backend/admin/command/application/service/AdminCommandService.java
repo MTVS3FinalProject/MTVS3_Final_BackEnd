@@ -5,14 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
-import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 
 @Slf4j
@@ -51,8 +49,8 @@ public class AdminCommandService {
     }
 
     // Concert 조회
-    private Concert getConcert(Long concertId) {
-        return concertQueryRepository.findById(concertId)
+    private void getConcert(Long concertId) {
+        concertQueryRepository.findById(concertId)
                 .orElseThrow(() -> new Exception400("해당 공연을 찾을 수 없습니다."));
     }
 
