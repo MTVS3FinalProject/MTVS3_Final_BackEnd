@@ -20,6 +20,9 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAuthRedisRepository;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -72,6 +75,9 @@ public class FileCommandService {
 
     // Custom Ticket 이미지 저장
     public void saveCustomTicketImage(Long customTicketId, MultipartFile customTicketImage) {
+
+        // Crop Custom Ticket
+
 
         String fileName = CUSTOM_TICKET_FILENAME_PREFIX + System.currentTimeMillis();
         String fileUrl = s3Service.uploadImage(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
