@@ -39,11 +39,4 @@ public class TicketQueryResponseDTO {
             List<stickerDTO> stickerDTOList
     ) {
     }
-
-    // Sticker
-    public record stickerDTO(
-            int stickerId,
-            String stickerImage
-    ) {
-    }
 }

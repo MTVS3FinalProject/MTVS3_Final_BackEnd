@@ -34,17 +34,11 @@ import java.util.List;
 public class MemberQueryService {
 
     private final MemberQueryRepository memberQueryRepository;
-    private final TitleQueryService titleQueryService;
-    private final StickerQueryService stickerQueryService;
-    private final TicketQueryService ticketQueryService;
-    private final FileQueryService fileQueryService;
 
     private final TicketQueryRepository ticketQueryRepository;
-    private final MemberTitleQueryRepository memberTitleQueryRepository;
     private final AddressRepository addressRepository;
     private final TitleQueryRepository titleQueryRepository;
     private final StickerQueryRepository stickerQueryRepository;
-//    private final MemberStickerQueryRepository;
     
     /*
         최근 배송지 조회
@@ -103,10 +97,4 @@ public class MemberQueryService {
         return memberQueryRepository.findById(memberId)
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
     }
-
-    // 보유 Ticket List 조회
-    private List<Ticket> getTicketList(Long memberId) {
-        return ticketQueryRepository.findAllByMemberId(memberId);
-    }
-
 }

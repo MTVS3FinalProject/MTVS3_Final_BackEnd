@@ -13,7 +13,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
 import ticketaka.mtvs3_final_backend.redis.daily.background.repository.DailyBackgroundRedisRepository;
-import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
+import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.service.ConcertQueryService;
@@ -23,8 +24,10 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticke
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.repository.TicketCustomQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.TicketQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,6 +47,7 @@ public class TicketQueryService {
     private final TicketQueryRepository ticketQueryRepository;
     private final TicketCustomQueryRepository ticketCustomQueryRepository;
     private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
+    private final StickerQueryRepository stickerQueryRepository;
 
     /*
         보유 티켓 조회
@@ -110,20 +114,13 @@ public class TicketQueryService {
         Integer dailyBackgroundRefreshCount = getDailyBackgroundRefreshCount(memberId);
 
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
-        List<Sticker> stickerList = stickerQueryService.getStickerDTOList(memberId, ticket.getConcertId());
-        // Sticker 에 대응하는 ImgUrl 조회
-        Map<Long, String> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
-                .map(Sticker::getId)
-                .toList());
+        List<stickerDTO> stickerDTOList = new ArrayList<>();
+        stickerDTOList.addAll(stickerQueryRepository.findAllByConcertId(ticket.getConcertId(), StickerType.COMMON, RelationType.CONCERT));
+        stickerDTOList.addAll(stickerQueryRepository.findAllByMemberId(memberId, StickerType.COLLECTION, RelationType.STICKER));
 
         return new TicketQueryResponseDTO.getTicketCustomObjectDTO(
                 dailyBackgroundRefreshCount,
-                stickerList.stream()
-                        .map(sticker -> new TicketQueryResponseDTO.stickerDTO(
-                                sticker.getId().intValue(),
-                                stickerImgMap.getOrDefault(sticker.getId(), null)
-                        ))
-                        .toList()
+                stickerDTOList
         );
     }
 

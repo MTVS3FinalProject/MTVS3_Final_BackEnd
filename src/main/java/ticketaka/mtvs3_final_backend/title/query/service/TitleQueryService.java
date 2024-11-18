@@ -26,19 +26,6 @@ public class TitleQueryService {
     private final TitleQueryRepository titleQueryRepository;
     private final MemberTitleQueryRepository memberTitleQueryRepository;
 
-    // Inventory Title 조회
-    public Map<Long, Title> getMemberTitleMap(List<MemberTitle> memberTitleList) {
-
-        List<Title> titleList = titleQueryRepository.findAllById(
-                memberTitleList.stream()
-                        .map(MemberTitle::getTitleId)
-                        .toList()
-        );
-
-        return titleList.stream()
-                .collect(Collectors.toMap(Title::getId, title -> title));
-    }
-
     // 현재 장착 중인 Title 조회
     public Title getMemberTitle(Long memberId) {
 
