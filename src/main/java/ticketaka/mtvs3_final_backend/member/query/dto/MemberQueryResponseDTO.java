@@ -27,33 +27,4 @@ public class MemberQueryResponseDTO {
             List<getMemberTicketDTO> memberTicketDTOList
     ) {
     }
-
-    // 보유 칭호 조회
-    public record getMemberTitleDTO(
-            int titleId,
-            String titleName,
-            String titleScript,
-            String titleRarity,
-            Boolean isRepresentative
-    ) {
-    }
-
-    // 보유 스티커 조회
-    public record getMemberStickerDTO(
-            int stickerId,
-            String stickerName,
-            String stickerScript,
-            String stickerRarity,
-            String stickerImage
-    ) {
-    }
-
-    // 보유 티켓 이미지 조회
-    public record getMemberTicketDTO(
-            int ticketId,
-            String concertName,
-            String seatInfo,
-            String ticketImage
-    ) {
-    }
 }

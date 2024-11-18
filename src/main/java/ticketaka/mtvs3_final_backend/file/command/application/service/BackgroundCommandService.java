@@ -48,7 +48,7 @@ public class BackgroundCommandService {
 
         return new TicketCustomCommandResponseDTO.generateAIBackgroundDTO(
                 background.getId().intValue(),
-                fileQueryService.encodingImageUrl(file.getFileUrl())
+                file.getFileUrl()
         );
     }
 }

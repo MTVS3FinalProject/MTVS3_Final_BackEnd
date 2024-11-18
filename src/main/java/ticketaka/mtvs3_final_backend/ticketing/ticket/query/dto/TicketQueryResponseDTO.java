@@ -12,38 +12,12 @@ public class TicketQueryResponseDTO {
     ) {
     }
 
-    public record getTicketDTO(
-            ticketConcertDTO concertInfo,
-            String seatInfo,
-            int ticketId,
-            String ticketImage,
-            String barcodeImage
-    ) {
-    }
-
-    // 공연 날짜
-    public record ticketConcertDTO(
-            String concertName,
-            int year,
-            int month,
-            int day,
-            String time
-    ) {
-    }
-
     /*
         티켓 커스텀 입장
      */
     public record getTicketCustomObjectDTO(
             int dailyBackgroundRefreshCount,
             List<stickerDTO> stickerDTOList
-    ) {
-    }
-
-    // Sticker
-    public record stickerDTO(
-            int stickerId,
-            String stickerImage
     ) {
     }
 }
