@@ -4,12 +4,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO;
 
 import java.util.List;
 
@@ -36,4 +38,25 @@ public interface StickerQueryRepository extends JpaRepository<Sticker, Long> {
     List<getMemberStickerDTO> findAllByMemberIdAndStickerTypeAndRelationType(@Param("memberId") Long memberId,
                                                                              @Param("stickerType") StickerType stickerType,
                                                                              @Param("relationType") RelationType relationType);
+
+
+    @Query("SELECT new ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO(" +
+            "s.id, f.fileUrl) " +
+            "FROM Sticker s " +
+            "JOIN Concert c " +
+            "LEFT JOIN File f ON f.relationType = :relationType AND f.relationId = c.id " +
+            "WHERE c.id = :concertId AND s.stickerType = :stickerType")
+    List<stickerDTO> findAllByConcertId(@Param("concertId") Long concertId,
+                                        @Param("stickerType") StickerType stickerType,
+                                        @Param("relationType") RelationType relationType);
+
+    @Query("SELECT new ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO(" +
+            "s.id, f.fileUrl) " +
+            "FROM Sticker s " +
+            "JOIN MemberSticker ms ON s.id = ms.stickerId " +
+            "LEFT JOIN File f ON f.relationType = :relationType AND f.relationId = s.id " +
+            "WHERE ms.memberId = :memberId AND s.stickerType = :stickerType")
+    List<stickerDTO> findAllByMemberId(@Param("memberId") Long memberId,
+                                       @Param("stickerType") StickerType stickerType,
+                                       @Param("relationType") RelationType relationType);
 }

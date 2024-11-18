@@ -33,23 +33,6 @@ public class StickerQueryService {
     private final StickerQueryRepository stickerQueryRepository;
     private final MemberStickerQueryRepository memberStickerQueryRepository;
 
-    /*
-        해당 공연, 회원이 가진 Sticker List DTO 로 조회
-     */
-    public List<Sticker> getStickerDTOList(Long memberId, Long concertId) {
-
-        // Member 조회
-        getMember(memberId);
-        // Concert 조회
-        getConcert(concertId);
-
-        // 공통 Sticker 조회 및 회원이 가진 Sticker 조회 후 합치기
-        List<Sticker> stickerList = new ArrayList<>(getCommonStickerList(concertId));
-        stickerList.addAll(getMemberStickerList(memberId));
-
-        return stickerList;
-    }
-
     // Sticker 할당
     public Sticker getPuzzleResult(Long memberId, Long concertId, StickerRarity stickerRarity) {
 
