@@ -72,7 +72,7 @@ public class TicketQueryService {
 
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
         List<stickerDTO> stickerDTOList = new ArrayList<>();
-        stickerDTOList.addAll(stickerQueryRepository.findAllByConcertId(ticket.getConcertId(), StickerType.COMMON, RelationType.CONCERT));
+        stickerDTOList.addAll(stickerQueryRepository.findAllByConcertId(ticket.getConcertId(), StickerType.COMMON, RelationType.STICKER));
         stickerDTOList.addAll(stickerQueryRepository.findAllByMemberId(memberId, StickerType.COLLECTION, RelationType.STICKER));
 
         return new TicketQueryResponseDTO.getTicketCustomObjectDTO(
