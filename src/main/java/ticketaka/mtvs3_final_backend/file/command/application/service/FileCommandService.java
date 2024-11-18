@@ -39,9 +39,6 @@ public class FileCommandService {
     private final FileCommandRepository fileCommandRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
 
-    @Value("${FIREBASE.STORAGE}")
-    private String firebaseStorageUrl;
-
     private static final String IMAGE_CONTENT_TYPE = "image/png";
 
     private static final String STICKER_FILENAME_PREFIX = "STICKER_";
@@ -155,22 +152,7 @@ public class FileCommandService {
     // 파일 업로드 기능
     protected String uploadImg(MultipartFile image, String fileName) {
 
-        try {
-            Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-            Blob blob = bucket.create(fileName,
-                    image.getInputStream(), image.getContentType());
-
-            String fileUrl = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media",
-                    bucket.getName(), java.net.URLEncoder.encode(blob.getName(), StandardCharsets.UTF_8));
-
-            log.info("ByMultipartFile Url : {}", fileUrl);
-
-            return fileUrl;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return s3Service.uploadImage(image, fileName, IMAGE_CONTENT_TYPE);
     }
 
     // File 객체 생성

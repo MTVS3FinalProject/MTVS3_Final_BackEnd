@@ -151,7 +151,7 @@ public class MemberAuthService {
         기본 로그인
      */
     @Transactional
-    public MemberAuthResponseDTO.loginDTO login(HttpServletRequest httpServletRequest, MemberAuthRequestDTO.authDTO requestDTO) {
+    public MemberAuthResponseDTO.loginDTO login(MemberAuthRequestDTO.authDTO requestDTO) {
 
         // 1. 이메일 확인
         Member member = memberRepository.findByEmail(requestDTO.email())
@@ -166,7 +166,7 @@ public class MemberAuthService {
         };
 
         MemberAuthResponseDTO.memberInfoDTO memberInfoDTO = getMemberInfo(member);
-        MemberAuthResponseDTO.authTokenDTO authTokenDTO = getAuthToken(requestDTO.email(), requestDTO.password(), httpServletRequest);
+        MemberAuthResponseDTO.authTokenDTO authTokenDTO = getAuthToken(requestDTO.email(), requestDTO.password());
 
         return new MemberAuthResponseDTO.loginDTO(memberInfoDTO, authTokenDTO);
     }
@@ -188,7 +188,7 @@ public class MemberAuthService {
     }
 
     // 토큰 발급
-    protected MemberAuthResponseDTO.authTokenDTO getAuthToken(String email, String password, HttpServletRequest httpServletRequest) {
+    protected MemberAuthResponseDTO.authTokenDTO getAuthToken(String email, String password) {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                 = new UsernamePasswordAuthenticationToken(email, password);
