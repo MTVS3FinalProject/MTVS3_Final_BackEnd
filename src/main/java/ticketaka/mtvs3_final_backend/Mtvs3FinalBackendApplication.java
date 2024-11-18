@@ -10,9 +10,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
+import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
+import ticketaka.mtvs3_final_backend.sticker.member.command.domain.repository.MemberStickerCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.repository.ConcertRepository;
@@ -27,10 +30,14 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.repository.TicketCustomCommandRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
-import ticketaka.mtvs3_final_backend.title.command.domain.repository.TitleCommandRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,19 +59,23 @@ public class Mtvs3FinalBackendApplication {
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
                                        SeatCommandRepository seatCommandRepository,
+                                       QRCommandService qrCommandService,
+                                       TicketCommandRepository ticketCommandRepository,
+                                       TicketCustomCommandRepository ticketCustomCommandRepository,
                                        TitleAdminCommandRepository titleAdminCommandRepository,
-                                       StickerAdminCommandRepository stickerAdminCommandRepository) {
+                                       StickerAdminCommandRepository stickerAdminCommandRepository,
+                                       MemberStickerCommandRepository memberStickerCommandRepository) {
         return args -> {
             
             // Member 저장
-            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 0, passwordEncoder);
-            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 0, passwordEncoder);
-            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 0, passwordEncoder);
-            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 0, passwordEncoder);
-            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 0, passwordEncoder);
-            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 0, passwordEncoder);
-            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 0, passwordEncoder);
-            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 0, passwordEncoder);
+            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 1, 0, passwordEncoder);
+            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 2, 0, passwordEncoder);
+            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 1, 0, passwordEncoder);
+            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 1, 0, passwordEncoder);
+            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 2, 0, passwordEncoder);
+            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 3, 0, passwordEncoder);
+            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 4, 0, passwordEncoder);
+            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 2, 0, passwordEncoder);
             member1.setCoin(100000);
             member2.setCoin(100000);
             member3.setCoin(100000);
@@ -126,10 +137,34 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE)
             ));
 
+            // Ticket 추가
+            ticketCommandRepository.saveAll(Arrays.asList(
+                    newTicket(5L, 1L, 3L, "TICKET_123451", 19999),
+                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999),
+                    newTicket(2L, 1L, 5L, "TICKET_1234578", 29999)
+            ));
+
             // Ticket 기본 이미지 저장
             fileCommandRepository.save(
                     newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
             );
+
+            // Ticket QR Image 저장
+            fileCommandRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.TICKET, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION),
+                    newFile(RelationType.TICKET, 2L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION),
+                    newFile(RelationType.TICKET, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION)
+            ));
+
+            // Custom Ticket 저장
+            ticketCustomCommandRepository.saveAll(Arrays.asList(
+                    newCustomTicket(1L)
+            ));
+
+            // Custom Ticket Image 저장
+            fileCommandRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.CUSTOM_TICKET, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/AI_BACKGROUND_11731603884034?generation=1731603884550372&alt=media", FilePurpose.CUSTOM)
+            ));
 
             // Title 저장
             titleAdminCommandRepository.saveAll(Arrays.asList(
@@ -199,47 +234,58 @@ public class Mtvs3FinalBackendApplication {
                     newSticker(concert01.getId(), "Cheers Together", "팬들과의 축배를 의미하는 건배 스티커", "Collection", "Common")
             ));
             fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.STICKER, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314172778?generation=1731314174220905&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 2L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314197978?generation=1731314198818242&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_321731314235021?generation=1731314235828811&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 4L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_331731314269429?generation=1731314270261170&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 5L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_341731314281176?generation=1731314282047164&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 6L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_351731314293011?generation=1731314293858227&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 7L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_361731314305493?generation=1731314306341966&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 8L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_371731314317168?generation=1731314318026682&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 9L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_381731314330131?generation=1731314331013958&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 10L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_391731314342416?generation=1731314343231197&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 11L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314518795?generation=1731314520199212&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 12L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_321731314544618?generation=1731314545489330&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 13L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_331731314556220?generation=1731314557098669&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 14L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_341731314573194?generation=1731314574100004&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 15L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_351731314584590?generation=1731314585431093&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 16L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_361731314594469?generation=1731314595267553&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 17L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_371731314606039?generation=1731314606896366&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 18L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_381731314615814?generation=1731314616605083&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 19L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_391731314627329?generation=1731314628116024&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 20L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_401731314638852?generation=1731314639789702&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 21L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731314819620?generation=1731314820867318&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 22L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_321731314829218?generation=1731314830079395&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 23L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_331731314839527?generation=1731314840340037&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 24L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_341731314853401?generation=1731314854214331&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 25L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_351731314865873?generation=1731314866722053&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 26L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_361731314882059?generation=1731314883004981&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 27L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_371731314901208?generation=1731314902117492&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 28L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_381731314913585?generation=1731314914395823&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 29L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_391731314924500?generation=1731314925429674&alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 30L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_401731314940147?generation=1731314941100197&alt=media", FilePurpose.CUSTOM)
+                    newFile(RelationType.STICKER, 1L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_321731386008486?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 2L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_311731385744525?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 3L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_331731386036518?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 4L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_341731386055244?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 5L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_351731386070531?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 6L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_361731386080741?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 7L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_371731386092032?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 8L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_381731386102867?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 9L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_391731386113243?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 10L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_401731386124433?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 11L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_311731386427118?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 12L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_321731386438155?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 13L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_331731386446783?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 14L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_341731386458959?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 15L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_351731386471553?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 16L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_361731386507644?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 17L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_371731386516742?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 18L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_381731386526246?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 19L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_391731386537196?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 20L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_401731386563069?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 21L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_411731386592163?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 22L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_421731386601112?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 23L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_431731386609922?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 24L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_441731386620628?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 25L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_451731386631284?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 26L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_461731386643230?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 27L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_471731386652832?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 28L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_481731386662794?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 29L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_491731386674993?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 30L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_501731386685660?alt=media", FilePurpose.CUSTOM)
+            ));
+
+            // Sticker 할당
+            memberStickerCommandRepository.saveAll(Arrays.asList(
+                    newMemberSticker(4L, 2L),
+                    newMemberSticker(4L, 7L),
+                    newMemberSticker(4L, 12L),
+                    newMemberSticker(4L, 15L),
+                    newMemberSticker(4L, 17L),
+                    newMemberSticker(4L, 28L)
             ));
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, int authority, PasswordEncoder passwordEncoder) {
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder) {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .secondPwd(passwordEncoder.encode(secondPwd))
                 .birth(birth)
+                .avatarData(avatarData)
                 .authority(Authority.fromInt(authority))
                 .status(Status.ACTIVE)
                 .build();
@@ -275,6 +321,22 @@ public class Mtvs3FinalBackendApplication {
                 .build();
     }
 
+    private Ticket newTicket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
+        return Ticket.builder()
+                .memberId(memberId)
+                .concertId(concertId)
+                .seatId(seatId)
+                .ticketNumber(ticketNumber)
+                .ticketPrice(ticketPrice)
+                .build();
+    }
+
+    private CustomTicket newCustomTicket(Long ticketId) {
+        return CustomTicket.builder()
+                .ticketId(ticketId)
+                .build();
+    }
+
     private Title newTitle(String titleType, Long concertId, String titleName, String titleScript, String titleRarity) {
         return Title.builder()
                 .titleType(TitleType.fromString(titleType))
@@ -292,6 +354,13 @@ public class Mtvs3FinalBackendApplication {
                 .stickerScript(stickerScript)
                 .stickerType(StickerType.fromString(stickerType))
                 .stickerRarity(StickerRarity.fromString(stickerRarity))
+                .build();
+    }
+
+    private MemberSticker newMemberSticker(Long memberId, Long stickerId) {
+        return MemberSticker.builder()
+                .memberId(memberId)
+                .stickerId(stickerId)
                 .build();
     }
 }

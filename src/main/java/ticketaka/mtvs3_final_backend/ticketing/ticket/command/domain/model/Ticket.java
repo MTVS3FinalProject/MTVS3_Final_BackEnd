@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 
 import java.time.LocalDateTime;
 
@@ -37,8 +38,6 @@ public class Ticket extends BaseTimeEntity {
 
     @Column
     private LocalDateTime issuedTime;
-    @Column
-    private String qrCode;
 
     @Builder
     public Ticket(Long memberId, Long concertId, Long seatId, String ticketNumber, Integer ticketPrice) {
@@ -49,6 +48,5 @@ public class Ticket extends BaseTimeEntity {
         this.ticketNumber = ticketNumber;
         this.ticketPrice = ticketPrice;
         this.issuedTime = null;
-        this.qrCode = null;
     }
 }

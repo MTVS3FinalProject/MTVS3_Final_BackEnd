@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
@@ -75,6 +76,7 @@ public class TicketQueryService {
                             String ticketImage = customTicket != null ?
                                     fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
                                     fileQueryService.getFileImage(RelationType.CONCERT, concert.getId());
+                            String encodedQRData = fileQueryService.getQRImage(RelationType.TICKET, ticket.getId(), FilePurpose.VERIFICATION);
 
                             return new TicketQueryResponseDTO.getTicketDTO(
                                     new TicketQueryResponseDTO.ticketConcertDTO(
@@ -86,7 +88,8 @@ public class TicketQueryService {
                                     ),
                                     seatInfo,
                                     ticket.getId().intValue(),
-                                    ticketImage
+                                    ticketImage,
+                                    encodedQRData
                             );
                         })
                         .toList()

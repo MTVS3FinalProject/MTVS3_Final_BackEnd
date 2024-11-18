@@ -3,6 +3,7 @@ package ticketaka.mtvs3_final_backend.file.command.domain.service;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundResponseDTO;
 
@@ -10,5 +11,5 @@ import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundResp
 public interface BackgroundFeignClient {
 
     @PostMapping("/img_random")
-    byte[] generateBackground();//@RequestBody BackgroundRequestDTO.generateBackgroundDTO requestDTO);
+    MultipartFile generateBackground();
 }

@@ -27,7 +27,11 @@ public class TicketCommandController {
     public ResponseEntity<?> saveCustomTicket(@PathVariable("ticketId") Long ticketId,
                                               @RequestBody TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
 
+        log.info("saveCustomTicket_requestDTO - stickerIdList: {}, backgroundId: {}", requestDTO.stickerIdList(), requestDTO.backgroundId());
+
         ticketCommandService.saveCustomTicket(getCurrentMemberId(), ticketId, requestDTO);
+
+        log.info("saveCustomTicket_responseDTO : {}", requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

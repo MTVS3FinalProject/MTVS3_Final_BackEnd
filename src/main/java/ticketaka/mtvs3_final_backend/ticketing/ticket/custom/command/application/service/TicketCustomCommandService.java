@@ -9,8 +9,6 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.service.BackgroundCommandService;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
-import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
-import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
@@ -90,9 +88,9 @@ public class TicketCustomCommandService {
 
         CustomTicket customTicket = getCustomTicket(ticketId);
 
-        // Custom Ticket Update
-        if (!requestDTO.stickerIdList().isEmpty()) {
-            customTicket.setStickerIdList(requestDTO.stickerIdList().stream().map(Long::valueOf).toList());
+        if (requestDTO.stickerIdList() != null && !requestDTO.stickerIdList().isEmpty()) {
+            customTicket.getStickerIdList().clear();
+            customTicket.getStickerIdList().addAll(requestDTO.stickerIdList().stream().map(Long::valueOf).toList());
         }
 
         if (requestDTO.backgroundId() != null) {
@@ -102,7 +100,7 @@ public class TicketCustomCommandService {
         customTicket = ticketCustomCommandRepository.save(customTicket);
 
         // Image 저장
-        fileCommandService.saveCustomTicketImage(customTicket.getId(), requestDTO.customTicketImage());
+        fileCommandService.saveCustomTicketImage(customTicket.getId(), requestDTO);
     }
 
     // Member 조회

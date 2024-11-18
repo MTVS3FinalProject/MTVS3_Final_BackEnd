@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
@@ -18,7 +19,6 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.Ti
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.service.TicketCustomCommandService;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 import java.util.UUID;
@@ -30,6 +30,7 @@ import java.util.UUID;
 public class TicketCommandService {
 
     private final TicketCustomCommandService ticketCustomCommandService;
+    private final QRCommandService qrCommandService;
 
     private final MemberQueryRepository memberQueryRepository;
     private final ConcertQueryRepository concertQueryRepository;
@@ -51,6 +52,9 @@ public class TicketCommandService {
         Integer ticketPrice = calculateTicketPrice(seat.getPrice());
 
         Ticket ticket = newTicket(memberId, concertId, seatId, ticketNumber, ticketPrice);
+        
+        // Ticket QR Code 생성
+        qrCommandService.generateQRImage(memberId, concertId, seatId, ticket.getId(), ticket.getTicketStatus());
 
         return new TicketResponseDTO.createTicketDTO(
                 ticket.getId()

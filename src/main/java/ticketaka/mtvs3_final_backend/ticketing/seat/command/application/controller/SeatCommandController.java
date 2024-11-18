@@ -83,12 +83,15 @@ public class SeatCommandController {
     }
 
     /*
-        좌석 추첨 결과 - 치트
+        좌석 결제 미루기
      */
-    @PostMapping("/{concertId}/draw-cheat")
-    public ResponseEntity<?> cheatDrawResult(@PathVariable("concertId") Long concertId) {
+    @PostMapping("/{concertId}/seats/{seatId}/postpone")
+    public ResponseEntity<?> postponeSeat(@PathVariable("concertId") Long concertId,
+                                          @PathVariable("seatId") Long seatId) {
 
-        seatCommandService.cheatDrawResult(getCurrentMemberId(), concertId);
+        log.info("postponeSeat_request: concertId={}, seatId={}", concertId, seatId);
+
+        seatCommandService.postponeSeat(getCurrentMemberId(), concertId, seatId);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -107,6 +110,17 @@ public class SeatCommandController {
         log.info("reserveSeat_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        좌석 추첨 결과 - 치트
+     */
+    @PostMapping("/{concertId}/draw-cheat")
+    public ResponseEntity<?> cheatDrawResult(@PathVariable("concertId") Long concertId) {
+
+        seatCommandService.cheatDrawResult(getCurrentMemberId(), concertId);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
     /*

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.repository.FileQueryRepository;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,10 @@ public class FileQueryService {
         return stickerFileList.stream()
                 .collect(Collectors.toMap(
                         File::getRelationId,
-                        File::getFileUrl,
+                        file -> {
+                            byte[] imageData = getImageFromUrl(file.getFileUrl());
+                            return Base64.getEncoder().encodeToString(imageData);
+                        },
                         (existing, replacement) -> existing,
                         LinkedHashMap::new
                 ));
@@ -46,7 +51,19 @@ public class FileQueryService {
 
         File file = fileQueryRepository.findByRelationTypeAndRelationId(relationType, id)
                 .orElseThrow(() -> new Exception400("해당 Ticket 이미지를 찾을 수 없습니다."));
-        return file.getFileUrl();//getImageFromUrl(file.getFileUrl());
+        return encodingImageUrl(file.getFileUrl());
+    }
+
+    // Encoding
+    public String encodingImageUrl(String imageUrl) {
+        return Base64.getEncoder().encodeToString(getImageFromUrl(imageUrl));
+    }
+
+    public String getQRImage(RelationType relationType, Long ticketId, FilePurpose filePurpose) {
+
+        File file = fileQueryRepository.findByRelationTypeAndRelationIdAndFilePurpose(relationType, ticketId, filePurpose)
+                .orElseThrow(() -> new Exception400("해당 Ticket QR 이미지를 찾을 수 없습니다."));
+        return encodingImageUrl(file.getFileUrl());
     }
 
     // ImageUrl 을 통해 byte[] 가져오기 (HTTP 요청 사용)

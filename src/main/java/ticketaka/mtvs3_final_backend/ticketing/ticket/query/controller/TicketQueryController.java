@@ -3,10 +3,7 @@ package ticketaka.mtvs3_final_backend.ticketing.ticket.query.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.TicketQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
@@ -25,7 +22,7 @@ public class TicketQueryController {
         커스텀 티켓 목록 조회
      */
     @GetMapping
-    public ResponseEntity<?> getCustomizableTicketList() {
+    public ResponseEntity<?> getCustomizableTicketList(@RequestParam(name = "status", required = false, defaultValue = "available") String status) {
 
         log.info("getCustomizableTicketList Request");
 
@@ -42,7 +39,7 @@ public class TicketQueryController {
     @GetMapping("/{ticketId}/custom")
     public ResponseEntity<?> getTicketCustomObject(@PathVariable("ticketId") Long ticketId) {
 
-        log.info("getTicketCustomInfo Request");
+        log.info("getTicketCustomInfo Request : {}", ticketId);
 
         TicketQueryResponseDTO.getTicketCustomObjectDTO responseDTO = ticketQueryService.getTicketCustomObject(getCurrentMemberId(), ticketId);
 

@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminCommandRequestDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
+import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
+import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 
 @Slf4j
@@ -20,8 +22,10 @@ public class AdminCommandService {
     private final TitleAdminCommandService titleAdminCommandService;
     private final StickerAdminCommandService stickerAdminCommandService;
     private final FileCommandService fileCommandService;
+    private final KakaoAdminService kakaoAdminService;
 
     private final ConcertQueryRepository concertQueryRepository;
+    private final KakaoTokenRepository kakaoTokenRepository;
 
     /*
         Title 추가
@@ -45,8 +49,47 @@ public class AdminCommandService {
     }
 
     // Concert 조회
-    private Concert getConcert(Long concertId) {
-        return concertQueryRepository.findById(concertId)
+    private void getConcert(Long concertId) {
+        concertQueryRepository.findById(concertId)
                 .orElseThrow(() -> new Exception400("해당 공연을 찾을 수 없습니다."));
+    }
+
+    /*
+        Kakao Token 발급 및 저장
+     */
+    public void saveKakaoToken(String code) {
+
+        // Kakao Token 발급
+        KakaoFeignClientResponseDTO.KakaoTokenDTO responseDTO = kakaoAdminService.getKakaoToken(code);
+
+        log.info("Kakao token: {}", responseDTO);
+
+        // Kakao Token 저장
+        kakaoAdminService.saveKakaoToken(responseDTO);
+    }
+
+
+    /*
+        Kakao 친구 목록 조회
+     */
+    public KakaoFeignClientResponseDTO.KakaoFriendListDTO getKakaoFriendList() {
+
+        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+                .orElse(null);
+
+        KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAdminService.getKakaoFriendList(kakaoToken);
+
+        log.info("Kakao friend list: {}", kakaoFriendListDTO);
+
+        return kakaoFriendListDTO;
+    }
+
+    /*
+        Kakao 친구 메세지 전송
+     */
+    public void sendKakaoMessage(String userName) {
+
+        kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+                .ifPresent(kakaoToken -> kakaoAdminService.sendKakaoMessage(kakaoToken, userName));
     }
 }

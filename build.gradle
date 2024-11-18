@@ -74,6 +74,9 @@ dependencies {
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
 
+    // S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     // QR Code - zxing
     implementation group: 'com.google.zxing', name: 'javase', version: '3.5.0'
     implementation group: 'com.google.zxing', name: 'core', version: '3.5.0'

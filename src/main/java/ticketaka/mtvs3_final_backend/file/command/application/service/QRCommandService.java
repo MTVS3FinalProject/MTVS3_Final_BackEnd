@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception500;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.BufferedImageMultipartFile;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
@@ -24,7 +26,9 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.UUID;
@@ -33,10 +37,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class QRService {
+public class QRCommandService {
+
+    private final FileCommandService fileCommandService;
 
     private final SeatQueryRepository seatQueryRepository;
-
     private final MemberRepository memberRepository;
     private final FileUploadRedisRepository fileUploadRedisRepository;
     private final FileUploadForAuthRedisRepository fileUploadForAuthRedisRepository;
@@ -47,6 +52,7 @@ public class QRService {
     private static final String QR_FORMAT = "PNG";
     private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/signup/guide";
     private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
+    private static final String TICKET_QR_PREFIX = "TICKETAKA_";
 
     /*
         회원 가입 용 QR 생성
@@ -111,17 +117,17 @@ public class QRService {
         DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(currentMemberId))
                 .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
 
-//        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
-//                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
-//
-//        if(!fileUpload.getCode().equals(String.valueOf(currentMemberId))) {
-//            throw new Exception401("인증 요청 대상과 일치하지 않습니다.");
-//        }
-//
-//        validateFileUpload(fileUpload);
-//
-//        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
-//        fileUploadRedisRepository.save(fileUpload);
+        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
+                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
+
+        if(!fileUpload.getCode().equals(String.valueOf(currentMemberId))) {
+            throw new Exception401("인증 요청 대상과 일치하지 않습니다.");
+        }
+
+        validateFileUpload(fileUpload);
+
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
+        fileUploadRedisRepository.save(fileUpload);
 
         Seat seat =  seatQueryRepository.findById(drawResult.getSeatId())
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
@@ -134,7 +140,7 @@ public class QRService {
     }
 
     // QR 생성
-    private static ByteArrayOutputStream getByteArrayOutputStream(String targetUrl) {
+    private ByteArrayOutputStream getByteArrayOutputStream(String targetUrl) {
 
         try {
             // QR Code - BitMatrix: qr 정보 생성
@@ -149,6 +155,35 @@ public class QRService {
 
         } catch (WriterException | IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // Ticket QR Image 생성
+    public void generateQRImage(Long memberId, Long concertId, Long seatId, Long ticketId, TicketStatus ticketStatus) {
+
+        // QR 데이터 포맷팅
+        String qrData = String.format("%d-%d-%d-%d-%s", memberId, concertId, seatId, ticketId, ticketStatus);
+        BufferedImage qrImage = generateBufferedQRImage(qrData);
+        String qrName = TICKET_QR_PREFIX + memberId + "_" + ticketId + "_" + System.currentTimeMillis() + ".png";
+
+        // BufferedImageMultipartFile로 변환
+        BufferedImageMultipartFile bufferedImageMultipartFile = new BufferedImageMultipartFile(
+                qrImage,
+                qrName,
+                "png",
+                "image/png"
+        );
+
+        fileCommandService.saveTicketQRImage(ticketId, bufferedImageMultipartFile);
+    }
+
+    private BufferedImage generateBufferedQRImage(String qrData) {
+
+        try {
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(qrData, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT);
+            return MatrixToImageWriter.toBufferedImage(bitMatrix);
+        } catch (Exception e) {
+            throw new Exception500("QR 코드 생성 중 오류 발생");
         }
     }
 
