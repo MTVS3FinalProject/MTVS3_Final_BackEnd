@@ -25,6 +25,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.Ti
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -176,5 +177,17 @@ public class FileCommandService {
 
         return fileUploadForAuthRedisRepository.findById(id)
                 .orElseThrow(() -> new Exception400("파일 업로드 대기 상태가 아닙니다."));
+    }
+
+    public BufferedImage convertImageDataToBufferedImage(byte[] backgroundImageData) {
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(backgroundImageData)) {
+            BufferedImage bufferedImage = ImageIO.read(inputStream);
+            if (bufferedImage == null) {
+                throw new RuntimeException("Invalid image data received");
+            }
+            return bufferedImage;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to convert byte array to BufferedImage", e);
+        }
     }
 }
