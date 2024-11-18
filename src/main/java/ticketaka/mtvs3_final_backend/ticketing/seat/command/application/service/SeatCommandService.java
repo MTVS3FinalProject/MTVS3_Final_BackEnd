@@ -99,7 +99,7 @@ public class SeatCommandService {
         추첨 시작 알림
      */
     @Transactional
-    public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long concertId, Long seatId) {
+    public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long memberId, Long concertId, Long seatId) {
 
         // Concert 조회
         getReservingConcert(concertId);
