@@ -6,31 +6,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
-import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
-import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
-import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
 import ticketaka.mtvs3_final_backend.redis.daily.background.repository.DailyBackgroundRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
-import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.service.ConcertQueryService;
-import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.service.SeatQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.repository.TicketCustomQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.TicketQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -38,16 +30,11 @@ import java.util.stream.Collectors;
 @Service
 public class TicketQueryService {
 
-    private final ConcertQueryService concertQueryService;
-    private final SeatQueryService seatQueryService;
-    private final StickerQueryService stickerQueryService;
-    private final FileQueryService fileQueryService;
-
     private final MemberQueryRepository memberQueryRepository;
     private final TicketQueryRepository ticketQueryRepository;
-    private final TicketCustomQueryRepository ticketCustomQueryRepository;
-    private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
     private final StickerQueryRepository stickerQueryRepository;
+
+    private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
 
     /*
         보유 티켓 조회
@@ -56,47 +43,17 @@ public class TicketQueryService {
 
         // Member 조회
         getMember(memberId);
+
         // Ticket 조회
-        List<Ticket> ticketList = getTicketList(memberId);
+        List<getTicketDTO> ticketList = ticketQueryRepository.findCustomizableTicketsByMemberId(memberId);
 
         // Custom 가능한 Ticket 이 없는 경우 빈 리스트 반환
         if(ticketList.isEmpty()) {
             return new TicketQueryResponseDTO.getCustomizableTicketListDTO(List.of());
         }
 
-        // ConcertIdList 조회
-        Map<Long, Concert> concertMap = getConcertMap(ticketList);
-        // SeatInfoList 조회
-        Map<Long, String> seatInfoMap = getSeatInfoMap(ticketList);
-        // Custom Ticket 조회
-        Map<Long, CustomTicket> customTicketMap = getCustomTicketMap(ticketList);
-
         return new TicketQueryResponseDTO.getCustomizableTicketListDTO(
-                ticketList.stream()
-                        .map(ticket -> {
-                            Concert concert = concertMap.get(ticket.getConcertId());
-                            String seatInfo = seatInfoMap.get(ticket.getSeatId());
-                            CustomTicket customTicket = customTicketMap.get(ticket.getId());
-                            String ticketImage = customTicket != null ?
-                                    fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
-                                    fileQueryService.getFileImage(RelationType.CONCERT, concert.getId());
-                            String encodedQRData = fileQueryService.getQRImage(RelationType.TICKET, ticket.getId(), FilePurpose.VERIFICATION);
-
-                            return new TicketQueryResponseDTO.getTicketDTO(
-                                    new TicketQueryResponseDTO.ticketConcertDTO(
-                                            concert.getName(),
-                                            concert.getConcertDate().getYear(),
-                                            concert.getConcertDate().getMonthValue(),
-                                            concert.getConcertDate().getDayOfMonth(),
-                                            concert.getConcertDate().toLocalTime().toString()
-                                    ),
-                                    seatInfo,
-                                    ticket.getId().intValue(),
-                                    ticketImage,
-                                    encodedQRData
-                            );
-                        })
-                        .toList()
+                ticketList
         );
     }
 
@@ -125,57 +82,15 @@ public class TicketQueryService {
     }
 
     // Member 조회
-    private Member getMember(Long memberId) {
-        return memberQueryRepository.findById(memberId)
+    private void getMember(Long memberId) {
+        memberQueryRepository.findById(memberId)
                 .orElseThrow(() -> new Exception401("해당 회원을 찾을 수 없습니다."));
-    }
-
-    // 보유 Ticket List 조회
-    private List<Ticket> getTicketList(Long memberId) {
-        return ticketQueryRepository.findAllByMemberId(memberId);
     }
 
     // Ticket 조회
     private Ticket getTicket(Long ticketId) {
         return ticketQueryRepository.findById(ticketId)
                 .orElseThrow(() -> new Exception400("해당 티켓을 찾을 수 없습니다."));
-    }
-
-    // Custom Ticket List 조회
-    private List<CustomTicket> getCustomTicketList(List<Long> ticketList) {
-        return ticketCustomQueryRepository.findAllByTicketIdIn(ticketList);
-    }
-
-    // Ticket List 로 ConcertMap 조회
-    public Map<Long, Concert> getConcertMap(List<Ticket> ticketList) {
-        return concertQueryService.getConcertList(
-                        ticketList.stream()
-                                .map(Ticket::getConcertId)
-                                .distinct()
-                                .toList()
-                ).stream()
-                .collect(Collectors.toMap(Concert::getId, concert -> concert));
-    }
-
-    // Ticket List 로 SeatInfoMap 조회
-    public Map<Long, String> getSeatInfoMap(List<Ticket> ticketList) {
-        return seatQueryService.getSeatInfoList(
-                        ticketList.stream()
-                                .map(Ticket::getSeatId)
-                                .distinct()
-                                .toList()
-                ).stream()
-                .collect(Collectors.toMap(Seat::getId, seatQueryService::formatSeatInfo));
-    }
-
-    // Ticket List 로 CustomTicketMap 조회
-    public Map<Long, CustomTicket> getCustomTicketMap(List<Ticket> ticketList) {
-        return getCustomTicketList(
-                ticketList.stream()
-                        .map(Ticket::getId)
-                        .toList()
-        ).stream()
-                .collect(Collectors.toMap(CustomTicket::getTicketId, customTicket -> customTicket));
     }
 
     // DailyBackgroundRefreshCount
