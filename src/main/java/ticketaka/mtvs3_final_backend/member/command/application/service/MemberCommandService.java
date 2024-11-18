@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.redis.ticketaddress.domain.TicketAddress;
 import ticketaka.mtvs3_final_backend.redis.ticketaddress.repository.TicketAddressRedisRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleCommandRepository;
 import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
+import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -24,6 +27,7 @@ public class MemberCommandService {
     private final MemberTitleQueryRepository memberTitleQueryRepository;
 
     private final TicketAddressRedisRepository ticketAddressRedisRepository;
+    private final TitleQueryRepository titleQueryRepository;
 
     /*
             티켓 주소지 입력
@@ -45,16 +49,34 @@ public class MemberCommandService {
         메인 타이틀 변경
      */
     @Transactional
-    public void changeMainTitle(Long memberId, Long titleId) {
+    public MemberCommandResponseDTO.changeMainTitleDTO changeMainTitle(Long memberId, Long titleId) {
 
         // 기존 Main Title 해제
         memberTitleCommandRepository.clearRepresentativeTitle(memberId);
+
+        // Title 조회
+        Title title = titleQueryRepository.findById(titleId)
+                .orElseThrow(() -> new Exception400("해당 Title 은 존재하지 않습니다."));
 
         // Main Title 설정
         MemberTitle memberTitle = memberTitleQueryRepository.findByMemberIdAndTitleId(memberId, titleId)
                 .orElseThrow(() -> new Exception400("해당 Title 을 소유하고 있지 않습니다."));
         memberTitle.setIsRepresentative(true);
         memberTitleCommandRepository.save(memberTitle);
+
+        return new MemberCommandResponseDTO.changeMainTitleDTO(
+                title.getTitleName(),
+                title.getTitleRarity().toString()
+        );
+    }
+
+    /*
+        메인 타이틀 제거
+     */
+    @Transactional
+    public void deleteMainTitle(Long currentMemberId) {
+
+        memberTitleCommandRepository.clearRepresentativeTitle(currentMemberId);
     }
 
     // Address 생성
