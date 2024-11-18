@@ -23,6 +23,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.mode
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.service.TicketCustomQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class MemberQueryService {
     private final TicketQueryRepository ticketQueryRepository;
     private final MemberTitleQueryRepository memberTitleQueryRepository;
     private final AddressRepository addressRepository;
+    private final TitleQueryRepository titleQueryRepository;
 //    private final MemberStickerQueryRepository;
     
     /*
@@ -77,23 +79,9 @@ public class MemberQueryService {
 
         // Member 조회
         getMember(memberId);
-        
-        // Title List 조회
-        List<MemberTitle> memberTitleList = memberTitleQueryRepository.findAllByMemberId(memberId);
-        Map<Long, Title> titleMap = titleQueryService.getMemberTitleMap(memberTitleList);
-        List<MemberQueryResponseDTO.getMemberTitleDTO> memberTitleDTOList = memberTitleList.stream()
-                .map(memberTitle -> {
-                    Title title = titleMap.get(memberTitle.getTitleId());
 
-                    return new MemberQueryResponseDTO.getMemberTitleDTO(
-                            title.getId().intValue(),
-                            title.getTitleName(),
-                            title.getTitleScript(),
-                            title.getTitleRarity().toString(),
-                            memberTitle.getIsRepresentative()
-                    );
-                })
-                .toList();
+        // Title List 조회
+        List<MemberQueryResponseDTO.getMemberTitleDTO> memberTitleDTOList = titleQueryRepository.findAllByMemberIdWithIsRepresentative(memberId);
 
         // Sticker List 조회
 //        List<MemberSticker> memberStickerList = memberStickerQueryRepository.findAllByMemberId(memberId);

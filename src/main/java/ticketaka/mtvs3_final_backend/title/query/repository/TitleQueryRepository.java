@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
@@ -15,6 +16,10 @@ public interface TitleQueryRepository extends JpaRepository<Title, Long> {
 
     List<Title> findAllByTitleTypeAndConcertIdAndTitleRarity(TitleType titleType, Long concertId, TitleRarity titleRarity);
 
-    @Query("SELECT t FROM Title t JOIN FETCH MemberTitle mt ON t.id = mt.titleId WHERE mt.memberId = :memberId")
-    List<Title> findAllByMemberId(@Param("memberId") Long memberId);
+    @Query("SELECT new ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO.getMemberTitleDTO(" +
+            "t.id, t.titleName, t.titleScript, t.titleRarity, mt.isRepresentative) " +
+            "FROM Title t " +
+            "JOIN FETCH MemberTitle mt ON t.id = mt.titleId " +
+            "WHERE mt.memberId = :memberId")
+    List<MemberQueryResponseDTO.getMemberTitleDTO> findAllByMemberIdWithIsRepresentative(@Param("memberId") Long memberId);
 }

@@ -1,5 +1,7 @@
 package ticketaka.mtvs3_final_backend.member.query.dto;
 
+import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
+
 import java.util.List;
 
 public class MemberQueryResponseDTO {
@@ -36,6 +38,9 @@ public class MemberQueryResponseDTO {
             String titleRarity,
             Boolean isRepresentative
     ) {
+        public getMemberTitleDTO(Long titleId, String titleName, String titleScript, TitleRarity titleRarity, Boolean isRepresentative) {
+            this(titleId.intValue(), titleName, titleScript, titleRarity.toString(), isRepresentative);
+        }
     }
 
     // 보유 스티커 조회
