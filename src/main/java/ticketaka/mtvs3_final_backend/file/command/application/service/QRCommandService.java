@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception500;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.QRResponseDTO;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.BufferedImageMultipartFile;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUpload;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
@@ -26,6 +28,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.UUID;
@@ -160,12 +163,28 @@ public class QRCommandService {
 
         // QR 데이터 포맷팅
         String qrData = String.format("%d-%d-%d-%d-%s", memberId, concertId, seatId, ticketId, ticketStatus);
+        BufferedImage qrImage = generateBufferedQRImage(qrData);
+        String qrName = TICKET_QR_PREFIX + memberId + "_" + ticketId + "_" + System.currentTimeMillis() + ".png";
 
-        ByteArrayOutputStream outputStream = getByteArrayOutputStream(qrData);
+        // BufferedImageMultipartFile로 변환
+        BufferedImageMultipartFile bufferedImageMultipartFile = new BufferedImageMultipartFile(
+                qrImage,
+                qrName,
+                "png",
+                "image/png"
+        );
 
-        String barcodeName = TICKET_QR_PREFIX + memberId + "_" + ticketId + "_" + System.currentTimeMillis();
+        fileCommandService.saveTicketQRImage(ticketId, bufferedImageMultipartFile);
+    }
 
-        fileCommandService.uploadTicketQRImgByByte(outputStream.toByteArray(), barcodeName, "image/png", ticketId);
+    private BufferedImage generateBufferedQRImage(String qrData) {
+
+        try {
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(qrData, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT);
+            return MatrixToImageWriter.toBufferedImage(bitMatrix);
+        } catch (Exception e) {
+            throw new Exception500("QR 코드 생성 중 오류 발생");
+        }
     }
 
     // FileUploadForAuth 생성

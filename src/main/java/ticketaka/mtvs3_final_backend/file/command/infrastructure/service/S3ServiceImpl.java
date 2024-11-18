@@ -30,9 +30,10 @@ public class S3ServiceImpl implements S3Service {
         try {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(contentType);
+            objectMetadata.setContentLength(file.getSize());
             amazonS3.putObject(new PutObjectRequest(
                     bucket, fileName, file.getInputStream(), objectMetadata
-                    ).withCannedAcl(CannedAccessControlList.PublicRead)
+                    )
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

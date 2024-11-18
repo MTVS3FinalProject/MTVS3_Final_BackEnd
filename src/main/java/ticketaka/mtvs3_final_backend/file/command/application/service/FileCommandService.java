@@ -94,6 +94,14 @@ public class FileCommandService {
         newFile(RelationType.CUSTOM_TICKET, customTicketId, fileUrl, FilePurpose.CUSTOM);
     }
 
+    // TicketQR 업로드
+    public void saveTicketQRImage(Long ticketId, MultipartFile ticketQRData) {
+
+        String fileUrl = s3Service.uploadImage(ticketQRData, ticketQRData.getOriginalFilename(), IMAGE_CONTENT_TYPE);
+
+        newFile(RelationType.TICKET, ticketId, fileUrl, FilePurpose.VERIFICATION);
+    }
+
     // Crop Custom Ticket
     public MultipartFile cropCustomTicketImage(TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
         try {
@@ -163,39 +171,6 @@ public class FileCommandService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    // 파일 업로드 기능 - byte[]
-    protected String uploadImgByByte(byte[] imageData, String fileName, String contentType) {
-
-        // 이미지 압축
-//        byte[] compressedData = compressImageData(imageData);
-
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        Blob blob = bucket.create(fileName,
-                imageData, contentType);
-
-        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
-
-        log.info("ByByte Url : {}", fileUrl);
-
-        return fileUrl;
-    }
-
-    // TicketQR 업로드
-    public void uploadTicketQRImgByByte(byte[] ticketQRData, String ticketQRName, String contentType, Long ticketId) {
-
-        Bucket bucket = StorageClient.getInstance().bucket(firebaseStorageUrl);
-
-        Blob blob = bucket.create(ticketQRName,
-                ticketQRData, contentType);
-
-        String fileUrl = blob.getMediaLink(); // 파이어베이스에 저장된 파일 url
-
-        log.info("TicketQR Url : {}", fileUrl);
-
-        newFile(RelationType.TICKET, ticketId, fileUrl, FilePurpose.VERIFICATION);
     }
 
     // File 객체 생성
