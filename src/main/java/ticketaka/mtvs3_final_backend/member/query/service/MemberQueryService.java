@@ -12,6 +12,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
+import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
@@ -45,6 +47,7 @@ public class MemberQueryService {
     private final MemberTitleQueryRepository memberTitleQueryRepository;
     private final AddressRepository addressRepository;
     private final TitleQueryRepository titleQueryRepository;
+    private final StickerQueryRepository stickerQueryRepository;
 //    private final MemberStickerQueryRepository;
     
     /*
@@ -81,24 +84,12 @@ public class MemberQueryService {
         getMember(memberId);
 
         // Title List 조회
-        List<MemberQueryResponseDTO.getMemberTitleDTO> memberTitleDTOList = titleQueryRepository.findAllByMemberIdWithIsRepresentative(memberId);
+        List<MemberQueryResponseDTO.getMemberTitleDTO> memberTitleDTOList =
+                titleQueryRepository.findAllByMemberIdWithIsRepresentative(memberId);
 
         // Sticker List 조회
-//        List<MemberSticker> memberStickerList = memberStickerQueryRepository.findAllByMemberId(memberId);
-        List<Sticker> stickerList = stickerQueryService.getMemberStickerList(memberId);
-        // Sticker 에 대응하는 ImgUrl 조회
-        Map<Long, String> stickerImgMap = fileQueryService.getStickerImgMap(stickerList.stream()
-                .map(Sticker::getId)
-                .toList());
-        List<MemberQueryResponseDTO.getMemberStickerDTO> memberStickerDTOList = stickerList.stream()
-                .map(sticker -> new MemberQueryResponseDTO.getMemberStickerDTO(
-                        sticker.getId().intValue(),
-                        sticker.getStickerName(),
-                        sticker.getStickerScript(),
-                        sticker.getStickerRarity().toString(),
-                        stickerImgMap.getOrDefault(sticker.getId(), null)
-                ))
-                .toList();
+        List<MemberQueryResponseDTO.getMemberStickerDTO> memberStickerDTOList =
+                stickerQueryRepository.findAllByMemberIdAndStickerTypeAndRelationType(memberId, StickerType.COLLECTION, RelationType.STICKER);
         
         // Custom Ticket List 조회
         // Ticket 조회

@@ -1,5 +1,6 @@
 package ticketaka.mtvs3_final_backend.member.query.dto;
 
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 
 import java.util.List;
@@ -51,6 +52,9 @@ public class MemberQueryResponseDTO {
             String stickerRarity,
             String stickerImage
     ) {
+        public getMemberStickerDTO(Long stickerId, String stickerName, String stickerScript, StickerRarity stickerRarity, String fileUrl) {
+            this(stickerId.intValue(), stickerName, stickerScript, stickerRarity.toString(), fileUrl);
+        }
     }
 
     // 보유 티켓 이미지 조회
