@@ -15,21 +15,14 @@ import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryReposito
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
-import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
-import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
-import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.model.CustomTicket;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.service.TicketCustomQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
-import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -92,32 +85,8 @@ public class MemberQueryService {
                 stickerQueryRepository.findAllByMemberIdAndStickerTypeAndRelationType(memberId, StickerType.COLLECTION, RelationType.STICKER);
         
         // Custom Ticket List 조회
-        // Ticket 조회
-        List<Ticket> ticketList = getTicketList(memberId);
-
-        // ConcertIdList 조회
-        Map<Long, Concert> concertMap = ticketQueryService.getConcertMap(ticketList);
-        // SeatInfoList 조회
-        Map<Long, String> seatInfoMap = ticketQueryService.getSeatInfoMap(ticketList);
-        // Custom Ticket 조회
-        Map<Long, CustomTicket> customTicketMap = ticketQueryService.getCustomTicketMap(ticketList);
-        List<MemberQueryResponseDTO.getMemberTicketDTO> memberTicketDTOList = ticketList.stream()
-                .map(ticket -> {
-                    Concert concert = concertMap.get(ticket.getConcertId());
-                    String seatInfo = seatInfoMap.get(ticket.getSeatId());
-                    CustomTicket customTicket = customTicketMap.get(ticket.getId());
-                    String ticketImage = customTicket != null ?
-                            fileQueryService.getFileImage(RelationType.CUSTOM_TICKET, customTicket.getId()) :
-                            fileQueryService.getFileImage(RelationType.CONCERT, concert.getId());
-
-                    return new MemberQueryResponseDTO.getMemberTicketDTO(
-                            ticket.getId().intValue(),
-                            concert.getName(),
-                            seatInfo,
-                            ticketImage
-                    );
-                })
-                .toList();
+        List<MemberQueryResponseDTO.getMemberTicketDTO> memberTicketDTOList =
+                ticketQueryRepository.findAllByMemberIdAndRelationType(memberId);
 
         return new MemberQueryResponseDTO.getMemberInventoryDTO(
                 memberTitleDTOList,

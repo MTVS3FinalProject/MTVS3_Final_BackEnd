@@ -64,5 +64,8 @@ public class MemberQueryResponseDTO {
             String seatInfo,
             String ticketImage
     ) {
+        public getMemberTicketDTO(Long ticketId, String concertName, String seatInfo, String ticketImage) {
+            this(ticketId.intValue(), concertName, seatInfo, ticketImage);
+        }
     }
 }
