@@ -32,40 +32,40 @@ public class MemberQueryResponseDTO {
     }
 
     // 보유 칭호 조회
-    public record getMemberTitleDTO(
-            int titleId,
-            String titleName,
-            String titleScript,
-            String titleRarity,
-            Boolean isRepresentative
-    ) {
-        public getMemberTitleDTO(Long titleId, String titleName, String titleScript, TitleRarity titleRarity, Boolean isRepresentative) {
-            this(titleId.intValue(), titleName, titleScript, titleRarity.toString(), isRepresentative);
-        }
-    }
+//    public record getMemberTitleDTO(
+//            int titleId,
+//            String titleName,
+//            String titleScript,
+//            String titleRarity,
+//            Boolean isRepresentative
+//    ) {
+//        public getMemberTitleDTO(Long titleId, String titleName, String titleScript, TitleRarity titleRarity, Boolean isRepresentative) {
+//            this(titleId.intValue(), titleName, titleScript, titleRarity.toString(), isRepresentative);
+//        }
+//    }
 
     // 보유 스티커 조회
-    public record getMemberStickerDTO(
-            int stickerId,
-            String stickerName,
-            String stickerScript,
-            String stickerRarity,
-            String stickerImage
-    ) {
-        public getMemberStickerDTO(Long stickerId, String stickerName, String stickerScript, StickerRarity stickerRarity, String fileUrl) {
-            this(stickerId.intValue(), stickerName, stickerScript, stickerRarity.toString(), fileUrl);
-        }
-    }
+//    public record getMemberStickerDTO(
+//            int stickerId,
+//            String stickerName,
+//            String stickerScript,
+//            String stickerRarity,
+//            String stickerImage
+//    ) {
+//        public getMemberStickerDTO(Long stickerId, String stickerName, String stickerScript, StickerRarity stickerRarity, String fileUrl) {
+//            this(stickerId.intValue(), stickerName, stickerScript, stickerRarity.toString(), fileUrl);
+//        }
+//    }
 
     // 보유 티켓 이미지 조회
-    public record getMemberTicketDTO(
-            int ticketId,
-            String concertName,
-            String seatInfo,
-            String ticketImage
-    ) {
-        public getMemberTicketDTO(Long ticketId, String concertName, String seatInfo, String ticketImage) {
-            this(ticketId.intValue(), concertName, seatInfo, ticketImage);
-        }
-    }
+//    public record getMemberTicketDTO(
+//            int ticketId,
+//            String concertName,
+//            String seatInfo,
+//            String ticketImage
+//    ) {
+//        public getMemberTicketDTO(Long ticketId, String concertName, String seatInfo, String ticketImage) {
+//            this(ticketId.intValue(), concertName, seatInfo, ticketImage);
+//        }
+//    }
 }

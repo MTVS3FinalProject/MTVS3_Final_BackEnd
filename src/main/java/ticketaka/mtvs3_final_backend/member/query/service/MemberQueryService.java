@@ -11,6 +11,9 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
+import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO;
+import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTitleDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
@@ -77,15 +80,15 @@ public class MemberQueryService {
         getMember(memberId);
 
         // Title List 조회
-        List<MemberQueryResponseDTO.getMemberTitleDTO> memberTitleDTOList =
-                titleQueryRepository.findAllByMemberIdWithIsRepresentative(memberId);
+        List<getMemberTitleDTO> memberTitleDTOList =
+                titleQueryRepository.findAllByMemberId(memberId);
 
         // Sticker List 조회
-        List<MemberQueryResponseDTO.getMemberStickerDTO> memberStickerDTOList =
+        List<getMemberStickerDTO> memberStickerDTOList =
                 stickerQueryRepository.findAllByMemberIdAndStickerTypeAndRelationType(memberId, StickerType.COLLECTION, RelationType.STICKER);
         
         // Custom Ticket List 조회
-        List<MemberQueryResponseDTO.getMemberTicketDTO> memberTicketDTOList =
+        List<getMemberTicketDTO> memberTicketDTOList =
                 ticketQueryRepository.findAllByMemberIdAndRelationType(memberId);
 
         return new MemberQueryResponseDTO.getMemberInventoryDTO(

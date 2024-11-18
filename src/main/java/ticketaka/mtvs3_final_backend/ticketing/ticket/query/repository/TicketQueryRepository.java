@@ -2,8 +2,10 @@ package ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
 public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByMemberId(Long memberId);
 
-    @Query("SELECT new ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO.getMemberTicketDTO(" +
+    @Query("SELECT new ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO(" +
             "t.id, c.name, CONCAT(s.section, '구역 ', s.number, '번')," +
             "CASE WHEN ct.id IS NOT NULL " +
             "   THEN ctf.fileUrl " +
@@ -24,5 +26,5 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "LEFT JOIN File ctf ON ctf.relationId = ct.id AND ctf.relationType = 'CUSTOM_TICKET' " +
             "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' " +
             "WHERE t.memberId = :memberId")
-    List<MemberQueryResponseDTO.getMemberTicketDTO> findAllByMemberIdAndRelationType(Long memberId);
+    List<getMemberTicketDTO> findAllByMemberIdAndRelationType(@Param("memberId") Long memberId);
 }
