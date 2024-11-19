@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
-    List<Ticket> findAllByMemberId(Long memberId);
 
     @Query("SELECT new ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO(" +
             "t.id, c.name, CONCAT(s.section, '구역 ', s.number, '번')," +
@@ -21,13 +20,17 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "   THEN ctf.fileUrl " +
             "   ELSE tf.fileUrl " +
             "END ) " +
-            "FROM Ticket t JOIN Concert c ON t.concertId = c.id " +
+            "FROM Ticket t " +
+            "JOIN Concert c ON t.concertId = c.id " +
             "JOIN Seat s ON t.seatId = s.id " +
-            "LEFT JOIN CustomTicket ct ON t.id = ct.ticketId " +
+            "LEFT JOIN CustomTicket ct ON t.id = ct.ticketId AND ct.createdAt = (" +
+            "   SELECT MAX(subCt.createdAt) FROM CustomTicket subCt WHERE subCt.ticketId = t.id" +
+            ") " +
             "LEFT JOIN File ctf ON ctf.relationId = ct.id AND ctf.relationType = 'CUSTOM_TICKET' " +
             "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' " +
             "WHERE t.memberId = :memberId")
     List<getMemberTicketDTO> findAllByMemberIdAndRelationType(@Param("memberId") Long memberId);
+
 
     @Query("SELECT new ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDTO(" +
             "t.id, c.name, c.concertDate, " +
@@ -39,7 +42,9 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "qf.fileUrl) " +
             "FROM Ticket t JOIN Concert c ON t.concertId = c.id " +
             "JOIN Seat s ON t.seatId = s.id " +
-            "LEFT JOIN CustomTicket ct ON t.id = ct.ticketId " +
+            "LEFT JOIN CustomTicket ct ON t.id = ct.ticketId AND ct.createdAt = (" +
+            "   SELECT MAX(subCt.createdAt) FROM CustomTicket subCt WHERE subCt.ticketId = t.id" +
+            ") " +
             "LEFT JOIN File ctf ON ctf.relationId = ct.id AND ctf.relationType = 'CUSTOM_TICKET' " +
             "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' " +
             "LEFT JOIN File qf ON qf.relationId = t.id AND qf.relationType = 'TICKET' AND qf.filePurpose = 'VERIFICATION' " +

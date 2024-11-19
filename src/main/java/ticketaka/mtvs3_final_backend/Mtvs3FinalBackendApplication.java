@@ -137,34 +137,9 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE)
             ));
 
-            // Ticket 추가
-            ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(5L, 1L, 3L, "TICKET_123451", 19999),
-                    newTicket(2L, 1L, 2L, "TICKET_123452", 29999),
-                    newTicket(2L, 1L, 5L, "TICKET_1234578", 29999)
-            ));
-
             // Ticket 기본 이미지 저장
             fileCommandRepository.save(
-                    newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
-            );
-
-            // Ticket QR Image 저장
-            fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.TICKET, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION),
-                    newFile(RelationType.TICKET, 2L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION),
-                    newFile(RelationType.TICKET, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/TICKETAKA_2_4_1731603393202?generation=1731603393935343&alt=media", FilePurpose.VERIFICATION)
-            ));
-
-            // Custom Ticket 저장
-            ticketCustomCommandRepository.saveAll(Arrays.asList(
-                    newCustomTicket(1L)
-            ));
-
-            // Custom Ticket Image 저장
-            fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.CUSTOM_TICKET, 1L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_311731619599623?alt=media", FilePurpose.CUSTOM)
-            ));
+                    newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET
 
             // Title 저장
             titleAdminCommandRepository.saveAll(Arrays.asList(
@@ -235,7 +210,7 @@ public class Mtvs3FinalBackendApplication {
             ));
             fileCommandRepository.saveAll(Arrays.asList(
                     newFile(RelationType.STICKER, 1L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_321731386008486?alt=media", FilePurpose.CUSTOM),
-                    newFile(RelationType.STICKER, 2L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_311731385744525?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 2L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_321731995947702", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 3L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_331731386036518?alt=media", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 4L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_341731386055244?alt=media", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 5L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_351731386070531?alt=media", FilePurpose.CUSTOM),

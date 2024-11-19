@@ -86,10 +86,9 @@ public class TicketCustomCommandService {
     @Transactional
     public void saveCustomTicket(Long ticketId, TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
 
-        CustomTicket customTicket = getCustomTicket(ticketId);
+        CustomTicket customTicket = newCustomTicket(ticketId);
 
         if (requestDTO.stickerIdList() != null && !requestDTO.stickerIdList().isEmpty()) {
-            customTicket.getStickerIdList().clear();
             customTicket.getStickerIdList().addAll(requestDTO.stickerIdList().stream().map(Long::valueOf).toList());
         }
 
@@ -125,6 +124,13 @@ public class TicketCustomCommandService {
     private CustomTicket getCustomTicket(Long ticketId) {
         return ticketCustomQueryRepository.findByTicketId(ticketId)
                 .orElse(new CustomTicket(ticketId));
+    }
+
+    // CustomTicket 저장
+    private CustomTicket newCustomTicket(Long ticketId) {
+        return CustomTicket.builder()
+                .ticketId(ticketId)
+                .build();
     }
 
     // DailyBackground 생성

@@ -46,8 +46,8 @@ public class FileCommandService {
     private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_";
     private static final String CUSTOM_TICKET_FILENAME_PREFIX = "CUSTOM_TICKET_";
 
-    private static final Integer CUSTOM_TICKET_WIDTH = 888;
-    private static final Integer CUSTOM_TICKET_HEIGHT = 504;
+    private static final Integer CUSTOM_TICKET_WIDTH = 504;
+    private static final Integer CUSTOM_TICKET_HEIGHT = 888;
 
     /*
         파일 업로드 - 회원 인증 용
@@ -105,6 +105,8 @@ public class FileCommandService {
         try {
             MultipartFile multipartFile = requestDTO.customTicketImage();
             BufferedImage originalImage = ImageIO.read(multipartFile.getInputStream());
+
+            log.info("Original image size: {} {}", originalImage.getWidth(), originalImage.getHeight());
 
             int x = requestDTO.start_x();
             int y = requestDTO.start_y();
