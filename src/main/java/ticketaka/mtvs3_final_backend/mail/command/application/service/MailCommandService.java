@@ -90,23 +90,4 @@ public class MailCommandService {
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
     }
-
-    /*
-        우편 리스트 조회
-     */
-    public MailCommandResponseDTO.getMailListDTO getMailList(Long memberId) {
-
-        List<Mail> mailList = mailCommandRepository.findAllByMemberId(memberId);
-        List<MailCommandResponseDTO.mailDTO> mailDTOList = mailList.stream()
-                .map(mail -> new MailCommandResponseDTO.mailDTO(
-                        mail.getId().intValue(),
-                        mail.getSubject(),
-                        mail.getContent(),
-                        mail.getMailCategory().toString(),
-                        mail.getIsRead()
-                ))
-                .toList();
-
-        return new MailCommandResponseDTO.getMailListDTO(mailDTOList);
-    }
 }
