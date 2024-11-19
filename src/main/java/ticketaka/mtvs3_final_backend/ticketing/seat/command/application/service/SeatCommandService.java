@@ -72,7 +72,8 @@ public class SeatCommandService {
         return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
                 getCompetitionRate(getReceptionMemberCount(concertId, seatId)),
-                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId)
+                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId),
+                true
         );
     }
 
@@ -91,7 +92,8 @@ public class SeatCommandService {
         seatReceptionService.cancelReception(memberId, concertId, seatId);
 
         return new SeatCommandResponseDTO.cancelReceptionSeatDTO(
-                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId)
+                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId),
+                false
         );
     }
 
