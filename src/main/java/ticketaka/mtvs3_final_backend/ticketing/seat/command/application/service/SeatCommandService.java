@@ -154,9 +154,18 @@ public class SeatCommandService {
     @Transactional
     public void postponeSeat(Long memberId, Long concertId, Long seatId) {
 
+        // Member 조회
+        Member member = getMember(memberId);
+        // Concert 조회
+        Concert concert = getReservingConcert(concertId);
+        // Seat 조회
+        Seat seat = getSeat(seatId);
+
         MemberSeat memberSeat = getMemberSeat(memberId, concertId, seatId, MemberSeatStatus.WAITING_RESERVE);
         memberSeat.setMemberSeatStatus(MemberSeatStatus.POSTPONE);
         memberSeatCommandRepository.save(memberSeat);
+
+        mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
     }
 
     /*
@@ -191,6 +200,9 @@ public class SeatCommandService {
 
         // Kakao Message 전송
         adminCommandService.sendKakaoMessage(address.getUserName());
+
+        // Mail 발송
+        mailCommandService.mailForSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(
