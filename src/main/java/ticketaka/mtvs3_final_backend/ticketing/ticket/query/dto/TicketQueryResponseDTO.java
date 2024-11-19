@@ -31,6 +31,5 @@ public class TicketQueryResponseDTO {
             String time,
             String seatInfo
     ) {
-
     }
 }

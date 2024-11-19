@@ -141,8 +141,12 @@ public class SeatCommandService {
     /*
         좌석 결제 연기
      */
+    @Transactional
     public void postponeSeat(Long memberId, Long concertId, Long seatId) {
 
+        MemberSeat memberSeat = getMemberSeat(memberId, concertId, seatId, MemberSeatStatus.WAITING_RESERVE);
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.POSTPONE);
+        memberSeatCommandRepository.save(memberSeat);
     }
 
     /*
