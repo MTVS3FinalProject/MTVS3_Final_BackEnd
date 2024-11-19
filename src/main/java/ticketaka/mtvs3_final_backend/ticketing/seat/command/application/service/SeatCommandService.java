@@ -12,6 +12,7 @@ import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryReq
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
+import ticketaka.mtvs3_final_backend.mail.command.application.service.MailCommandService;
 import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
@@ -45,6 +46,8 @@ public class SeatCommandService {
     private final SeatDrawingService seatDrawingService;
     private final TicketCommandService ticketCommandService;
     private final CoinHistoryService coinHistoryService;
+    private final AdminCommandService adminCommandService;
+    private final MailCommandService mailCommandService;
 
     private final ConcertQueryRepository concertQueryRepository;
     private final SeatCommandRepository seatCommandRepository;
@@ -53,7 +56,6 @@ public class SeatCommandService {
     private final AddressRepository addressRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
-    private final AdminCommandService adminCommandService;
 
     /*
         좌석 접수
@@ -62,12 +64,15 @@ public class SeatCommandService {
     public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
-        getMember(memberId);
+        Member member = getMember(memberId);
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
 
         // 좌석 접수
         Seat seat = seatReceptionService.seatReception(memberId, concertId, seatId);
+
+        // 좌석 접수 우편 전송
+        mailCommandService.mailForSeatReception(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
 
         return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
@@ -84,13 +89,18 @@ public class SeatCommandService {
     public SeatCommandResponseDTO.cancelReceptionSeatDTO cancelReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
-        getMember(memberId);
+        Member member = getMember(memberId);
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
+        // Seat 조회
+        Seat seat = getSeat(seatId);
 
         // 좌석 접수 취소
         seatReceptionService.cancelReception(memberId, concertId, seatId);
 
+        // 우편 전송
+        mailCommandService.mailForCancelSeatReception(memberId, member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        
         return new SeatCommandResponseDTO.cancelReceptionSeatDTO(
                 concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId),
                 false
