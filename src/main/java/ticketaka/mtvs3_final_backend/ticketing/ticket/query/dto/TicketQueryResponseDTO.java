@@ -17,7 +17,20 @@ public class TicketQueryResponseDTO {
      */
     public record getTicketCustomObjectDTO(
             int dailyBackgroundRefreshCount,
-            List<stickerDTO> stickerDTOList
+            List<stickerDTO> stickerDTOList,
+            List<ticketDTO> ticketDTOList
     ) {
+    }
+
+    public record ticketDTO(
+            int ticketId,
+            String concertName,
+            int year,
+            int month,
+            int day,
+            String time,
+            String seatInfo
+    ) {
+
     }
 }
