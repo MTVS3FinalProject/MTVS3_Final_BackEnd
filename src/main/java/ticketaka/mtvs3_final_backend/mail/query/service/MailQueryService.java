@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.query.dto.MailQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.mail.query.repository.MailQueryRepository;
@@ -29,7 +28,6 @@ public class MailQueryService {
                 .map(mail -> new MailQueryResponseDTO.mailDTO(
                         mail.getId().intValue(),
                         mail.getSubject(),
-                        mail.getContent(),
                         mail.getMailCategory().toString(),
                         mail.getIsRead()
                 ))

@@ -12,7 +12,6 @@ public class MailQueryResponseDTO {
     public record mailDTO(
             int mailId,
             String subject,
-            String content,
             String mailCategory,
             Boolean isRead
     ) {

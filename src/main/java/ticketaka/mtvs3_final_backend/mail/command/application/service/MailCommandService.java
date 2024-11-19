@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
-
-import java.util.List;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -89,5 +88,27 @@ public class MailCommandService {
                 concertName + " 의 " +
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
+    }
+
+    // 특정 우편 조회
+    @Transactional
+    public MailCommandResponseDTO.readMailDTO readMail(Long memberId, Long mailId) {
+
+        Mail mail = getMail(mailId);
+
+        mail.setIsRead(true);
+        mailCommandRepository.save(mail);
+
+        return new MailCommandResponseDTO.readMailDTO(
+                mail.getId().intValue(),
+                mail.getSubject(),
+                mail.getContent(),
+                mail.getMailCategory().toString()
+        );
+    }
+
+    private Mail getMail(Long mailId) {
+        return mailCommandRepository.findById(mailId)
+                .orElseThrow(() -> new Exception400("해당 우편은 존재하지 않습니다."));
     }
 }
