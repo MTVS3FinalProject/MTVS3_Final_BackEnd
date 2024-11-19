@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
+
+import java.util.List;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -86,5 +89,24 @@ public class MailCommandService {
                 concertName + " 의 " +
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
+    }
+
+    /*
+        우편 리스트 조회
+     */
+    public MailCommandResponseDTO.getMailListDTO getMailList(Long memberId) {
+
+        List<Mail> mailList = mailCommandRepository.findAllByMemberId(memberId);
+        List<MailCommandResponseDTO.mailDTO> mailDTOList = mailList.stream()
+                .map(mail -> new MailCommandResponseDTO.mailDTO(
+                        mail.getId().intValue(),
+                        mail.getSubject(),
+                        mail.getContent(),
+                        mail.getMailCategory().toString(),
+                        mail.getIsRead()
+                ))
+                .toList();
+
+        return new MailCommandResponseDTO.getMailListDTO(mailDTOList);
     }
 }
