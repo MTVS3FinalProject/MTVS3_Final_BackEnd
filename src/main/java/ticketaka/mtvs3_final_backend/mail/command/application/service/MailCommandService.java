@@ -9,6 +9,7 @@ import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandRes
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
+import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -46,7 +47,7 @@ public class MailCommandService {
 
     // 좌석 결제 미루기 Mail
     @Transactional
-    public void mailForPostponeSeatReservation(Long memberId, String nickname, String concertName, String seatInfo) {
+    public Mail mailForPostponeSeatReservation(Long memberId, String nickname, String concertName, String seatInfo) {
 
         // generate Subject
         String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제 미루기를");
@@ -54,7 +55,7 @@ public class MailCommandService {
         // generate Content
         String content = subject + "\n24시간 내 결제를 완료하지 않을 경우 결제 권한을 잃습니다.\n유의해 주시길 바랍니다.";
 
-        saveMail(memberId, subject, content, MailCategory.POSTPONE);
+        return saveMail(memberId, subject, content, MailCategory.POSTPONE);
     }
 
     // 좌석 결제 완료 Mail
@@ -71,15 +72,15 @@ public class MailCommandService {
     }
 
     // Mail 생성
-    public void saveMail(Long memberId, String subject, String content, MailCategory mailCategory) {
+    public Mail saveMail(Long memberId, String subject, String content, MailCategory mailCategory) {
         Mail mail = Mail.builder()
                 .memberId(memberId)
                 .subject(subject)
                 .content(content)
                 .mailCategory(mailCategory)
                 .build();
-
         mailCommandRepository.save(mail);
+        return mail;
     }
 
     private String generateSubject(String nickname, String concertName, String seatInfo, String mailCategory) {

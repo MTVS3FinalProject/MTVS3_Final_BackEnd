@@ -13,7 +13,10 @@ import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistor
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
 import ticketaka.mtvs3_final_backend.mail.command.application.service.MailCommandService;
+import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
+import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
+import ticketaka.mtvs3_final_backend.redis.seat.postpone.repository.SeatPostponeRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
@@ -56,6 +59,7 @@ public class SeatCommandService {
     private final AddressRepository addressRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
+    private final SeatPostponeRedisRepository seatPostponeRedisRepository;
 
     /*
         좌석 접수
@@ -165,7 +169,10 @@ public class SeatCommandService {
         memberSeat.setMemberSeatStatus(MemberSeatStatus.POSTPONE);
         memberSeatCommandRepository.save(memberSeat);
 
-        mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        Mail mail = mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+
+        SeatPostpone seatPostpone = newSeatPostpone(memberId, mail.getId(), concertId, seatId);
+        seatPostponeRedisRepository.save(seatPostpone);
     }
 
     /*
@@ -321,6 +328,16 @@ public class SeatCommandService {
                 .build();
 
         drawResultRedisRepository.save(drawResult);
+    }
+
+    // SeatPostpone 생성
+    private SeatPostpone newSeatPostpone(Long memberId, Long mailId, Long concertId, Long seatId) {
+        return SeatPostpone.builder()
+                .id(memberId.toString())
+                .mailId(mailId)
+                .concertId(concertId)
+                .seatId(seatId)
+                .build();
     }
 
     // SeatName 생성
