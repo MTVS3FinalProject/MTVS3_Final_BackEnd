@@ -136,7 +136,7 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D1", "65", 17999, LocalDateTime.of(2024, 10, 23, 00, 00), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "67", 24999, LocalDateTime.of(2024, 10, 23, 00, 15), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "69", 29999, LocalDateTime.of(2024, 10, 23, 00, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.RESERVED),
                     newSeat(2, "D2", "72", 39999, LocalDateTime.of(2024, 10, 23, 00, 50), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "73", 39999, LocalDateTime.of(2024, 10, 23, 00, 55), concert01, SeatStatus.AVAILABLE)
             ));
@@ -146,6 +146,10 @@ public class Mtvs3FinalBackendApplication {
                     newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
             );
 
+            // Ticket 할당
+            ticketCommandRepository.saveAll(Arrays.asList(
+                    newTicket(8L, 1L, 5L, "TestTicket", 12345)
+            ));
 
             // Title 저장
             titleAdminCommandRepository.saveAll(Arrays.asList(
