@@ -38,6 +38,8 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.domain.repo
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
+import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleCommandRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,7 +66,7 @@ public class Mtvs3FinalBackendApplication {
                                        TicketCustomCommandRepository ticketCustomCommandRepository,
                                        TitleAdminCommandRepository titleAdminCommandRepository,
                                        StickerAdminCommandRepository stickerAdminCommandRepository,
-                                       MemberStickerCommandRepository memberStickerCommandRepository) {
+                                       MemberStickerCommandRepository memberStickerCommandRepository, MemberTitleCommandRepository memberTitleCommandRepository) {
         return args -> {
             
             // Member 저장
@@ -134,7 +136,9 @@ public class Mtvs3FinalBackendApplication {
                     newSeat(2, "D1", "65", 17999, LocalDateTime.of(2024, 10, 23, 00, 00), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "67", 24999, LocalDateTime.of(2024, 10, 23, 00, 15), concert01, SeatStatus.AVAILABLE),
                     newSeat(2, "D2", "69", 29999, LocalDateTime.of(2024, 10, 23, 00, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE)
+                    newSeat(2, "D2", "71", 19999, LocalDateTime.of(2024, 10, 23, 00, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(2, "D2", "72", 39999, LocalDateTime.of(2024, 10, 23, 00, 50), concert01, SeatStatus.AVAILABLE),
+                    newSeat(2, "D2", "73", 39999, LocalDateTime.of(2024, 10, 23, 00, 55), concert01, SeatStatus.AVAILABLE)
             ));
 
             // Ticket 기본 이미지 저장
@@ -250,7 +254,19 @@ public class Mtvs3FinalBackendApplication {
                     newMemberSticker(4L, 12L),
                     newMemberSticker(4L, 15L),
                     newMemberSticker(4L, 17L),
-                    newMemberSticker(4L, 28L)
+                    newMemberSticker(4L, 28L),
+                    newMemberSticker(8L, 6L),
+                    newMemberSticker(8L, 11L),
+                    newMemberSticker(8L, 16L),
+                    newMemberSticker(8L, 8L),
+                    newMemberSticker(8L, 13L),
+                    newMemberSticker(8L, 29L)
+            ));
+
+            // Title 할당
+            memberTitleCommandRepository.saveAll(Arrays.asList(
+                    newMemberTitle(4L, 24L),
+                    newMemberTitle(8L, 20L)
             ));
         };
     }
@@ -338,6 +354,13 @@ public class Mtvs3FinalBackendApplication {
         return MemberSticker.builder()
                 .memberId(memberId)
                 .stickerId(stickerId)
+                .build();
+    }
+
+    private MemberTitle newMemberTitle(Long memberId, Long titleId) {
+        return MemberTitle.builder()
+                .memberId(memberId)
+                .titleId(titleId)
                 .build();
     }
 }
