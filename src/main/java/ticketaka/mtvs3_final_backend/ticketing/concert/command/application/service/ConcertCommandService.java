@@ -87,25 +87,28 @@ public class ConcertCommandService {
 
         checkMemberAge(member, concert);
 
+        // 접수 가능한 좌석 조회
+        List<Seat> availableSeatList = seatCommandRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
+        // 이미 추첨 완료되었거나 예약된 좌석 조회
+        List<Seat> reservedSeatList = seatCommandRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.RESERVED);
         // 내가 접수한 좌석 조회
-        List<Seat> receptionSeatList = seatQueryRepository.findAllSeatsByMemberIdAndConcertIdAndMemberSeatStatus(
+        List<Seat> myReceptionSeatList = seatQueryRepository.findAllSeatsByMemberIdAndConcertIdAndMemberSeatStatus(
                 currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
 
-        // 이외에 접수 가능한 좌석 조회
-        List<Seat> availableSeatList = seatCommandRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.AVAILABLE);
         List<ConcertCommandResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
+        List<ConcertCommandResponseDTO.SeatIdDTO> reservedSeats = getSeatIdDTOList(reservedSeatList, concert);
+        List<ConcertCommandResponseDTO.SeatIdDTO> myReceptionSeats = getSeatIdDTOList(myReceptionSeatList, concert);
 
-        List<ConcertCommandResponseDTO.SeatIdDTO> receptionSeats = getSeatIdDTOList(receptionSeatList, concert);
-
-        int remainingTickets = concert.getReceptionLimit() - receptionSeats.size();
+        int remainingTickets = concert.getReceptionLimit() - myReceptionSeats.size();
 
         return new ConcertCommandResponseDTO.entranceConcertDTO(
                 concert.getId().intValue(),
                 concert.getName(),
                 getTimeDTO(concert.getConcertDate()),
                 availableSeats,
-                receptionSeats,
+                reservedSeats,
+                myReceptionSeats,
                 remainingTickets
         );
     }

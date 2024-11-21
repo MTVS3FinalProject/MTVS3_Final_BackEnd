@@ -146,6 +146,10 @@ public class Mtvs3FinalBackendApplication {
                     newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
             );
 
+            // Ticket 할당
+            ticketCommandRepository.saveAll(Arrays.asList(
+                    newTicket(8L, 1L, 5L, "TestTicket", 12345)
+            ));
 
             // Title 저장
             titleAdminCommandRepository.saveAll(Arrays.asList(

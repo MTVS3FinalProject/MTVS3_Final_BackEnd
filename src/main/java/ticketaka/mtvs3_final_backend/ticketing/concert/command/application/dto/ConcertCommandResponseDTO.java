@@ -24,7 +24,8 @@ public class ConcertCommandResponseDTO {
             String concertName,
             timeDTO concertTime,
             List<SeatIdDTO> availableSeats,
-            List<SeatIdDTO> receptionSeats,
+            List<SeatIdDTO> reservedSeats,
+            List<SeatIdDTO> myReceptionSeats,
             int remainingTickets
     ) {
     }
