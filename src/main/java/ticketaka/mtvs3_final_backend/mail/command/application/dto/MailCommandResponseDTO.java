@@ -9,4 +9,10 @@ public class MailCommandResponseDTO {
             String mailCategory
     ) {
     }
+
+    public record readPostponeMailDTO(
+            int concertId,
+            int seatId
+    ) {
+    }
 }
