@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
+import ticketaka.mtvs3_final_backend.redis.seat.postpone.repository.SeatPostponeRedisRepository;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -18,6 +20,7 @@ import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
 public class MailCommandService {
 
     private final MailCommandRepository mailCommandRepository;
+    private final SeatPostponeRedisRepository seatPostponeRedisRepository;
 
     // 좌석 접수 Mail
     @Transactional
@@ -105,6 +108,23 @@ public class MailCommandService {
                 mail.getSubject(),
                 mail.getContent(),
                 mail.getMailCategory().toString()
+        );
+    }
+
+    @Transactional
+    public MailCommandResponseDTO.readPostponeMailDTO readPostponeMail(Long mailId) {
+
+        Mail mail = getMail(mailId);
+
+        mail.setIsRead(true);
+        mailCommandRepository.save(mail);
+
+        SeatPostpone seatPostpone = seatPostponeRedisRepository.findById(mailId.toString())
+                .orElseThrow(() -> new Exception401("좌석 결제를 미룬 상태가 아닙니다."));
+
+        return new MailCommandResponseDTO.readPostponeMailDTO(
+                seatPostpone.getConcertId().intValue(),
+                seatPostpone.getSeatId().intValue()
         );
     }
 

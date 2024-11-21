@@ -38,7 +38,7 @@ public class MailCommandController {
     @GetMapping("/{mailId}/postpone")
     public ResponseEntity<?> readPostponeMail(@PathVariable("mailId") Long mailId) {
 
-        MailCommandResponseDTO.readPostponeMailDTO responseDTO = mailCommandService.readPostponeMail(getCurrentMemberId(), mailId);
+        MailCommandResponseDTO.readPostponeMailDTO responseDTO = mailCommandService.readPostponeMail(mailId);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

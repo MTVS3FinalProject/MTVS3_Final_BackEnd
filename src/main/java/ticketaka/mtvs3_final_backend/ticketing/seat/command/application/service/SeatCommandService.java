@@ -171,7 +171,7 @@ public class SeatCommandService {
 
         Mail mail = mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
 
-        SeatPostpone seatPostpone = newSeatPostpone(memberId, mail.getId(), concertId, seatId);
+        SeatPostpone seatPostpone = newSeatPostpone(mail.getId(), memberId, concertId, seatId);
         seatPostponeRedisRepository.save(seatPostpone);
     }
 
@@ -331,10 +331,10 @@ public class SeatCommandService {
     }
 
     // SeatPostpone 생성
-    private SeatPostpone newSeatPostpone(Long memberId, Long mailId, Long concertId, Long seatId) {
+    private SeatPostpone newSeatPostpone(Long mailId, Long memberId, Long concertId, Long seatId) {
         return SeatPostpone.builder()
-                .id(memberId.toString())
-                .mailId(mailId)
+                .id(mailId.toString())
+                .memberId(memberId)
                 .concertId(concertId)
                 .seatId(seatId)
                 .build();

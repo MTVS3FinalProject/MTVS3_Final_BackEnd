@@ -15,14 +15,14 @@ public class SeatPostpone {
     @Id
     private String id;
 
-    private Long mailId;
+    private Long memberId;
     private Long concertId;
     private Long seatId;
 
     @Builder
-    public SeatPostpone(String id, Long mailId, Long concertId, Long seatId) {
+    public SeatPostpone(String id, Long memberId, Long concertId, Long seatId) {
         this.id = id;
-        this.mailId = mailId;
+        this.memberId = memberId;
         this.concertId = concertId;
         this.seatId = seatId;
     }
