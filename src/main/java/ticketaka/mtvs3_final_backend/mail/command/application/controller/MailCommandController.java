@@ -31,4 +31,15 @@ public class MailCommandController {
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
+
+    /*
+        결제 미루기 우편 조회
+     */
+    @GetMapping("/{mailId}/postpone")
+    public ResponseEntity<?> readPostponeMail(@PathVariable("mailId") Long mailId) {
+
+        MailCommandResponseDTO.readPostponeMailDTO responseDTO = mailCommandService.readPostponeMail(getCurrentMemberId(), mailId);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
 }
