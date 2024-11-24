@@ -42,6 +42,8 @@ public class ConcertCommandController {
         
         ConcertCommandResponseDTO.entranceConcertDTO responseDTO = concertCommandService.entranceConcert(concertId, getCurrentMemberId());
         
+        log.info("entranceConcert concertId: {}", concertId);
+
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 

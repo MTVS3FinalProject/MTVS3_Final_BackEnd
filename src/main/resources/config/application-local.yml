@@ -45,7 +45,7 @@ jwt:
 
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
+    path: /api/swagger-ui
     groups-order: desc
     operations-sorter: method
     disable-swagger-default-url: true
@@ -54,7 +54,7 @@ springdoc:
     tags-sorter: alpha
 
   api-docs:
-    path: /v3/api-docs
+    path: /api/v3/api-docs
 
   show-actuator: true
 
@@ -62,3 +62,17 @@ logging:
   level:
     '[ticketaka]': debug
     '[org.hibernate.type]': trace
+
+management:
+  endpoints:
+    web:
+      base-path: /api/actuator
+      exposure:
+        include: "prometheus"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      enabled: true

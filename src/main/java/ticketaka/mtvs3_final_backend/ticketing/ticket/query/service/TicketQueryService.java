@@ -72,12 +72,26 @@ public class TicketQueryService {
 
         // 해당 공연, 회원이 가진 Sticker List DTO 로 조회
         List<stickerDTO> stickerDTOList = new ArrayList<>();
-        stickerDTOList.addAll(stickerQueryRepository.findAllByConcertId(ticket.getConcertId(), StickerType.COMMON, RelationType.CONCERT));
+        stickerDTOList.addAll(stickerQueryRepository.findAllByConcertId(ticket.getConcertId(), StickerType.COMMON, RelationType.STICKER));
         stickerDTOList.addAll(stickerQueryRepository.findAllByMemberId(memberId, StickerType.COLLECTION, RelationType.STICKER));
+
+        List<getTicketDTO> getTicketDTOList = ticketQueryRepository.findCustomizableTicketsByMemberId(memberId);
+        List<TicketQueryResponseDTO.ticketDTO> ticketDTOList = getTicketDTOList.stream()
+                .map(ticketDTO -> new TicketQueryResponseDTO.ticketDTO(
+                        ticketDTO.ticketId(),
+                        ticketDTO.concertName(),
+                        ticketDTO.year(),
+                        ticketDTO.month(),
+                        ticketDTO.day(),
+                        ticketDTO.time(),
+                        ticketDTO.seatInfo()
+                ))
+                .toList();
 
         return new TicketQueryResponseDTO.getTicketCustomObjectDTO(
                 dailyBackgroundRefreshCount,
-                stickerDTOList
+                stickerDTOList,
+                ticketDTOList
         );
     }
 

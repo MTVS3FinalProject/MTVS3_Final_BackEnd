@@ -25,13 +25,11 @@ public class TicketCommandController {
      */
     @PostMapping("/{ticketId}/custom")
     public ResponseEntity<?> saveCustomTicket(@PathVariable("ticketId") Long ticketId,
-                                              @RequestBody TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
+                                              @ModelAttribute TicketCommandRequestDTO.saveCustomTicketDTO requestDTO) {
 
-        log.info("saveCustomTicket_requestDTO - stickerIdList: {}, backgroundId: {}", requestDTO.stickerIdList(), requestDTO.backgroundId());
+        log.info("saveCustomTicket_requestDTO : {}", requestDTO);
 
         ticketCommandService.saveCustomTicket(getCurrentMemberId(), ticketId, requestDTO);
-
-        log.info("saveCustomTicket_responseDTO : {}", requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

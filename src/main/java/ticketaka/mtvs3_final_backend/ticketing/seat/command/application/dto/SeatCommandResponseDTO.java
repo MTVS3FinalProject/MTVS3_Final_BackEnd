@@ -27,7 +27,8 @@ public class SeatCommandResponseDTO {
     public record seatReceptionDTO(
             int seatPrice,
             int competitionRate,
-            int remainingTicket
+            int remainingTicket,
+            Boolean isReceived
     ) {
     }
 
@@ -48,7 +49,8 @@ public class SeatCommandResponseDTO {
 
     // 좌석 접수 취소
     public record cancelReceptionSeatDTO(
-            int remainingTicket
+            int remainingTicket,
+            Boolean isReceived
     ) {
     }
 

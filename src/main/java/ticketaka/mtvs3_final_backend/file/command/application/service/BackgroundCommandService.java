@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.BackgroundResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.Background;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.BufferedImageMultipartFile;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurpose;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
@@ -16,6 +17,8 @@ import ticketaka.mtvs3_final_backend.file.command.domain.repository.FileCommandR
 import ticketaka.mtvs3_final_backend.file.command.domain.service.BackgroundFeignClient;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.command.application.dto.TicketCustomCommandResponseDTO;
+
+import java.awt.image.BufferedImage;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -28,7 +31,8 @@ public class BackgroundCommandService {
     private final BackgroundCommandRepository backgroundCommandRepository;
 
     private final BackgroundFeignClient backgroundFeignClient;
-    private final FileQueryService fileQueryService;
+
+    private static final String BACKGROUND_IMAGE_PREFIX = "background_";
 
     /*
         AI 배경 생성
@@ -36,7 +40,18 @@ public class BackgroundCommandService {
     @Transactional
     public TicketCustomCommandResponseDTO.generateAIBackgroundDTO generateBackground(BackgroundRequestDTO.generateBackgroundDTO requestDTO) {
 
-        MultipartFile backgroundImageData = backgroundFeignClient.generateBackground();
+        byte[] backgroundImageData = backgroundFeignClient.generateBackground();
+
+        BufferedImage backgroundImage = fileCommandService.convertImageDataToBufferedImage(backgroundImageData);
+
+        String fileName = BACKGROUND_IMAGE_PREFIX + requestDTO.concert().getId() + "_" + System.currentTimeMillis();
+
+        MultipartFile backgroundImageFile = new BufferedImageMultipartFile(
+                backgroundImage,
+                fileName,
+                "png",
+                "image/png"
+        );
 
         // Background 생성
         Background background = Background.builder()
@@ -44,7 +59,7 @@ public class BackgroundCommandService {
                 .build();
         background = backgroundCommandRepository.save(background);
 
-        File file = fileCommandService.saveAIBackgroundImage(background.getId(), backgroundImageData);
+        File file = fileCommandService.saveAIBackgroundImage(background.getId(), backgroundImageFile);
 
         return new TicketCustomCommandResponseDTO.generateAIBackgroundDTO(
                 background.getId().intValue(),

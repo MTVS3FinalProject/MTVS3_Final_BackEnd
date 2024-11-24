@@ -25,6 +25,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.dto.Ti
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -45,8 +46,8 @@ public class FileCommandService {
     private static final String AI_BACKGROUND_FILENAME_PREFIX = "AI_BACKGROUND_";
     private static final String CUSTOM_TICKET_FILENAME_PREFIX = "CUSTOM_TICKET_";
 
-    private static final Integer CUSTOM_TICKET_WIDTH = 888;
-    private static final Integer CUSTOM_TICKET_HEIGHT = 504;
+    private static final Integer CUSTOM_TICKET_WIDTH = 504;
+    private static final Integer CUSTOM_TICKET_HEIGHT = 888;
 
     /*
         파일 업로드 - 회원 인증 용
@@ -104,6 +105,8 @@ public class FileCommandService {
         try {
             MultipartFile multipartFile = requestDTO.customTicketImage();
             BufferedImage originalImage = ImageIO.read(multipartFile.getInputStream());
+
+            log.info("Original image size: {} {}", originalImage.getWidth(), originalImage.getHeight());
 
             int x = requestDTO.start_x();
             int y = requestDTO.start_y();
@@ -176,5 +179,17 @@ public class FileCommandService {
 
         return fileUploadForAuthRedisRepository.findById(id)
                 .orElseThrow(() -> new Exception400("파일 업로드 대기 상태가 아닙니다."));
+    }
+
+    public BufferedImage convertImageDataToBufferedImage(byte[] backgroundImageData) {
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(backgroundImageData)) {
+            BufferedImage bufferedImage = ImageIO.read(inputStream);
+            if (bufferedImage == null) {
+                throw new RuntimeException("Invalid image data received");
+            }
+            return bufferedImage;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to convert byte array to BufferedImage", e);
+        }
     }
 }

@@ -61,7 +61,7 @@ public class SeatCommandController {
 
         log.info("drawingNotification_request: concertId={}, seatId={}", concertId, seatId);
 
-        SeatCommandResponseDTO.createDrawingNotificationDTO responseDTO = seatCommandService.drawingNotification(concertId, seatId);
+        SeatCommandResponseDTO.createDrawingNotificationDTO responseDTO = seatCommandService.drawingNotification(getCurrentMemberId(), concertId, seatId);
 
         log.info("drawingNotification_response: {}", responseDTO);
 

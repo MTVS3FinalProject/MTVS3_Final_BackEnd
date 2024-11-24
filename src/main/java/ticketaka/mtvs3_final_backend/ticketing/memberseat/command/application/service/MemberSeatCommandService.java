@@ -17,7 +17,6 @@ import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.Membe
 public class MemberSeatCommandService {
 
     private final MemberSeatCommandRepository memberSeatCommandRepository;
-
     private final MemberSeatQueryRepository memberSeatQueryRepository;
 
     /*

@@ -43,8 +43,8 @@ public interface StickerQueryRepository extends JpaRepository<Sticker, Long> {
     @Query("SELECT new ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO(" +
             "s.id, f.fileUrl) " +
             "FROM Sticker s " +
-            "JOIN Concert c " +
-            "LEFT JOIN File f ON f.relationType = :relationType AND f.relationId = c.id " +
+            "JOIN Concert c ON s.concertId = c.id " +
+            "LEFT JOIN File f ON f.relationType = :relationType AND f.relationId = s.id " +
             "WHERE c.id = :concertId AND s.stickerType = :stickerType")
     List<stickerDTO> findAllByConcertId(@Param("concertId") Long concertId,
                                         @Param("stickerType") StickerType stickerType,

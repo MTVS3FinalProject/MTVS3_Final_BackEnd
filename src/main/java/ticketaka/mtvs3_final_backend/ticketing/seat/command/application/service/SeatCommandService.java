@@ -12,7 +12,11 @@ import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryReq
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
+import ticketaka.mtvs3_final_backend.mail.command.application.service.MailCommandService;
+import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
+import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
+import ticketaka.mtvs3_final_backend.redis.seat.postpone.repository.SeatPostponeRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.ConcertStatus;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
@@ -45,6 +49,8 @@ public class SeatCommandService {
     private final SeatDrawingService seatDrawingService;
     private final TicketCommandService ticketCommandService;
     private final CoinHistoryService coinHistoryService;
+    private final AdminCommandService adminCommandService;
+    private final MailCommandService mailCommandService;
 
     private final ConcertQueryRepository concertQueryRepository;
     private final SeatCommandRepository seatCommandRepository;
@@ -53,7 +59,7 @@ public class SeatCommandService {
     private final AddressRepository addressRepository;
 
     private final DrawResultRedisRepository drawResultRedisRepository;
-    private final AdminCommandService adminCommandService;
+    private final SeatPostponeRedisRepository seatPostponeRedisRepository;
 
     /*
         좌석 접수
@@ -62,17 +68,21 @@ public class SeatCommandService {
     public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
-        getMember(memberId);
+        Member member = getMember(memberId);
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
 
         // 좌석 접수
         Seat seat = seatReceptionService.seatReception(memberId, concertId, seatId);
 
+        // 좌석 접수 우편 전송
+        mailCommandService.mailForSeatReception(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+
         return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
                 getCompetitionRate(getReceptionMemberCount(concertId, seatId)),
-                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId)
+                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId),
+                true
         );
     }
 
@@ -83,15 +93,21 @@ public class SeatCommandService {
     public SeatCommandResponseDTO.cancelReceptionSeatDTO cancelReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
-        getMember(memberId);
+        Member member = getMember(memberId);
         // Concert 조회
         Concert concert = getReservingConcert(concertId);
+        // Seat 조회
+        Seat seat = getSeat(seatId);
 
         // 좌석 접수 취소
         seatReceptionService.cancelReception(memberId, concertId, seatId);
 
+        // 우편 전송
+        mailCommandService.mailForCancelSeatReception(memberId, member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        
         return new SeatCommandResponseDTO.cancelReceptionSeatDTO(
-                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId)
+                concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId),
+                false
         );
     }
 
@@ -99,7 +115,7 @@ public class SeatCommandService {
         추첨 시작 알림
      */
     @Transactional
-    public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long concertId, Long seatId) {
+    public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long memberId, Long concertId, Long seatId) {
 
         // Concert 조회
         getReservingConcert(concertId);
@@ -139,8 +155,24 @@ public class SeatCommandService {
     /*
         좌석 결제 연기
      */
+    @Transactional
     public void postponeSeat(Long memberId, Long concertId, Long seatId) {
 
+        // Member 조회
+        Member member = getMember(memberId);
+        // Concert 조회
+        Concert concert = getReservingConcert(concertId);
+        // Seat 조회
+        Seat seat = getSeat(seatId);
+
+        MemberSeat memberSeat = getMemberSeat(memberId, concertId, seatId, MemberSeatStatus.WAITING_RESERVE);
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.POSTPONE);
+        memberSeatCommandRepository.save(memberSeat);
+
+        Mail mail = mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+
+        SeatPostpone seatPostpone = newSeatPostpone(mail.getId(), memberId, concertId, seatId);
+        seatPostponeRedisRepository.save(seatPostpone);
     }
 
     /*
@@ -175,6 +207,9 @@ public class SeatCommandService {
 
         // Kakao Message 전송
         adminCommandService.sendKakaoMessage(address.getUserName());
+
+        // Mail 발송
+        mailCommandService.mailForSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(
@@ -293,6 +328,16 @@ public class SeatCommandService {
                 .build();
 
         drawResultRedisRepository.save(drawResult);
+    }
+
+    // SeatPostpone 생성
+    private SeatPostpone newSeatPostpone(Long mailId, Long memberId, Long concertId, Long seatId) {
+        return SeatPostpone.builder()
+                .id(mailId.toString())
+                .memberId(memberId)
+                .concertId(concertId)
+                .seatId(seatId)
+                .build();
     }
 
     // SeatName 생성
