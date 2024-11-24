@@ -27,11 +27,7 @@ public class SeatCommandController {
     public ResponseEntity<?> seatReception(@PathVariable("concertId") Long concertId,
                                            @PathVariable("seatId") Long seatId) {
 
-        log.info("seatReception_request: concertId={}, seatId={}", concertId, seatId);
-
         SeatCommandResponseDTO.seatReceptionDTO responseDTO = seatCommandService.seatReception(getCurrentMemberId(), concertId, seatId);
-
-        log.info("seatReception_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -43,11 +39,7 @@ public class SeatCommandController {
     public ResponseEntity<?> cancelReceptionSeat(@PathVariable("concertId") Long concertId,
                                                  @PathVariable("seatId") Long seatId) {
 
-        log.info("cancelReceptionSeat_request: concertId={}, seatId={}", concertId, seatId);
-
         SeatCommandResponseDTO.cancelReceptionSeatDTO responseDTO = seatCommandService.cancelReception(getCurrentMemberId(), concertId, seatId);
-
-        log.info("cancelReceptionSeat_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -59,11 +51,7 @@ public class SeatCommandController {
     public ResponseEntity<?> drawingNotification(@PathVariable("concertId") Long concertId,
                                                  @PathVariable("seatId") Long seatId) {
 
-        log.info("drawingNotification_request: concertId={}, seatId={}", concertId, seatId);
-
         SeatCommandResponseDTO.createDrawingNotificationDTO responseDTO = seatCommandService.drawingNotification(getCurrentMemberId(), concertId, seatId);
-
-        log.info("drawingNotification_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -74,8 +62,6 @@ public class SeatCommandController {
     @PostMapping("/{concertId}/seats/{seatId}/result")
     public ResponseEntity<?> processDrawResult(@PathVariable("concertId") Long concertId,
                                                @PathVariable("seatId") Long seatId) {
-
-        log.info("createDrawResult_request: concertId={}, seatId={}", concertId, seatId);
 
         seatCommandService.processDrawResult(getCurrentMemberId(), concertId, seatId);
 
@@ -89,8 +75,6 @@ public class SeatCommandController {
     public ResponseEntity<?> postponeSeat(@PathVariable("concertId") Long concertId,
                                           @PathVariable("seatId") Long seatId) {
 
-        log.info("postponeSeat_request: concertId={}, seatId={}", concertId, seatId);
-
         seatCommandService.postponeSeat(getCurrentMemberId(), concertId, seatId);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
@@ -103,11 +87,7 @@ public class SeatCommandController {
     public ResponseEntity<?> reserveSeat(@PathVariable("concertId") Long concertId,
                                          @PathVariable("seatId") Long seatId) {
 
-        log.info("reserveSeat_request: concertId={}, seatId={}", concertId, seatId);
-
         SeatCommandResponseDTO.reserveSeatDTO responseDTO = seatCommandService.reserveSeat(getCurrentMemberId(), concertId, seatId);
-
-        log.info("reserveSeat_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

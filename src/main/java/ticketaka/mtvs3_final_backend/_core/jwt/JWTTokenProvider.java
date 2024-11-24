@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 
 import java.security.Key;
@@ -89,11 +91,10 @@ public class JWTTokenProvider {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | JwtException e) {
-            log.info("올바르지 않은 서명의 JWT Token 입니다.", e);
+            throw new Exception400("올바르지 않은 서명의 JWT Token 입니다.");
         } catch (IllegalArgumentException e) {
-            log.info("JWT Claims 가 비어있습니다.", e);
+            throw new Exception400("JWT Claims가 비어있습니다.");
         }
-        return false;
     }
 
     public Claims parseClaims(String accessToken) {
@@ -112,7 +113,7 @@ public class JWTTokenProvider {
 
         // 권한 정보가 없으면 예외
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 Token 입니다.");
+            throw new Exception403("권한 정보가 없는 Token 입니다.");
         }
 
         // 권한 정보 가져오기
