@@ -38,8 +38,6 @@ cloud:
     stack:
       auto: false
 
-
-
 jwt:
   secret: ${JWT.SECRET}
 

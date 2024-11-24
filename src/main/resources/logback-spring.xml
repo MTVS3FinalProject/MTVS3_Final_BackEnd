@@ -9,10 +9,12 @@
 
     <springProfile name="!prod">
         <include resource="log/console-appender.xml"/>
+        <include resource="log/logstash-appender.xml"/>
 
         <logger name="ticketaka" level="DEBUG" />
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="LOGSTASH"/>
         </root>
     </springProfile>
 
@@ -20,8 +22,10 @@
         <include resource="log/file-info-appender.xml"/>
         <include resource="log/file-warn-appender.xml"/>
         <include resource="log/file-error-appender.xml"/>
+        <include resource="log/logstash-appender.xml"/>
 
         <root level="INFO">
+            <appender-ref ref="LOGSTASH"/>
             <appender-ref ref="FILE-INFO"/>
             <appender-ref ref="FILE-WARN"/>
             <appender-ref ref="FILE-ERROR"/>
