@@ -3,6 +3,7 @@ package ticketaka.mtvs3_final_backend.file.command.application.service;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import lombok.RequiredArgsConstructor;
@@ -147,9 +148,15 @@ public class QRCommandService {
             BitMatrix bitMatrix = new MultiFormatWriter()
                     .encode(targetUrl, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT);
 
+            // QR Code - Image 배경
+            MatrixToImageConfig imageConfig = new MatrixToImageConfig(
+                    MatrixToImageConfig.BLACK,
+                    MatrixToImageConfig.WHITE
+            );
+
             // QR Code - Image 생성
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            MatrixToImageWriter.writeToStream(bitMatrix, QR_FORMAT, outputStream);
+            MatrixToImageWriter.writeToStream(bitMatrix, QR_FORMAT, outputStream, imageConfig);
 
             return outputStream;
 
