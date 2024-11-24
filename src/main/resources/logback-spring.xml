@@ -16,7 +16,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <springProfile name="dev">
         <include resource="log/file-info-appender.xml"/>
         <include resource="log/file-warn-appender.xml"/>
         <include resource="log/file-error-appender.xml"/>
@@ -25,6 +25,14 @@
             <appender-ref ref="FILE-INFO"/>
             <appender-ref ref="FILE-WARN"/>
             <appender-ref ref="FILE-ERROR"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <include resource="log/logstash-appender.xml"/>
+
+        <root level="INFO">
+            <appender-ref ref="LOGSTASH"/>
         </root>
     </springProfile>
 </configuration>
