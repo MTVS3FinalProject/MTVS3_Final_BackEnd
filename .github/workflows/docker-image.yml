@@ -56,9 +56,9 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
-          KAKAO_CODE_REQUEST: ${{ secrets.KAKAO_CODE_REQUEST }}
-          KAKAO_MESSAGE_TEMPLATE_ID: ${{ secrets.KAKAO_MESSAGE_TEMPLATE_ID }}
           KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
+          KAKAO_MESSAGE_TEMPLATE_ID: ${{ secrets.KAKAO_MESSAGE_TEMPLATE_ID }}
+          KAKAO_CODE_REQUEST: ${{ secrets.KAKAO_CODE_REQUEST }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ticketaka
           IMAGE_TAG: ticketaka
