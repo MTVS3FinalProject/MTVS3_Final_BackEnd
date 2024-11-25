@@ -44,8 +44,6 @@ public class MemberAuthController {
 
         MemberAuthResponseDTO.loginDTO responseDTO = memberAuthService.login(requestDTO);
 
-        System.out.println("responseDTO = " + responseDTO);
-
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
@@ -65,8 +63,6 @@ public class MemberAuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) {
-
-        log.info("로그아웃 시도");
 
         memberAuthService.logout(httpServletRequest);
 

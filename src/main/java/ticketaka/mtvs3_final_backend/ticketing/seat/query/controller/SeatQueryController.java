@@ -30,13 +30,9 @@ public class SeatQueryController {
     public ResponseEntity<?> getConcertSeat(@PathVariable("concertId") Long concertId,
                                             @PathVariable("seatId") Long seatId) {
 
-        log.info("GetConcertSeat_request: concertId={}, seatId={}", concertId, seatId);
-
         SeatQueryResponseDTO.getSeatInfoDTO responseDTO = seatQueryService.getConcertSeat(
                 getCurrentMemberId(), concertId, seatId
         );
-
-        log.info("GetConcertSeat_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -47,13 +43,9 @@ public class SeatQueryController {
     @GetMapping("{concertId}/receptions")
     public ResponseEntity<?> getMyConcertReceptions(@PathVariable("concertId") Long concertId) {
 
-        log.info("GetMyConcertReceptions_request: concertId={}", concertId);
-
         SeatQueryResponseDTO.getMyConcertReceptionsDTO responseDTO = seatQueryService.getMyConcertReceptions(
                 getCurrentMemberId(), concertId
         );
-
-        log.info("GetMyConcertReceptions_response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

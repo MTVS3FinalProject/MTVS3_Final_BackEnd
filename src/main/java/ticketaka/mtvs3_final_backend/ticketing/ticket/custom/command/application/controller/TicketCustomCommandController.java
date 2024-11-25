@@ -24,11 +24,7 @@ public class TicketCustomCommandController {
     @PostMapping("/{ticketId}/background")
     public ResponseEntity<?> generateAIBackground(@PathVariable("ticketId") Long ticketId) {
 
-        log.info("createAISticker Request: ticketId = {}", ticketId);
-
         TicketCustomCommandResponseDTO.generateAIBackgroundDTO responseDTO = ticketCustomCommandService.generateAIBackground(getCurrentMemberId(), ticketId);
-
-        log.info("createAISticker Response: {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }

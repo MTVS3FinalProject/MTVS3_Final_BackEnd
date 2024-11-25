@@ -37,12 +37,8 @@ public class ConcertCommandController {
      */
     @GetMapping("/{concertId}")
     public ResponseEntity<?> entranceConcert(@PathVariable("concertId") Long concertId) {
-
-        log.info("entranceConcert concertId: {}", concertId);
         
         ConcertCommandResponseDTO.entranceConcertDTO responseDTO = concertCommandService.entranceConcert(concertId, getCurrentMemberId());
-        
-        log.info("entranceConcert concertId: {}", concertId);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
@@ -54,11 +50,7 @@ public class ConcertCommandController {
     public ResponseEntity<?> acquireStickerFromPuzzleResult(@PathVariable("concertId") Long concertId,
                                                             @RequestBody ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
 
-        log.info("acquireStickerFromPuzzleResult requestDTO = {}", requestDTO);
-
         ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO responseDTO = concertCommandService.acquireStickerFromPuzzleResult(getCurrentMemberId(), concertId, requestDTO);
-
-        log.info("acquireStickerFromPuzzleResult responseDTO = {}", responseDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
