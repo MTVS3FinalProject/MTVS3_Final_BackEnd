@@ -78,8 +78,8 @@ jobs:
             --build-arg KAKAO_CODE_REQUEST=${{ secrets.KAKAO_CODE_REQUEST }} \
             --build-arg KAKAO_MESSAGE_TEMPLATE_ID=${{ secrets.KAKAO_MESSAGE_TEMPLATE_ID }} \
             --build-arg KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }} \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            --push .
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Get current time
         uses: 1466587594/get-current-time@v2
