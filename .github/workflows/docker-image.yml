@@ -71,11 +71,11 @@ jobs:
           --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
           --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
           --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-          --build-arg AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }} \
+          --build-arg AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
           --build-arg REDIS_HOST=${{ secrets.REDIS_HOST }} \
           --build-arg REDIS_PORT=${{ secrets.REDIS_PORT }} \
           --build-arg KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
-          --build-arg KAKAO_CODE_REQUEST=${{ secrets.REDIS_PORT }} \
+          --build-arg KAKAO_CODE_REQUEST=${{ secrets.KAKAO_CODE_REQUEST }} \
           --build-arg KAKAO_MESSAGE_TEMPLATE_ID=${{ secrets.KAKAO_MESSAGE_TEMPLATE_ID }} \
           --build-arg KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }} \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -97,8 +97,6 @@ jobs:
     - name: Beanstalk Deploy
       uses: einaregilsson/beanstalk-deploy@v14
       with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: ${{ secrets.EB_APP_NAME }}
         environment_name: ${{ secrets.EB_ENV_NAME }}
         version_label: todorian-docker-${{steps.current-time.outputs.formattedTime}}
