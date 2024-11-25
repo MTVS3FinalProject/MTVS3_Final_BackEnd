@@ -1,7 +1,7 @@
 spring:
   datasource:
+    driver-class-name: org.postgresql.Driver
     url: ${DB.URL}
-    driver-class-name:
     username: ${DB.USERNAME}
     password: ${DB.PASSWORD}
   h2:
@@ -13,9 +13,9 @@ spring:
 
   jpa:
     show-sql: true
-    database: mysql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect # PostgreSQL 사용
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true

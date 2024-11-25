@@ -41,8 +41,8 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // (배포용) mysql
-    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+    // (배포용) postgresql
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 
     // (테스트용) H2 데이터베이스
     runtimeOnly 'com.h2database:h2'
