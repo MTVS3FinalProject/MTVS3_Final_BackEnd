@@ -5,7 +5,7 @@ import java.util.List;
 public class ConcertQueryResponseDTO {
 
     public record getConcertThumbnailList(
-            List<String> concertThumbnailList
+            List<concertThumbnailDTO> concertThumbnailList
     ) {
     }
 }

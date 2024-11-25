@@ -8,6 +8,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.FilePurp
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.dto.ConcertQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.concert.query.dto.concertThumbnailDTO;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class ConcertQueryService {
      */
     public ConcertQueryResponseDTO.getConcertThumbnailList getConcertThumbnailList(Long memberId) {
 
-        List<String> concertThumbnails = concertQueryRepository.findConcertThumbnailsByMemberId(memberId, RelationType.CONCERT, FilePurpose.THUMBNAIL);
+        List<concertThumbnailDTO> concertThumbnails = concertQueryRepository.findConcertThumbnailsByMemberId(memberId, RelationType.CONCERT, FilePurpose.THUMBNAIL);
 
         return new ConcertQueryResponseDTO.getConcertThumbnailList(concertThumbnails);
     }
