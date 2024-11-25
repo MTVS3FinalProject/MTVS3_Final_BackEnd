@@ -95,6 +95,16 @@ public class TicketQueryService {
         );
     }
 
+    /*
+        티켓 상세 정보 조회
+     */
+    public getTicketDTO getTicketDetails(Long memberId, Long ticketId) {
+
+        getMember(memberId);
+
+        return ticketQueryRepository.findTicketDTOByMemberIdAndTicketId(memberId, ticketId);
+    }
+
     // Member 조회
     private void getMember(Long memberId) {
         memberQueryRepository.findById(memberId)
