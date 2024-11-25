@@ -104,6 +104,11 @@ public class Mtvs3FinalBackendApplication {
             concertRepository.saveAll(Arrays.asList(
                     concert01
             ));
+
+            // Concert 기본 이미지 저장
+            fileCommandRepository.saveAll(Arrays.asList(
+                    newFile(RelationType.CONCERT, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311732511993139", FilePurpose.THUMBNAIL)
+            ));
             
             // Seat 저장
             seatCommandRepository.saveAll(Arrays.asList(
@@ -143,7 +148,7 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 기본 이미지 저장
             fileCommandRepository.save(
-                    newFile(RelationType.CONCERT, 1L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/STICKER_311731337203423?generation=1731337204796918&alt=media", FilePurpose.TICKET)
+                    newFile(RelationType.CONCERT, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311732511477375", FilePurpose.TICKET)
             );
 
             // Ticket 할당
