@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
+import ticketaka.mtvs3_final_backend.ticketing.concert.query.dto.ConcertQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 
 import java.util.List;
@@ -20,5 +21,15 @@ public class ConcertQueryService {
     // ConcertList 조회
     public List<Concert> getConcertList(List<Long> concertIdList) {
         return concertQueryRepository.findAllById(concertIdList);
+    }
+
+    /*
+        티켓을 보유한 공연장 썸네일 목록 조회
+     */
+    public ConcertQueryResponseDTO.getConcertThumbnailList getConcertThumbnailList(Long memberId) {
+
+        List<String> concertThumbnails = concertQueryRepository.findThumbnailByMemberId(memberId);
+
+        return new ConcertQueryResponseDTO.getConcertThumbnailList(concertThumbnails);
     }
 }
