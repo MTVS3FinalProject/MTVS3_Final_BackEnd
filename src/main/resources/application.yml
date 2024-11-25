@@ -2,8 +2,5 @@ spring:
   profiles:
     active:
       - local
-  config:
-    import: optional:file:.env[.properties]
-
-server:
-  port: ${SERVER.PORT}
+#  config:
+#    import: optional:file:.env[.properties]

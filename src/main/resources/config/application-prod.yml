@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB.URL}
-    username: ${DB.USERNAME}
-    password: ${DB.PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   h2:
     console:
       enabled: true
@@ -21,7 +21,7 @@ spring:
         format_sql: true
 
 jwt:
-  secret: ${JWT.SECRET}
+  secret: ${JWT_SECRET}
 
 logging:
   level:

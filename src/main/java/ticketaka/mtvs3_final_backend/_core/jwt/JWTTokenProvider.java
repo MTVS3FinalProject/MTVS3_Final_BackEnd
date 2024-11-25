@@ -42,7 +42,7 @@ public class JWTTokenProvider {
     // Refresh token 의 시간 : 3일
     private static final long REFRESH_TOKEN_LIFETIME = 3 * 24 * 60 * 60 * 1000L;
 
-    public JWTTokenProvider(@Value("${JWT.SECRET}") String secretKey) {
+    public JWTTokenProvider(@Value("${JWT_SECRET}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }

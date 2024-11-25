@@ -26,13 +26,13 @@ public class KakaoAdminService {
     private static final String ACCESS_TOKEN_GRANT_TYPE = "authorization_code";
     private static final String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
     private final KakaoAPIFeignClient kakaoAPIFeignClient;
-    @Value("${KAKAO.CLIENT.ID}")
+    @Value("${KAKAO_CLIENT.ID}")
     private String CLIENT_ID;
-    @Value("${KAKAO.REDIRECT.URI}")
+    @Value("${KAKAO_REDIRECT.URI}")
     private String REDIRECT_URI;
 
     private static final String AUTHORIZATION_GRANT_TYPE = "Bearer ";
-    @Value("${KAKAO.MESSAGE.TEMPLATE.ID}")
+    @Value("${KAKAO_MESSAGE.TEMPLATE.ID}")
     private Long KAKAO_MESSAGE_TEMPLATE;
 
     // Kakao Token 발급
