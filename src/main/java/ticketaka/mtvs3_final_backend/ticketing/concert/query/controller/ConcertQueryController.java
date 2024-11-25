@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
+import ticketaka.mtvs3_final_backend.ticketing.concert.query.dto.ConcertQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.service.ConcertQueryService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
@@ -27,7 +28,7 @@ public class ConcertQueryController {
     @GetMapping("/thumbnails")
     public ResponseEntity<?> getConcertThumbnailList() {
 
-        ConcertQueryResponseDTO.getConcertListDTO responseDTO = concertQueryService.getConcertThumbnailList(getCurrentMemberId());
+        ConcertQueryResponseDTO.getConcertThumbnailList responseDTO = concertQueryService.getConcertThumbnailList(getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
