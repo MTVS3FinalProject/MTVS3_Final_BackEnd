@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.TicketQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDetailDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
@@ -47,7 +48,7 @@ public class TicketQueryController {
     @GetMapping("/{ticketId}")
     public ResponseEntity<?> getTicketDetails(@PathVariable("ticketId") Long ticketId) {
 
-        getTicketDTO responseDTO = ticketQueryService.getTicketDetails(getCurrentMemberId(), ticketId);
+        getTicketDetailDTO responseDTO = ticketQueryService.getTicketDetails(getCurrentMemberId(), ticketId);
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
