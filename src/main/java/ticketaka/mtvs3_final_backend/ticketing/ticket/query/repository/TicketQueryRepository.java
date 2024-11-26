@@ -28,7 +28,7 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "   SELECT MAX(subCt.createdAt) FROM CustomTicket subCt WHERE subCt.ticketId = t.id" +
             ") " +
             "LEFT JOIN File ctf ON ctf.relationId = ct.id AND ctf.relationType = 'CUSTOM_TICKET' " +
-            "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' " +
+            "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' AND tf.filePurpose = 'TICKET' " +
             "WHERE t.memberId = :memberId")
     List<getMemberTicketDTO> findAllByMemberIdAndRelationType(@Param("memberId") Long memberId);
 
@@ -47,7 +47,7 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "   SELECT MAX(subCt.createdAt) FROM CustomTicket subCt WHERE subCt.ticketId = t.id" +
             ") " +
             "LEFT JOIN File ctf ON ctf.relationId = ct.id AND ctf.relationType = 'CUSTOM_TICKET' " +
-            "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' " +
+            "LEFT JOIN File tf ON tf.relationId = c.id AND tf.relationType = 'CONCERT' AND tf.filePurpose = 'TICKET' " +
             "LEFT JOIN File qf ON qf.relationId = t.id AND qf.relationType = 'TICKET' AND qf.filePurpose = 'VERIFICATION' " +
             "WHERE t.memberId = :memberId")
     List<getTicketDTO> findCustomizableTicketsByMemberId(@Param("memberId") Long memberId);

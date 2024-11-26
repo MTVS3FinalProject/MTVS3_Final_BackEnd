@@ -32,6 +32,7 @@ public class SecurityConfig {
     private static final String[] WHITE_LIST = {
             "/api/auth/**",
             "/api/qr/**",
+            "/api/face/**",
             "/h2-console/**"  // h2-console 경로 추가
     };
 
