@@ -18,6 +18,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticke
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.repository.TicketCustomQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.TicketQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDetailDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.stickerDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
@@ -93,6 +94,16 @@ public class TicketQueryService {
                 stickerDTOList,
                 ticketDTOList
         );
+    }
+
+    /*
+        티켓 상세 정보 조회
+     */
+    public getTicketDetailDTO getTicketDetails(Long memberId, Long ticketId) {
+
+        getMember(memberId);
+
+        return ticketQueryRepository.findTicketDTOByMemberIdAndTicketId(memberId, ticketId);
     }
 
     // Member 조회

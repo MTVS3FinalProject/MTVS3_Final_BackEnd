@@ -109,7 +109,8 @@ public class Mtvs3FinalBackendApplication {
 
             // Concert 기본 이미지 저장
             fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.CONCERT, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311732511993139", FilePurpose.THUMBNAIL)
+                    newFile(RelationType.CONCERT, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311732511993139", FilePurpose.THUMBNAIL),
+                    newFile(RelationType.CONCERT, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311732541941039", FilePurpose.BACKGROUND)
             ));
             
             // Seat 저장

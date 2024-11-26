@@ -6,7 +6,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 
 import java.lang.reflect.Method;
 
@@ -45,7 +47,19 @@ public class LoggingAspect {
             Object response = proceedingJoinPoint.proceed(args);
 
             log.info("Response Type = {}", response.getClass().getSimpleName());
-            log.info("Response Value = {}", response);
+
+            if (response instanceof ResponseEntity<?> responseEntity) {
+                Object body = responseEntity.getBody();
+
+                if (body instanceof ApiUtils.ApiResult<?> apiResult) {
+                    log.info("ApiResult Response = {}", apiResult.getResponse());
+                    log.info("ApiResult Error = {}", apiResult.getError());
+                } else {
+                    log.info("Response Body = {}", body);
+                }
+            } else {
+                log.info("Response Value = {}", response);
+            }
 
             return response;
 

@@ -54,6 +54,7 @@ public class QRCommandService {
     private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/signup/guide";
     private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
     private static final String TICKET_QR_PREFIX = "TICKETAKA_";
+    private static final String TICKET_QR = "https://ticketaka.shop/api/admin/ticket/verification";
 
     /*
         회원 가입 용 QR 생성
@@ -169,7 +170,7 @@ public class QRCommandService {
     public void generateQRImage(Long memberId, Long concertId, Long seatId, Long ticketId, TicketStatus ticketStatus) {
 
         // QR 데이터 포맷팅
-        String qrData = String.format("%d-%d-%d-%d-%s", memberId, concertId, seatId, ticketId, ticketStatus);
+        String qrData = String.format("%s?ticketId=%d", TICKET_QR, ticketId);
         BufferedImage qrImage = generateBufferedQRImage(qrData);
         String qrName = TICKET_QR_PREFIX + memberId + "_" + ticketId + "_" + System.currentTimeMillis() + ".png";
 
