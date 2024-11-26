@@ -33,6 +33,7 @@ public class SecurityConfig {
             "/api/auth/**",
             "/api/qr/**",
             "/api/face/**",
+            "/api/admin/kakao/token/**",
             "/h2-console/**"  // h2-console 경로 추가
     };
 
