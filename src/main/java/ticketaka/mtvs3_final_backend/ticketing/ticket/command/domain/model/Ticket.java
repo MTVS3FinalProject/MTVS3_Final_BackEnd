@@ -1,10 +1,7 @@
 package ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
 
@@ -27,6 +24,7 @@ public class Ticket extends BaseTimeEntity {
     @Column(nullable = false)
     private Long seatId;
 
+    @Setter
     @Column
     @Enumerated(EnumType.STRING)
     private TicketStatus ticketStatus;

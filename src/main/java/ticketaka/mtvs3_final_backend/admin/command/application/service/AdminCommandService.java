@@ -19,6 +19,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.repository.TicketCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 @Slf4j
@@ -36,6 +37,7 @@ public class AdminCommandService {
     private final KakaoTokenRepository kakaoTokenRepository;
     private final TicketQueryRepository ticketQueryRepository;
     private final SeatQueryRepository seatQueryRepository;
+    private final TicketCommandRepository ticketCommandRepository;
 
     /*
         Title 추가
@@ -107,11 +109,9 @@ public class AdminCommandService {
     /*
         티켓 검증
      */
-    @Transactional
     public AdminVerificationResponseDTO.verifyTicketDTO verifyTicket(Long ticketId) {
 
-        Ticket ticket = ticketQueryRepository.findById(ticketId)
-                .orElseThrow(() -> new Exception403("해당 번호의 티켓은 존재하지 않습니다."));
+        Ticket ticket = getTicket(ticketId);
 
         checkTicketStatus(ticket.getTicketStatus());
 
@@ -127,6 +127,25 @@ public class AdminCommandService {
         );
     }
 
+    /*
+        티켓 소모
+     */
+    @Transactional
+    public void consumeTicket(Long ticketId) {
+
+        Ticket ticket = getTicket(ticketId);
+
+        ticket.setTicketStatus(TicketStatus.USED);
+        ticketCommandRepository.save(ticket);
+    }
+
+    // Ticket 조회
+    private Ticket getTicket(Long ticketId) {
+        return ticketQueryRepository.findById(ticketId)
+                .orElseThrow(() -> new Exception403("해당 번호의 티켓은 존재하지 않습니다."));
+    }
+
+    // TicketStatus 유효성 검사
     private void checkTicketStatus(TicketStatus ticketStatus) {
         if (ticketStatus == TicketStatus.USED) {
             throw new Exception400("이미 사용 완료된 티켓입니다.");
