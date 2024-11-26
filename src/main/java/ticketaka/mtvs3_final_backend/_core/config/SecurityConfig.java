@@ -30,8 +30,8 @@ public class SecurityConfig {
     private final JWTTokenProvider jwtTokenProvider;
 
     private static final String[] WHITE_LIST = {
-            "/**",
             "/api/auth/**",
+            "/api/qr/**",
             "/h2-console/**"  // h2-console 경로 추가
     };
 
