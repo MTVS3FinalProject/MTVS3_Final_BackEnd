@@ -151,7 +151,7 @@ public class KakaoAdminService {
 
     private void checkKakaoFriendListDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
         if (kakaoFriendListDTO == null || kakaoFriendListDTO.elements().isEmpty()) {
-            throw new Exception400("Kakao 친구 목록이 비어있습니다.");
+            log.info("Kakao 친구 목록이 비어있습니다.");
         }
     }
 }

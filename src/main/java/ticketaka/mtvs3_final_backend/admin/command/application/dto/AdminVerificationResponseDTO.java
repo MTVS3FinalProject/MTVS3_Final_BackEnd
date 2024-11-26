@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class AdminVerificationResponseDTO {
 
     public record verifyTicketDTO(
+            Long ticketId,
             String concertName,
             LocalDateTime concertDate,
             String seatInfo

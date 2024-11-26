@@ -121,6 +121,7 @@ public class AdminCommandService {
                 .orElseThrow(() -> new Exception403("해당 티켓의 좌석은 존재하지 않습니다."));
 
         return new AdminVerificationResponseDTO.verifyTicketDTO(
+                ticketId,
                 concert.getName(),
                 concert.getConcertDate(),
                 formatSeatInfo(seat)

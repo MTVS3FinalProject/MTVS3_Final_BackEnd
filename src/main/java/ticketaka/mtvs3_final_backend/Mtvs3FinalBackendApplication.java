@@ -156,7 +156,9 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 할당
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(8L, 1L, 5L, "TestTicket", 12345)
+                    newTicket(2L, 1L, 13L, "InukTicket", 11110),
+                    newTicket(8L, 1L, 5L, "SugarTicket", 12345),
+                    newTicket(5L, 1L, 11L, "guswnsTicket", 11110)
             ));
 
             // Title 저장
