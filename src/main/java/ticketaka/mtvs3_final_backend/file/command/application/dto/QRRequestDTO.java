@@ -22,7 +22,9 @@ public class QRRequestDTO {
     }
 
     public record checkVerificationQRDTO(
-            String userCode
+            String userCode,
+            int concertId,
+            int seatId
     ) {
     }
 }

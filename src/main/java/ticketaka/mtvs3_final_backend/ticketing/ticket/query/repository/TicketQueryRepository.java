@@ -61,7 +61,9 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "   ELSE tf.fileUrl " +
             "END, " +
             "bgf.fileUrl, " +
-            "qf.fileUrl) " +
+            "qf.fileUrl, " +
+            "CASE WHEN t.ticketStatus = 'USED' THEN true ELSE false END" +
+            ") " +
             "FROM Ticket t JOIN Concert c ON t.concertId = c.id " +
             "JOIN Seat s ON t.seatId = s.id " +
             "LEFT JOIN CustomTicket ct ON t.id = ct.ticketId AND ct.createdAt = (" +

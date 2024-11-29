@@ -87,7 +87,7 @@ public class AdminCommandService {
      */
     public KakaoFeignClientResponseDTO.KakaoFriendListDTO getKakaoFriendList() {
 
-        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+        KakaoToken kakaoToken = kakaoTokenRepository.findTopByOrderByCreatedAtAsc()
                 .orElse(null);
 
         KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO = kakaoAdminService.getKakaoFriendList(kakaoToken);
@@ -102,7 +102,7 @@ public class AdminCommandService {
      */
     public void sendKakaoMessage(String userName) {
 
-        kakaoTokenRepository.findTopByOrderByCreatedAtDesc()
+        kakaoTokenRepository.findTopByOrderByCreatedAtAsc()
                 .ifPresent(kakaoToken -> kakaoAdminService.sendKakaoMessage(kakaoToken, userName));
     }
 

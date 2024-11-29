@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface KakaoTokenRepository extends JpaRepository<KakaoToken, Long> {
 
-    Optional<KakaoToken> findTopByOrderByCreatedAtDesc();
+    Optional<KakaoToken> findTopByOrderByCreatedAtAsc();
 }

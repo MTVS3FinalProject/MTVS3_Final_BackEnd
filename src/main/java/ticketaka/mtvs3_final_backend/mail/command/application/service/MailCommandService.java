@@ -66,7 +66,7 @@ public class MailCommandService {
     public void mailForSeatReservation(Long memberId, String nickname, String concertName, String seatInfo) {
 
         // generate Subject
-        String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제 미루기를");
+        String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제를 ");
 
         // generate Content
         String content = subject + "\n축하드립니다.";

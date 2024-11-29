@@ -137,7 +137,8 @@ public class QRCommandService {
         return new QRResponseDTO.checkVerificationQR(
                 seat.getFloor(),
                 1,
-                seat.getSection() + "구역 " + seat.getNumber() + "번"
+                seat.getSection() + "구역 " + seat.getNumber() + "번",
+                seat.getPrice()
         );
     }
 
