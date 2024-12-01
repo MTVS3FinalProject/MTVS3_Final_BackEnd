@@ -84,13 +84,8 @@ public class KakaoAdminService {
 
             checkKakaoFriendListDTO(kakaoFriendListDTO);
 
-            if (userName == null) {
-                // 친구 목록에서 UUID 추출
-                kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageToAllDTO(kakaoFriendListDTO), KAKAO_MESSAGE_TEMPLATE);
-            } else {
-                String uuid = formatKakaoFriendUUID(kakaoFriendListDTO, userName);
-                kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), uuid, KAKAO_MESSAGE_TEMPLATE);
-            }
+            // 친구 목록에서 UUID 추출
+            kakaoAPIFeignClient.sendKakaoMessage(kakaoToken.getAccessToken(), formatSendKakaoMessageToAllDTO(kakaoFriendListDTO), KAKAO_MESSAGE_TEMPLATE);
 
         } catch (FeignException e) {
 
@@ -156,7 +151,7 @@ public class KakaoAdminService {
 
     private void checkKakaoFriendListDTO(KakaoFeignClientResponseDTO.KakaoFriendListDTO kakaoFriendListDTO) {
         if (kakaoFriendListDTO == null || kakaoFriendListDTO.elements().isEmpty()) {
-            throw new Exception400("Kakao 친구 목록이 비어있습니다.");
+            log.info("Kakao 친구 목록이 비어있습니다.");
         }
     }
 }

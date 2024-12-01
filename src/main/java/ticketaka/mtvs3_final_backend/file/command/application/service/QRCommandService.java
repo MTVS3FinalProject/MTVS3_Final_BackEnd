@@ -50,7 +50,7 @@ public class QRCommandService {
 
     private static final int QR_WIDTH = 200;
     private static final int QR_HEIGHT = 200;
-    private static final String QR_FORMAT = "PNG";
+    private static final String QR_FORMAT = "JPEG";
     private static final String QR_FOR_SIGNUP = "https://ticketaka.shop/signup/guide";
     private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
     private static final String TICKET_QR_PREFIX = "TICKETAKA_";
@@ -137,7 +137,8 @@ public class QRCommandService {
         return new QRResponseDTO.checkVerificationQR(
                 seat.getFloor(),
                 1,
-                seat.getSection() + "구역 " + seat.getNumber() + "번"
+                seat.getSection() + "구역 " + seat.getNumber() + "번",
+                seat.getPrice()
         );
     }
 

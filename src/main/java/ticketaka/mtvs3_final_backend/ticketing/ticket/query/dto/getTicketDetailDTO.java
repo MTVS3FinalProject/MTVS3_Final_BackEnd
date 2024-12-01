@@ -1,5 +1,7 @@
 package ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto;
 
+import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
+
 import java.time.LocalDateTime;
 
 public record getTicketDetailDTO(
@@ -12,9 +14,10 @@ public record getTicketDetailDTO(
         String seatInfo,
         String ticketImage,
         String backgroundImage,
-        String qrImage
+        String qrImage,
+        Boolean isUsed
 ) {
-    public getTicketDetailDTO(Long ticketId, String concertName, LocalDateTime concertDate, String seatInfo, String ticketImage, String backgroundImage, String qrImage) {
+    public getTicketDetailDTO(Long ticketId, String concertName, LocalDateTime concertDate, String seatInfo, String ticketImage, String backgroundImage, String qrImage, Boolean isUsed) {
         this(ticketId.intValue(),
                 concertName,
                 concertDate.getYear(),
@@ -24,7 +27,8 @@ public record getTicketDetailDTO(
                 seatInfo,
                 ticketImage,
                 backgroundImage,
-                qrImage
+                qrImage,
+                isUsed
         );
     }
 }
