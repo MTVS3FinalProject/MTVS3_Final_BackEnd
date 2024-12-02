@@ -9,6 +9,10 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
+import ticketaka.mtvs3_final_backend.mail.command.application.service.MailCommandService;
+import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
+import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailPuzzleResult;
+import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailPuzzleResultCommandRepository;
 import ticketaka.mtvs3_final_backend.redis.ticketaddress.domain.TicketAddress;
 import ticketaka.mtvs3_final_backend.redis.ticketaddress.repository.TicketAddressRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
@@ -62,6 +66,8 @@ public class ConcertCommandService {
     private final TitleQueryService titleQueryService;
     private final MemberTitleCommandRepository memberTitleCommandRepository;
     private final PuzzleResultCommandRepository puzzleResultCommandRepository;
+    private final MailCommandService mailCommandService;
+    private final MailPuzzleResultCommandRepository mailPuzzleResultCommandRepository;
 
     /*
         공연장 정보 조회
@@ -122,6 +128,11 @@ public class ConcertCommandService {
     @Transactional
     public ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO acquireStickerFromPuzzleResult(Long memberId, Long concertId, ConcertCommandRequestDTO.acquireStickerFromPuzzleResultDTO requestDTO) {
 
+        // Member 조회
+        Member member = getMember(memberId);
+        // Concert 조회
+        Concert concert = getConcert(concertId);
+
         // Title 할당
         Title title = titleQueryService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
         // Sticker 할당
@@ -129,6 +140,12 @@ public class ConcertCommandService {
 
         // PuzzleResult 저장
         PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId(), requestDTO.rank());
+
+        // Mail 저장
+        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getNickname(), concert.getName(), title.getTitleName(), sticker.getStickerName());
+
+        // MailPuzzleResult 저장
+        newMailPuzzleResult(mail.getId(), puzzleResult.getId());
 
         // Member Title 할당
         MemberTitle memberTitle = newMemberTitle(memberId, title.getId());
@@ -155,6 +172,14 @@ public class ConcertCommandService {
                         stickerImage
                 )
         );
+    }
+
+    private void newMailPuzzleResult(Long mailId, Long puzzleResultId) {
+        MailPuzzleResult mailPuzzleResult = MailPuzzleResult.builder()
+                .mailId(mailId)
+                .puzzleResultId(puzzleResultId)
+                .build();
+        mailPuzzleResultCommandRepository.save(mailPuzzleResult);
     }
 
     /*

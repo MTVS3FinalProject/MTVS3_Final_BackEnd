@@ -23,8 +23,7 @@ public class MailPuzzleResult extends BaseTimeEntity {
     private Long puzzleResultId;
 
     @Builder
-    public MailPuzzleResult(Long id, Long mailId, Long puzzleResultId) {
-        this.id = id;
+    public MailPuzzleResult(Long mailId, Long puzzleResultId) {
         this.mailId = mailId;
         this.puzzleResultId = puzzleResultId;
     }
