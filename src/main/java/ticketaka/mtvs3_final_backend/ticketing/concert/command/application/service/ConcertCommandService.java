@@ -128,7 +128,7 @@ public class ConcertCommandService {
         Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
 
         // PuzzleResult 저장
-        PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId());
+        PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId(), requestDTO.rank());
 
         // Member Title 할당
         MemberTitle memberTitle = newMemberTitle(memberId, title.getId());
@@ -215,11 +215,12 @@ public class ConcertCommandService {
     }
 
     // PuzzleResult 생성
-    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId) {
+    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId, int rank) {
         PuzzleResult puzzleResult = PuzzleResult.builder()
                 .concertId(concertId)
                 .titleId(titleId)
                 .stickerId(stickerId)
+                .rank(rank)
                 .build();
         return puzzleResultCommandRepository.save(puzzleResult);
     }

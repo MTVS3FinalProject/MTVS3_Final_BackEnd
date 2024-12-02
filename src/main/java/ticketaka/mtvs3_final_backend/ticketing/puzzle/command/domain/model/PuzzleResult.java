@@ -24,10 +24,14 @@ public class PuzzleResult extends BaseTimeEntity {
     @Column
     private Long stickerId;
 
+    @Column
+    private Integer rank;
+
     @Builder
-    public PuzzleResult(Long concertId, Long titleId, Long stickerId) {
+    public PuzzleResult(Long concertId, Long titleId, Long stickerId, Integer rank) {
         this.concertId = concertId;
         this.titleId = titleId;
         this.stickerId = stickerId;
+        this.rank = rank;
     }
 }
