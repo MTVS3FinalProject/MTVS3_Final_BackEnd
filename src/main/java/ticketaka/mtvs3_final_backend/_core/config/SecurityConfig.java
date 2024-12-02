@@ -35,6 +35,8 @@ public class SecurityConfig {
             "/api/face/**",
             "/api/admin/kakao/token/**",
             "/api/swagger-ui/**",
+            "/api/health/**",
+            "/api/actuator/**",
             "/h2-console/**"  // h2-console 경로 추가
     };
 
