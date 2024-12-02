@@ -35,6 +35,8 @@ public class SecurityConfig {
             "/api/face/**",
             "/api/admin/kakao/token/**",
             "/api/swagger-ui/**",
+            "/api/health/**",
+            "/api/actuator/**",
             "/h2-console/**"  // h2-console 경로 추가
     };
 
@@ -76,7 +78,7 @@ public class SecurityConfig {
 
     private AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
-            throw new Exception401("Authentication failed: " + authException.getMessage());
+            throw new Exception401("Authentication failed: " + request.getRequestURI());
         };
     }
 
