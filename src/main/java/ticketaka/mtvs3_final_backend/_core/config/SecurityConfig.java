@@ -42,6 +42,10 @@ public class SecurityConfig {
             "/h2-console/**"  // h2-console 경로 추가
     };
 
+    private static final String[] BAN_LIST = {
+            "/vendor/**"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -65,6 +69,7 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(BAN_LIST).denyAll()
                         .anyRequest().authenticated())
                 .headers(AbstractHttpConfigurer::disable  // H2 콘솔에서 프레임 사용 허용
                 )
