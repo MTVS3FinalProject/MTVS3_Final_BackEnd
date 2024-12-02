@@ -1,12 +1,13 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB.URL}
-    username: ${DB.USERNAME}
-    password: ${DB.PASSWORD}
-  h2:
-    console:
-      enabled: true
+    url: ${DATABASE.URL}
+    username: ${DATABASE.USERNAME}
+    password: ${DATABASE.PASSWORD}
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
 
   application:
     name: ticketaka
@@ -20,13 +21,59 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS.ACCESS.KEY.ID}
+      secretKey: ${AWS.SECRET.ACCESS.KEY}
+    s3:
+      bucket: ${AWS.S3.BUCKET}
+    region:
+      static: ${AWS.REGION}
+    stack:
+      auto: false
+
 jwt:
   secret: ${JWT.SECRET}
+
+springdoc:
+  swagger-ui:
+    path: /api/swagger-ui
+    groups-order: desc
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+    doc-expansion: none
+    tags-sorter: alpha
+
+  api-docs:
+    path: /api/v3/api-docs
+
+  show-actuator: true
 
 logging:
   level:
     '[ticketaka]': debug
     '[org.hibernate.type]': trace
 
+management:
+  endpoints:
+    web:
+      base-path: /api/actuator
+      exposure:
+        include: "prometheus"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    prometheus:
+      enabled: true
+
 server:
-  port: 7878
+  port: 8080

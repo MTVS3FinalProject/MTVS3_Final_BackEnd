@@ -30,12 +30,20 @@ public class SecurityConfig {
     private final JWTTokenProvider jwtTokenProvider;
 
     private static final String[] WHITE_LIST = {
+            "/",
+            "/error",
             "/api/auth/**",
             "/api/qr/**",
             "/api/face/**",
             "/api/admin/kakao/token/**",
             "/api/swagger-ui/**",
+            "/api/health/**",
+            "/api/actuator/**",
             "/h2-console/**"  // h2-console 경로 추가
+    };
+
+    private static final String[] BAN_LIST = {
+            "/vendor/**"
     };
 
     @Bean
@@ -61,6 +69,7 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(BAN_LIST).denyAll()
                         .anyRequest().authenticated())
                 .headers(AbstractHttpConfigurer::disable  // H2 콘솔에서 프레임 사용 허용
                 )
@@ -76,7 +85,7 @@ public class SecurityConfig {
 
     private AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
-            throw new Exception401("Authentication failed: " + authException.getMessage());
+            throw new Exception401("Authentication failed: " + request.getRequestURI());
         };
     }
 
