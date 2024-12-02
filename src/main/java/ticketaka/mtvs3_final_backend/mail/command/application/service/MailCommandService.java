@@ -13,6 +13,8 @@ import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandR
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.repository.SeatPostponeRedisRepository;
 
+import java.time.LocalDate;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -74,6 +76,19 @@ public class MailCommandService {
         saveMail(memberId, subject, content, MailCategory.RESERVE);
     }
 
+    // Puzzle 게임 결과 Mail
+    @Transactional
+    public Mail mailForPuzzleResult(Long memberId, String nickname, String concertName, String titleName, String stickerName) {
+
+        // generate PuzzleResultSubject
+        String subject = generatePuzzleResultSubject(nickname, concertName, titleName, stickerName);
+
+        // generate PuzzleResultSubject
+        String content = "";
+
+        return saveMail(memberId, subject, content, MailCategory.PUZZLE);
+    }
+
     // Mail 생성
     public Mail saveMail(Long memberId, String subject, String content, MailCategory mailCategory) {
         Mail mail = Mail.builder()
@@ -87,11 +102,19 @@ public class MailCommandService {
     }
 
     private String generateSubject(String nickname, String concertName, String seatInfo, String mailCategory) {
-
         return nickname + " 님이 " +
                 concertName + " 의 " +
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
+    }
+
+    private String generatePuzzleResultSubject(String nickname, String concertName, String titleName, String stickerName) {
+        return nickname + " 님이 " +
+                concertName + " 의 " +
+                LocalDate.now() + " Puzzle 게임에서 " +
+                titleName + " 칭호와 " +
+                stickerName + " 스티커를 " +
+                "획득하였습니다.";
     }
 
     // 특정 우편 조회
@@ -128,6 +151,7 @@ public class MailCommandService {
         );
     }
 
+    // Mail 조회
     private Mail getMail(Long mailId) {
         return mailCommandRepository.findById(mailId)
                 .orElseThrow(() -> new Exception400("해당 우편은 존재하지 않습니다."));
