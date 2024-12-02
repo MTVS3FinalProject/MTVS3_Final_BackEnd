@@ -4,6 +4,3 @@ spring:
       - local
   config:
     import: optional:file:.env[.properties]
-
-server:
-  port: ${SERVER.PORT}

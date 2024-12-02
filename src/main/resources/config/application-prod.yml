@@ -1,9 +1,13 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB.URL}
-    username: ${DB.USERNAME}
-    password: ${DB.PASSWORD}
+    url: ${DATABASE.URL}
+    username: ${DATABASE.USERNAME}
+    password: ${DATABASE.PASSWORD}
+  data:
+    redis:
+      host: clustercfg.ticketaka-redis-cluster.9ukk7l.memorydb.ap-northeast-2.amazonaws.com
+      port: 6379
   h2:
     console:
       enabled: true
@@ -29,4 +33,4 @@ logging:
     '[org.hibernate.type]': trace
 
 server:
-  port: 7878
+  port: 8080
