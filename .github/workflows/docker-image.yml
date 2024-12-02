@@ -1,8 +1,6 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "dev" ]
   pull_request:
     branches: [ "dev" ]
 
@@ -24,9 +22,9 @@ jobs:
 
       - name: Build with Gradle
         env:
-          DATABASE_URL: ${{ secrets.DB_URL }}
-          DATABASE_USERNAME: ${{ secrets.DB_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: ./gradlew clean build -x test
@@ -60,8 +58,8 @@ jobs:
           KAKAO_MESSAGE_TEMPLATE_ID: ${{ secrets.KAKAO_MESSAGE_TEMPLATE_ID }}
           KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ secrets.IMAGE_TAG }}
+          ECR_REPOSITORY: ticketaka
+          IMAGE_TAG: ticketaka
         run: |
           docker buildx build --platform=linux/amd64 \
             --build-arg DB_URL=${{ secrets.DB_URL }} \
