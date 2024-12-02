@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.mail.command.domain.model;
+package ticketaka.mtvs3_final_backend.mail.puzzle.command.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
