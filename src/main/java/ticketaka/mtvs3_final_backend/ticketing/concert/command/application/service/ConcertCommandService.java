@@ -26,6 +26,8 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
+import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.model.PuzzleResult;
+import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.repository.PuzzleResultCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
@@ -59,6 +61,7 @@ public class ConcertCommandService {
     private final TicketAddressRedisRepository ticketAddressRedisRepository;
     private final TitleQueryService titleQueryService;
     private final MemberTitleCommandRepository memberTitleCommandRepository;
+    private final PuzzleResultCommandRepository puzzleResultCommandRepository;
 
     /*
         공연장 정보 조회
@@ -123,6 +126,9 @@ public class ConcertCommandService {
         Title title = titleQueryService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
         // Sticker 할당
         Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
+
+        // PuzzleResult 저장
+        PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId());
 
         // Member Title 할당
         MemberTitle memberTitle = newMemberTitle(memberId, title.getId());
@@ -206,6 +212,16 @@ public class ConcertCommandService {
                 .userAddress1(requestDTO.userAddress1())
                 .userAddress2(requestDTO.userAddress2())
                 .build();
+    }
+
+    // PuzzleResult 생성
+    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId) {
+        PuzzleResult puzzleResult = PuzzleResult.builder()
+                .concertId(concertId)
+                .titleId(titleId)
+                .stickerId(stickerId)
+                .build();
+        return puzzleResultCommandRepository.save(puzzleResult);
     }
 
     // MemberTitle 생성
