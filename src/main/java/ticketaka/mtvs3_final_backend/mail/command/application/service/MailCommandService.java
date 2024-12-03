@@ -6,12 +6,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
+import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
+import ticketaka.mtvs3_final_backend.file.query.repository.FileQueryRepository;
 import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
+import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.repository.SeatPostponeRedisRepository;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
+import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.model.PuzzleResult;
+import ticketaka.mtvs3_final_backend.ticketing.puzzle.query.repository.PuzzleResultQueryRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
+import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
 import java.time.LocalDate;
 
@@ -23,6 +33,10 @@ public class MailCommandService {
 
     private final MailCommandRepository mailCommandRepository;
     private final SeatPostponeRedisRepository seatPostponeRedisRepository;
+    private final PuzzleResultQueryRepository puzzleResultQueryRepository;
+    private final TitleQueryRepository titleQueryRepository;
+    private final StickerQueryRepository stickerQueryRepository;
+    private final FileQueryRepository fileQueryRepository;
 
     // 좌석 접수 Mail
     @Transactional
@@ -151,9 +165,74 @@ public class MailCommandService {
         );
     }
 
+    @Transactional
+    public MailCommandResponseDTO.readPuzzleMailDTO readPuzzleMail(Long mailId) {
+
+        Mail mail = getMail(mailId);
+
+        PuzzleResult puzzleResult = getPuzzleResultByMailId(mailId);
+
+        Title title = getTitle(puzzleResult.getTitleId());
+        Sticker sticker = getSticker(puzzleResult.getStickerId());
+        File stickerImg = getStickerImgUrl(puzzleResult.getStickerId());
+
+        // DTO 변환
+        MailCommandResponseDTO.getTitleDTO titleInfo = new MailCommandResponseDTO.getTitleDTO(
+                title.getId().intValue(),
+                title.getTitleName(),
+                title.getTitleScript(),
+                title.getTitleRarity().toString()
+        );
+
+        getMemberStickerDTO stickerInfo = new getMemberStickerDTO(
+                sticker.getId(),
+                sticker.getStickerName(),
+                sticker.getStickerScript(),
+                sticker.getStickerRarity(),
+                stickerImg.getFileUrl()
+        );
+
+        mail.setIsRead(true);
+        mailCommandRepository.save(mail);
+
+        // 최종 반환 DTO 생성
+        return new MailCommandResponseDTO.readPuzzleMailDTO(
+                mail.getId().intValue(),
+                mail.getSubject(),
+                mail.getContent(),
+                mail.getMailCategory().toString(),
+                puzzleResult.getRank(),
+                titleInfo,
+                stickerInfo
+        );
+    }
+
     // Mail 조회
     private Mail getMail(Long mailId) {
         return mailCommandRepository.findById(mailId)
                 .orElseThrow(() -> new Exception400("해당 우편은 존재하지 않습니다."));
+    }
+
+    // Puzzle Result 조회
+    private PuzzleResult getPuzzleResultByMailId(Long mailId) {
+        return puzzleResultQueryRepository.getPuzzleResultByMailId(mailId);
+    }
+
+    // Title 조회
+    private Title getTitle(Long titleId) {
+        return titleQueryRepository.findById(titleId)
+                .orElse(null);
+    }
+
+    // Sticker 조회
+    private Sticker getSticker(Long stickerId) {
+        return stickerQueryRepository.findById(stickerId)
+                .orElse(null);
+    }
+
+    // Sticker Image Url 조회
+    private File getStickerImgUrl(Long stickerId) {
+        return fileQueryRepository.findByRelationTypeAndRelationId(RelationType.STICKER, stickerId)
+                .orElseThrow(() -> new Exception400("이미지 정보가 없는 스티커를 조회하였습니다."));
     }
 }
