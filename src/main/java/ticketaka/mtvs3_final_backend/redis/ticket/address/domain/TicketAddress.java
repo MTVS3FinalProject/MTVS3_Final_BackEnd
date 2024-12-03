@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.redis.ticketaddress.domain;
+package ticketaka.mtvs3_final_backend.redis.ticket.address.domain;
 
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
