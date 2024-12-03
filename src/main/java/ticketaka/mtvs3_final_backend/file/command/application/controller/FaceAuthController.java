@@ -46,7 +46,7 @@ public class FaceAuthController {
     /*
         티켓 사용
      */
-    @PostMapping("/ticket/verfication")
+    @PostMapping("/ticket/verification")
     public ResponseEntity<?> verifyTicketOwner(@ModelAttribute FaceAuthRequestDTO.verifyTicketOwnerDTO requestDTO) {
 
         faceAuthService.verifyTicketOwner(getCurrentMemberId(), requestDTO);
