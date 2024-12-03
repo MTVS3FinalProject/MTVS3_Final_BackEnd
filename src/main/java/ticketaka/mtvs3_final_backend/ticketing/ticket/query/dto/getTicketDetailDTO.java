@@ -15,9 +15,10 @@ public record getTicketDetailDTO(
         String ticketImage,
         String backgroundImage,
         String qrImage,
-        Boolean isUsed
+        Boolean isUsed,
+        Boolean isVerified
 ) {
-    public getTicketDetailDTO(Long ticketId, String concertName, LocalDateTime concertDate, String seatInfo, String ticketImage, String backgroundImage, String qrImage, Boolean isUsed) {
+    public getTicketDetailDTO(Long ticketId, String concertName, LocalDateTime concertDate, String seatInfo, String ticketImage, String backgroundImage, String qrImage, Boolean isUsed, Boolean isVerified) {
         this(ticketId.intValue(),
                 concertName,
                 concertDate.getYear(),
@@ -28,7 +29,8 @@ public record getTicketDetailDTO(
                 ticketImage,
                 backgroundImage,
                 qrImage,
-                isUsed
+                isUsed,
+                isVerified
         );
     }
 }
