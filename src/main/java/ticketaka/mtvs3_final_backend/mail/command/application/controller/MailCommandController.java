@@ -42,4 +42,15 @@ public class MailCommandController {
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
+
+    /*
+        Puzzle 우편 조회
+     */
+    @GetMapping("/{mailId}/puzzle")
+    public ResponseEntity<?> readPuzzleMail(@PathVariable("mailId") Long mailId) {
+
+        MailCommandResponseDTO.readPuzzleMailDTO responseDTO = mailCommandService.readPuzzleMail(mailId);
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
 }
