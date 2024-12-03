@@ -20,6 +20,8 @@ import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepo
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.FileUploadForAuth;
 import ticketaka.mtvs3_final_backend.redis.FileUpload.domain.UploadStatus;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.domain.TicketUsable;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.repository.TicketUsableRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
@@ -39,6 +41,7 @@ public class FaceAuthService {
 
     private final FaceAuthFeignClient faceAuthFeignClient;
     private final PasswordEncoder passwordEncoder;
+    private final TicketUsableRedisRepository ticketUsableRedisRepository;
 
     /*
         얼굴 인식
@@ -113,8 +116,8 @@ public class FaceAuthService {
         }
 
         // 2차 비밀번호 확인
-        if (!member.getSecondPwd().equals(requestDTO.secondPwd())) {
-            throw new Exception400("비밀번호가 틀렸습니다.");
+        if(!passwordEncoder.matches(requestDTO.secondPwd(), member.getSecondPwd())) {
+            throw new Exception401("회원 인증에 실패하였습니다.");
         }
 
         String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
@@ -123,6 +126,9 @@ public class FaceAuthService {
         FaceAuthResponseDTO.identifyFaceDTO responseDTO = getIdentifyFaceDTO(memberId, imgUrl);
 
         log.info("{}", responseDTO);
+
+        // 인증 결과 저장
+        newTicketUsable(memberId);
     }
 
     // 회원 확인
@@ -135,6 +141,13 @@ public class FaceAuthService {
     private Ticket getTicket(Long ticketId) {
         return ticketQueryRepository.findById(ticketId)
                 .orElseThrow(() -> new Exception403("해당 번호의 티켓은 존재하지 않습니다."));
+    }
+
+    private void newTicketUsable(Long memberId) {
+        TicketUsable ticketUsable = TicketUsable.builder()
+                .memberId(memberId)
+                .build();
+        ticketUsableRedisRepository.save(ticketUsable);
     }
 
     // 회원 인증 파일 이미지 조회
