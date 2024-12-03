@@ -7,7 +7,7 @@
     <property name="FILE_LOG_PATTERN"
               value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
 
-    <springProfile name="prod">
+    <springProfile name="!prod">
         <include resource="log/console-appender.xml"/>
         <include resource="log/logstash-appender.xml"/>
 
@@ -32,7 +32,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="!prod">
+    <springProfile name="prod">
         <include resource="log/logstash-appender.xml"/>
 
         <root level="INFO">
