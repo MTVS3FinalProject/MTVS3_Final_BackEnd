@@ -38,9 +38,18 @@ public class FaceAuthController {
     @PostMapping("/verification")
     public ResponseEntity<?> verificationMember(@ModelAttribute FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
-        System.out.println("requestDTO = " + requestDTO);
-
         faceAuthService.verificationMember(requestDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        티켓 사용
+     */
+    @PostMapping("/ticket/verfication")
+    public ResponseEntity<?> verifyTicketOwner(@ModelAttribute FaceAuthRequestDTO.verifyTicketOwnerDTO requestDTO) {
+
+        faceAuthService.verifyTicketOwner(getCurrentMemberId(), requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
