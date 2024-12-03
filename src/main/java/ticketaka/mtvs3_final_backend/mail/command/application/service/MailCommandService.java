@@ -92,13 +92,13 @@ public class MailCommandService {
 
     // Puzzle 게임 결과 Mail
     @Transactional
-    public Mail mailForPuzzleResult(Long memberId, String nickname, String concertName, String titleName, String stickerName) {
+    public Mail mailForPuzzleResult(Long memberId, String nickname, String concertName, int rank, String titleName, String stickerName) {
 
         // generate PuzzleResultSubject
-        String subject = generatePuzzleResultSubject(nickname, concertName, titleName, stickerName);
+        String subject = "퍼즐 이벤트가 종료되었습니다. 기여도 순위와 보상을 확인해보세요.";
 
         // generate PuzzleResultSubject
-        String content = "";
+        String content = generatePuzzleResultContent(nickname, concertName, rank, titleName, stickerName);
 
         return saveMail(memberId, subject, content, MailCategory.PUZZLE);
     }
@@ -122,10 +122,11 @@ public class MailCommandService {
                 mailCategory + " 완료하였습니다.";
     }
 
-    private String generatePuzzleResultSubject(String nickname, String concertName, String titleName, String stickerName) {
+    private String generatePuzzleResultContent(String nickname, String concertName, int rank, String titleName, String stickerName) {
         return nickname + " 님이 " +
                 concertName + " 의 " +
                 LocalDate.now() + " Puzzle 게임에서 " +
+                rank + " 등 보상으로 " +
                 titleName + " 칭호와 " +
                 stickerName + " 스티커를 " +
                 "획득하였습니다.";

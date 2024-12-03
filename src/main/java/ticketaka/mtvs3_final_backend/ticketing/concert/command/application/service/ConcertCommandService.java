@@ -142,7 +142,7 @@ public class ConcertCommandService {
         PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId(), requestDTO.rank());
 
         // Mail 저장
-        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getNickname(), concert.getName(), title.getTitleName(), sticker.getStickerName());
+        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getNickname(), concert.getName(), requestDTO.rank(), title.getTitleName(), sticker.getStickerName());
 
         // MailPuzzleResult 저장
         newMailPuzzleResult(mail.getId(), puzzleResult.getId());
