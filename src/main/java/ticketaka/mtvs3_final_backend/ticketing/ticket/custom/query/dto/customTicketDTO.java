@@ -4,4 +4,7 @@ public record customTicketDTO(
         int ticketId,
         String customTicketImage
 ) {
+    public customTicketDTO(Long ticketId, String fileUrl) {
+        this(ticketId.intValue(), fileUrl);
+    }
 }
