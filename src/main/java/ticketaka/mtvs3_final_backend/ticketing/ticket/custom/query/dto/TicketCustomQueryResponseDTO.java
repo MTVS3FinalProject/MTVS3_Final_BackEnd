@@ -8,10 +8,4 @@ public class TicketCustomQueryResponseDTO {
             List<customTicketDTO> customTicketDTOList
     ) {
     }
-
-    public record customTicketDTO(
-            int ticketId,
-            String customTicketImage
-    ) {
-    }
 }
