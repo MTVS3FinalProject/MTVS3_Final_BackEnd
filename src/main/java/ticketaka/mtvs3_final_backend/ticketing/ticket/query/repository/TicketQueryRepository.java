@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.TicketCustomQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.customTicketDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.dto.getTicketDetailDTO;
 
@@ -79,4 +81,24 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
     getTicketDetailDTO findTicketDTOByMemberIdAndTicketId(@Param("memberId") Long memberId,
                                                           @Param("ticketId") Long ticketId,
                                                           @Param("isVerified") Boolean isVerified);
+
+    @Query("""
+        SELECT new ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.customTicketDTO(
+            t.id,
+            (SELECT f.fileUrl
+             FROM File f
+             WHERE f.relationType = 'CUSTOM_TICKET'
+               AND f.relationId = (
+                   SELECT ct.id
+                   FROM CustomTicket ct
+                   WHERE ct.ticketId = t.id
+                   ORDER BY ct.createdAt DESC
+                   LIMIT 1
+               )
+            )
+        )
+        FROM Ticket t
+        WHERE t.memberId = :memberId
+    """)
+    List<customTicketDTO> findCustomTicketImage(@Param("memberId") Long memberId);
 }

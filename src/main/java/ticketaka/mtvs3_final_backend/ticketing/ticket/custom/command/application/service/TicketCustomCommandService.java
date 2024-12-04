@@ -120,12 +120,6 @@ public class TicketCustomCommandService {
                 .orElseThrow(() -> new Exception400("해당 티켓을 찾을 수 없습니다."));
     }
 
-    // CustomTicket 조회 - TicketId
-    private CustomTicket getCustomTicket(Long ticketId) {
-        return ticketCustomQueryRepository.findByTicketId(ticketId)
-                .orElse(new CustomTicket(ticketId));
-    }
-
     // CustomTicket 저장
     private CustomTicket newCustomTicket(Long ticketId) {
         return CustomTicket.builder()
