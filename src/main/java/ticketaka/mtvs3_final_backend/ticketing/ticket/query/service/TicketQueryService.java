@@ -105,7 +105,9 @@ public class TicketQueryService {
 
         getMember(memberId);
 
-        Boolean isVerified = ticketUsableRedisRepository.findById(memberId.toString()).isPresent();
+        Boolean isVerified = ticketUsableRedisRepository.findById(ticketId.toString())
+                .map(ticketUsable -> ticketUsable.getMemberId().equals(memberId))
+                .orElse(false);
 
         return ticketQueryRepository.findTicketDTOByMemberIdAndTicketId(memberId, ticketId, isVerified);
     }

@@ -15,8 +15,11 @@ public class TicketUsable {
     @Id
     private String id;
 
+    private Long memberId;
+
     @Builder
-    public TicketUsable(Long memberId) {
-        this.id = memberId.toString();
+    public TicketUsable(Long ticketId, Long memberId) {
+        this.id = ticketId.toString();
+        this.memberId = memberId;
     }
 }

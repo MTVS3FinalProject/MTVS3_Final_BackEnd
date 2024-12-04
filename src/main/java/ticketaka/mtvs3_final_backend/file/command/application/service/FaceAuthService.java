@@ -128,7 +128,7 @@ public class FaceAuthService {
         log.info("{}", responseDTO);
 
         // 인증 결과 저장
-        newTicketUsable(memberId);
+        newTicketUsable(ticket.getId(), memberId);
     }
 
     // 회원 확인
@@ -143,8 +143,9 @@ public class FaceAuthService {
                 .orElseThrow(() -> new Exception403("해당 번호의 티켓은 존재하지 않습니다."));
     }
 
-    private void newTicketUsable(Long memberId) {
+    private void newTicketUsable(Long ticketId, Long memberId) {
         TicketUsable ticketUsable = TicketUsable.builder()
+                .ticketId(ticketId)
                 .memberId(memberId)
                 .build();
         ticketUsableRedisRepository.save(ticketUsable);
