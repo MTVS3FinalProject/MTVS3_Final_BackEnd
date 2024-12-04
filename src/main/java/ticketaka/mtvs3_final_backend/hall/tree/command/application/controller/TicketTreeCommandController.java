@@ -15,4 +15,12 @@ import ticketaka.mtvs3_final_backend.hall.tree.command.application.service.Ticke
 public class TicketTreeCommandController {
 
     private final TicketTreeCommandService ticketTreeCommandService;
+
+    /*
+        티켓 걸기
+     */
+
+    /*
+        티켓 회수
+     */
 }
