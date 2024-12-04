@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.TicketCustomQueryResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.customTicketDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
 
 import java.util.List;
@@ -19,7 +20,9 @@ public class TicketCustomQueryService {
 
     public TicketCustomQueryResponseDTO.getCustomTicketListDTO getCustomTicketList(Long memberId) {
 
-        List<TicketCustomQueryResponseDTO.customTicketDTO> customTicketDTOList = ticketQueryRepository.findCustomTicketImage(memberId);
+        List<customTicketDTO> customTicketDTOList = ticketQueryRepository.findCustomTicketImage(memberId).stream()
+                .filter(customTicketDTO -> customTicketDTO.customTicketImage() != null)
+                .toList();
 
         return new TicketCustomQueryResponseDTO.getCustomTicketListDTO(customTicketDTOList);
     }
