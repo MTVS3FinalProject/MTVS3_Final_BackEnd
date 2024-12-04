@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
+import ticketaka.mtvs3_final_backend.hall.tree.command.application.dto.TicketTreeCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.hall.tree.command.application.service.TicketTreeCommandService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
@@ -28,9 +29,9 @@ public class TicketTreeCommandController {
     @PostMapping("/tickets/{ticketId}")
     public ResponseEntity<?> registerTicketTree(@PathVariable Long ticketId) {
 
-        ticketTreeCommandService.registerTicketTree(getCurrentMemberId(), ticketId);
+        TicketTreeCommandResponseDTO.registerTicketTreeDTO responseDTO = ticketTreeCommandService.registerTicketTree(getCurrentMemberId(), ticketId);
 
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
     }
 
     /*
