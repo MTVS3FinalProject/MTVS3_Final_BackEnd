@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface TicketCustomQueryRepository extends JpaRepository<CustomTicket, Long> {
-    List<CustomTicket> findAllByTicketIdIn(List<Long> ticketList);
 
-    Optional<CustomTicket> findByTicketId(Long ticketId);
+    Optional<CustomTicket> findByTicketIdOrderByCreatedAtDesc(Long ticketId);
 }
