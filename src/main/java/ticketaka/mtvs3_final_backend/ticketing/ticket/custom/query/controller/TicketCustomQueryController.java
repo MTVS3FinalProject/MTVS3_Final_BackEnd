@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
+import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.dto.TicketCustomQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.custom.query.service.TicketCustomQueryService;
 
 import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
@@ -15,6 +16,16 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/member/tickets")
+@RequestMapping("/api/member/tickets/type/custom")
 public class TicketCustomQueryController {
+
+    private final TicketCustomQueryService ticketCustomQueryService;
+
+    @GetMapping
+    public ResponseEntity<?> getCustomTicketList() {
+
+        TicketCustomQueryResponseDTO.getCustomTicketListDTO responseDTO = ticketCustomQueryService.getCustomTicketList(getCurrentMemberId());
+
+        return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
 }

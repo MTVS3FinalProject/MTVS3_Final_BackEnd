@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TicketCustomQueryResponseDTO {
 
-    public record getCustomTicketDTO(
+    public record getCustomTicketListDTO(
             List<customTicketDTO> customTicketDTOList
     ) {
     }
