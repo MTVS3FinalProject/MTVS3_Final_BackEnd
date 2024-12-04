@@ -1,7 +1,7 @@
-package ticketaka.mtvs3_final_backend.redis.ticketaddress.repository;
+package ticketaka.mtvs3_final_backend.redis.ticket.address.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import ticketaka.mtvs3_final_backend.redis.ticketaddress.domain.TicketAddress;
+import ticketaka.mtvs3_final_backend.redis.ticket.address.domain.TicketAddress;
 
 public interface TicketAddressRedisRepository extends CrudRepository<TicketAddress, String> {
 }

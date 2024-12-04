@@ -10,6 +10,7 @@ import ticketaka.mtvs3_final_backend.file.command.domain.model.property.Relation
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
 import ticketaka.mtvs3_final_backend.redis.daily.background.domain.DailyBackground;
 import ticketaka.mtvs3_final_backend.redis.daily.background.repository.DailyBackgroundRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.repository.TicketUsableRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.service.ConcertQueryService;
@@ -36,6 +37,7 @@ public class TicketQueryService {
     private final StickerQueryRepository stickerQueryRepository;
 
     private final DailyBackgroundRedisRepository dailyBackgroundRedisRepository;
+    private final TicketUsableRedisRepository ticketUsableRedisRepository;
 
     /*
         보유 티켓 조회
@@ -103,7 +105,11 @@ public class TicketQueryService {
 
         getMember(memberId);
 
-        return ticketQueryRepository.findTicketDTOByMemberIdAndTicketId(memberId, ticketId);
+        Boolean isVerified = ticketUsableRedisRepository.findById(ticketId.toString())
+                .map(ticketUsable -> ticketUsable.getMemberId().equals(memberId))
+                .orElse(false);
+
+        return ticketQueryRepository.findTicketDTOByMemberIdAndTicketId(memberId, ticketId, isVerified);
     }
 
     // Member 조회

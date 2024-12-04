@@ -13,8 +13,8 @@ import ticketaka.mtvs3_final_backend.mail.command.application.service.MailComman
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.puzzle.command.domain.model.MailPuzzleResult;
 import ticketaka.mtvs3_final_backend.mail.puzzle.command.domain.repository.MailPuzzleResultCommandRepository;
-import ticketaka.mtvs3_final_backend.redis.ticketaddress.domain.TicketAddress;
-import ticketaka.mtvs3_final_backend.redis.ticketaddress.repository.TicketAddressRedisRepository;
+import ticketaka.mtvs3_final_backend.redis.ticket.address.domain.TicketAddress;
+import ticketaka.mtvs3_final_backend.redis.ticket.address.repository.TicketAddressRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;

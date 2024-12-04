@@ -62,7 +62,8 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "END, " +
             "bgf.fileUrl, " +
             "qf.fileUrl, " +
-            "CASE WHEN t.ticketStatus = 'USED' THEN true ELSE false END" +
+            "CASE WHEN t.ticketStatus = 'USED' THEN true ELSE false END, " +
+            "CASE WHEN :isVerified = true THEN true ELSE false END " +
             ") " +
             "FROM Ticket t JOIN Concert c ON t.concertId = c.id " +
             "JOIN Seat s ON t.seatId = s.id " +
@@ -75,5 +76,7 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "LEFT JOIN File qf ON qf.relationId = t.id AND qf.relationType = 'TICKET' AND qf.filePurpose = 'VERIFICATION' " +
             "WHERE t.memberId = :memberId " +
             "AND t.id = :ticketId")
-    getTicketDetailDTO findTicketDTOByMemberIdAndTicketId(@Param("memberId") Long memberId, @Param("ticketId") Long ticketId);
+    getTicketDetailDTO findTicketDTOByMemberIdAndTicketId(@Param("memberId") Long memberId,
+                                                          @Param("ticketId") Long ticketId,
+                                                          @Param("isVerified") Boolean isVerified);
 }
