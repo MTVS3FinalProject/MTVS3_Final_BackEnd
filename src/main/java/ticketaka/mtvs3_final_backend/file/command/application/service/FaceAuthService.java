@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
+import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminVerificationResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.File;
@@ -102,7 +103,7 @@ public class FaceAuthService {
     /*
         티켓 사용 신원 인증
      */
-    public void verifyTicketOwner(Long memberId, FaceAuthRequestDTO.verifyTicketOwnerDTO requestDTO) {
+    public void verifyTicketOwner(Long memberId, AdminVerificationResponseDTO.verifyTicketOwnerDTO requestDTO) {
 
         // Member 조회
         Member member = getMember(memberId);

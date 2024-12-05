@@ -20,13 +20,6 @@ public class FaceAuthRequestDTO {
     ) {
     }
 
-    // 티켓 사용 파일 업로드
-    public record verifyTicketOwnerDTO(
-            MultipartFile image,
-            Long ticketId
-    ) {
-    }
-
     // 얼굴 인식
     public record recognizeFaceDTO(
             String faceImg
