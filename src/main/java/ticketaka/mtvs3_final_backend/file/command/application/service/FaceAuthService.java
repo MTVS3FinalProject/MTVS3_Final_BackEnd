@@ -115,11 +115,6 @@ public class FaceAuthService {
             throw new Exception403("해당 티켓의 소유주가 아닙니다.");
         }
 
-        // 2차 비밀번호 확인
-        if(!passwordEncoder.matches(requestDTO.secondPwd(), member.getSecondPwd())) {
-            throw new Exception401("회원 인증에 실패하였습니다.");
-        }
-
         String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
 
         // 얼굴 인증
