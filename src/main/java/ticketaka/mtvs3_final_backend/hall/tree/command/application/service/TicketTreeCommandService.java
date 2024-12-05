@@ -71,4 +71,11 @@ public class TicketTreeCommandService {
                 .build();
         return ticketTreeCommandRepository.save(ticketTree);
     }
+
+    /*
+        티켓 트리 초기화
+     */
+    public void resetTicketTree() {
+        ticketTreeCommandRepository.deleteAll();
+    }
 }
