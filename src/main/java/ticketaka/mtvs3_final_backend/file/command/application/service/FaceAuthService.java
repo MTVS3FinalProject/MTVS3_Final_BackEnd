@@ -37,12 +37,10 @@ public class FaceAuthService {
     private final FileCommandService fileCommandService;
 
     private final MemberRepository memberRepository;
-    private final TicketQueryRepository ticketQueryRepository;
     private final FileCommandRepository fileCommandRepository;
 
     private final FaceAuthFeignClient faceAuthFeignClient;
     private final PasswordEncoder passwordEncoder;
-    private final TicketUsableRedisRepository ticketUsableRedisRepository;
 
     /*
         얼굴 인식
@@ -100,53 +98,6 @@ public class FaceAuthService {
         fileCommandService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
     }
 
-    /*
-        티켓 사용 신원 인증
-     */
-    public void verifyTicketOwner(Long memberId, AdminVerificationResponseDTO.verifyTicketOwnerDTO requestDTO) {
-
-        // Member 조회
-        Member member = getMember(memberId);
-
-        // Ticket 조회
-        Ticket ticket = getTicket(requestDTO.ticketId());
-
-        // Ticket 소유 여부 확인
-        if (!ticket.getMemberId().equals(memberId)) {
-            throw new Exception403("해당 티켓의 소유주가 아닙니다.");
-        }
-
-        String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
-
-        // 얼굴 인증
-        FaceAuthResponseDTO.identifyFaceDTO responseDTO = getIdentifyFaceDTO(memberId, imgUrl);
-
-        log.info("{}", responseDTO);
-
-        // 인증 결과 저장
-        newTicketUsable(ticket.getId(), memberId);
-    }
-
-    // 회원 확인
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new Exception401("회원 인식이 되지 않습니다."));
-    }
-
-    // Ticket 조회
-    private Ticket getTicket(Long ticketId) {
-        return ticketQueryRepository.findById(ticketId)
-                .orElseThrow(() -> new Exception403("해당 번호의 티켓은 존재하지 않습니다."));
-    }
-
-    private void newTicketUsable(Long ticketId, Long memberId) {
-        TicketUsable ticketUsable = TicketUsable.builder()
-                .ticketId(ticketId)
-                .memberId(memberId)
-                .build();
-        ticketUsableRedisRepository.save(ticketUsable);
-    }
-
     // 회원 인증 파일 이미지 조회
     private File getOriginImgUrl(Long currentMemberId) {
 
@@ -155,7 +106,7 @@ public class FaceAuthService {
     }
 
     // 회원 인증
-    private FaceAuthResponseDTO.identifyFaceDTO getIdentifyFaceDTO(Long currentMemberId, String fileUrl) {
+    public FaceAuthResponseDTO.identifyFaceDTO getIdentifyFaceDTO(Long currentMemberId, String fileUrl) {
 
         // 유저 이미지 파일 조회
         File currentMemberImgFile = getOriginImgUrl(currentMemberId);
