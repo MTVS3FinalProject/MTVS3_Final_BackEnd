@@ -8,6 +8,7 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
+import ticketaka.mtvs3_final_backend.member.command.domain.service.COOLSMSService;
 import ticketaka.mtvs3_final_backend.redis.ticket.address.domain.TicketAddress;
 import ticketaka.mtvs3_final_backend.redis.ticket.address.repository.TicketAddressRedisRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
@@ -16,11 +17,16 @@ import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.Memb
 import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class MemberCommandService {
+
+    private final COOLSMSService coolsmsService;
 
     private final AddressRepository addressRepository;
     private final MemberTitleCommandRepository memberTitleCommandRepository;
@@ -79,6 +85,14 @@ public class MemberCommandService {
         memberTitleCommandRepository.clearRepresentativeTitle(currentMemberId);
     }
 
+    // 티켓 결제 SMS 전송
+    public void sendReserveSMS(String phoneNumber, String concertName, String seatInfo, LocalDateTime concertDateTime) {
+
+        String content = generateReserveSMS(concertName, seatInfo, concertDateTime);
+
+        coolsmsService.sendOne(phoneNumber, content);
+    }
+
     // Address 생성
     private Address newAddress(TicketAddress ticketAddress, Long memberId, Long ticketId) {
         return Address.builder()
@@ -89,5 +103,25 @@ public class MemberCommandService {
                 .address(ticketAddress.getUserAddress1())
                 .detail(ticketAddress.getUserAddress2())
                 .build();
+    }
+
+    private String generateReserveSMS(String concertName, String seatInfo, LocalDateTime concertDateTime) {
+        // 공연 날짜 및 시간 포맷 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm");
+
+        // 메시지 내용 생성
+        return String.format(
+                """
+                        [티케타카]
+                        공연명: %s
+                        좌석 정보: %s
+                        공연 일시: %s
+
+                        티켓 확인 링크: %s""",
+                concertName,
+                seatInfo,
+                concertDateTime.format(formatter),
+                "https://ticketaka.shop/member/tickets"
+        );
     }
 }

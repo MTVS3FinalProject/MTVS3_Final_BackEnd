@@ -199,14 +199,16 @@ public class SeatCommandService {
         seat.setSeatStatus(SeatStatus.RESERVED);
         seatCommandRepository.save(seat);
 
+        String seatInfo = formatSeatInfo(seat);
+
         // Ticket 생성
         Long ticketId = ticketCommandService.createTicket(memberId, concertId, seatId).ticketId();
 
         // 주소지 티켓 매핑
         Address address = memberCommandService.saveTicketAddress(memberId, concertId, seatId, ticketId);
 
-        // Kakao Message 전송
-        adminCommandService.sendKakaoMessage(address.getUserName());
+        // SMS 문자 보내기
+        memberCommandService.sendReserveSMS(address.getPhoneNumber(), concert.getName(), seatInfo, concert.getConcertDate());
 
         // Mail 발송
         mailCommandService.mailForSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
@@ -215,7 +217,7 @@ public class SeatCommandService {
         return new SeatCommandResponseDTO.reserveSeatDTO(
                 seat.getId().intValue(),
                 formatSeatName(concert, seat),
-                formatSeatInfo(seat),
+                seatInfo,
                 1,
                 seat.getPrice(),
                 member.getCoin(),
