@@ -88,6 +88,9 @@ dependencies {
     // Activation framework (needed for JAXB)
     implementation 'javax.activation:activation:1.1.1'
 
+    // SMS
+    implementation 'net.nurigo:sdk:4.3.2'
+
     // QR Code - zxing
     implementation group: 'com.google.zxing', name: 'javase', version: '3.5.0'
     implementation group: 'com.google.zxing', name: 'core', version: '3.5.0'

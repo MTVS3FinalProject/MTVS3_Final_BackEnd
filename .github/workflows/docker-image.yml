@@ -58,6 +58,7 @@ jobs:
           KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
           COOLSMS_ACCESS_KEY: ${{ secrets.COOLSMS_ACCESS_KEY }}
           COOLSMS_SECRET_KEY: ${{ secrets.COOLSMS_SECRET_KEY }}
+          COOLSMS_FROM_NUMBER: ${{ secrets.COOLSMS_FROM_NUMBER }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ticketaka
           IMAGE_TAG: ticketaka
@@ -79,6 +80,7 @@ jobs:
             --build-arg KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }} \
             --build-arg COOLSMS_ACCESS_KEY=${{ secrets.COOLSMS_ACCESS_KEY }} \
             --build-arg COOLSMS_SECRET_KEY=${{ secrets.COOLSMS_SECRET_KEY }} \
+            --build-arg COOLSMS_SECRET_KEY=${{ secrets.COOLSMS_FROM_NUMBER }} \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
