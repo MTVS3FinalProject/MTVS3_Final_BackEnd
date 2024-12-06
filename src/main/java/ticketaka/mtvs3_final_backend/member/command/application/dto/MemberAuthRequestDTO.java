@@ -19,6 +19,9 @@ public class MemberAuthRequestDTO {
             String birth,
             Integer avatarData
     ) {
+        public Boolean bisHost() {
+            return this.isHost == 1;
+        }
     }
 
     // 기본 로그인

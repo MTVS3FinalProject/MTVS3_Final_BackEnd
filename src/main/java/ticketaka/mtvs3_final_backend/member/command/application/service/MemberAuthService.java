@@ -144,6 +144,7 @@ public class MemberAuthService {
                 .avatarData(requestDTO.avatarData())
                 .authority(Authority.fromInt(requestDTO.isHost()))
                 .status(Status.ACTIVE)
+                .host(requestDTO.bisHost())
                 .build();
     }
 
