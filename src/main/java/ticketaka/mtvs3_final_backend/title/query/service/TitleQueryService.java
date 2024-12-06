@@ -13,9 +13,7 @@ import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQu
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -43,7 +41,7 @@ public class TitleQueryService {
     // Title 할당
     public Title getPuzzleResult(Long memberId, Long concertId, TitleRarity titleRarity) {
 
-        List<Long> memberTitleList = getMemberTitleList(memberId);
+        List<Long> memberTitleList = getMemberTitleIdList(memberId);
 
         TitleRarity currentRarity = titleRarity;
         while (currentRarity != null) {
@@ -56,11 +54,11 @@ public class TitleQueryService {
             currentRarity = currentRarity.getLowerRarity();
         }
 
-        throw new Exception400("더 이상 해당 공연에서 얻을 수 있는 스티커가 없습니다.");
+        throw new Exception400("더 이상 해당 공연에서 얻을 수 있는 칭호가 없습니다.");
     }
 
     // 회원이 소유한 Title Id 목록 조회
-    private List<Long> getMemberTitleList(Long memberId) {
+    private List<Long> getMemberTitleIdList(Long memberId) {
         return memberTitleQueryRepository.findAllByMemberId(memberId).stream()
                 .map(MemberTitle::getTitleId)
                 .toList();
