@@ -14,6 +14,7 @@ public class MemberAuthResponseDTO {
 
     // 회원 정보
     public record memberInfoDTO(
+            Boolean bIsHost,
             String nickname,
             String birth,
             int coin,
