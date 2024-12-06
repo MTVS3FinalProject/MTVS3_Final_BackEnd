@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ticketaka.mtvs3_final_backend.member.command.domain.service.COOLSMSService;
 
+import javax.annotation.PostConstruct;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -23,9 +25,10 @@ public class COOLSMSServiceImpl implements COOLSMSService {
     @Value("${COOLSMS.FROM.NUMBER}")
     private String fromNumber;
 
-    private final DefaultMessageService defaultMessageService;
+    private DefaultMessageService defaultMessageService;
 
-    public COOLSMSServiceImpl() {
+    @PostConstruct
+    private void init() {
         this.defaultMessageService = NurigoApp.INSTANCE.initialize(accessKey, secretKey, "https://api.coolsms.co.kr");
     }
 
