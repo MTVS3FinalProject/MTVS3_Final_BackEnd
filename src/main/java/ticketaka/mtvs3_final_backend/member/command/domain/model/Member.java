@@ -44,9 +44,11 @@ public class Member extends BaseTimeEntity {
     @Setter
     @Column
     private Integer coin;
+    @Column
+    private Boolean bIsHost;
 
     @Builder
-    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Authority authority, Status status) {
+    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Authority authority, Status status, Boolean host) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
@@ -56,5 +58,6 @@ public class Member extends BaseTimeEntity {
         this.authority = authority;
         this.status = status;
         this.coin = 0;
+        this.bIsHost = host;
     }
 }

@@ -13,9 +13,7 @@ import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQu
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -43,16 +41,35 @@ public class TitleQueryService {
     // Title 할당
     public Title getPuzzleResult(Long memberId, Long concertId, TitleRarity titleRarity) {
 
-        List<Title> titleList = titleQueryRepository.findAllByTitleTypeAndConcertIdAndTitleRarity(TitleType.CONCERT, concertId, titleRarity);
-        List<Long> memberTitleList = memberTitleQueryRepository.findAllByMemberId(memberId).stream()
+        List<Long> memberTitleList = getMemberTitleIdList(memberId);
+
+        TitleRarity currentRarity = titleRarity;
+        while (currentRarity != null) {
+            List<Title> availableTitleList = getAvailableTitleList(concertId, titleRarity, memberTitleList);
+
+            if (!availableTitleList.isEmpty()) {
+                return getRandomTitle(availableTitleList);
+            }
+
+            currentRarity = currentRarity.getLowerRarity();
+        }
+
+        throw new Exception400("더 이상 해당 공연에서 얻을 수 있는 칭호가 없습니다.");
+    }
+
+    // 회원이 소유한 Title Id 목록 조회
+    private List<Long> getMemberTitleIdList(Long memberId) {
+        return memberTitleQueryRepository.findAllByMemberId(memberId).stream()
                 .map(MemberTitle::getTitleId)
                 .toList();
+    }
 
-        List<Title> availableTitleList = titleList.stream()
+    // 획득 가능한 Title 목록 조회
+    private List<Title> getAvailableTitleList(Long concertId, TitleRarity titleRarity, List<Long> memberTitleList) {
+        List<Title> titleList = titleQueryRepository.findAllByTitleTypeAndConcertIdAndTitleRarity(TitleType.CONCERT, concertId, titleRarity);
+        return titleList.stream()
                 .filter(title -> !memberTitleList.contains(title.getId()))
                 .toList();
-
-        return getRandomTitle(availableTitleList);
     }
 
     // 랜덤으로 하나 선택

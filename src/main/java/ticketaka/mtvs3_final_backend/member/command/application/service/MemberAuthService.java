@@ -144,6 +144,7 @@ public class MemberAuthService {
                 .avatarData(requestDTO.avatarData())
                 .authority(Authority.fromInt(requestDTO.isHost()))
                 .status(Status.ACTIVE)
+                .host(requestDTO.bisHost())
                 .build();
     }
 
@@ -177,6 +178,7 @@ public class MemberAuthService {
         Title title = titleQueryService.getMemberTitle(member.getId());
 
         return new MemberAuthResponseDTO.memberInfoDTO(
+                member.getBIsHost(),
                 member.getNickname(),
                 member.getBirth().toString(),
                 member.getCoin(),

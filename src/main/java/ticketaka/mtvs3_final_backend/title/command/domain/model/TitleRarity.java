@@ -29,4 +29,15 @@ public enum TitleRarity {
 
         return titleRarities[titleRarities.length - rank];
     }
+
+    public TitleRarity getLowerRarity() {
+
+        int currentOrdinal = this.ordinal();
+
+        if (currentOrdinal == 0) {
+            return null;
+        }
+
+        return TitleRarity.values()[currentOrdinal - 1];
+    }
 }

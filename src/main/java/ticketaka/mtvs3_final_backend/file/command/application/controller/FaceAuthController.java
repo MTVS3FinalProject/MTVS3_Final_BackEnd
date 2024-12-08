@@ -42,15 +42,4 @@ public class FaceAuthController {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
-
-    /*
-        티켓 사용
-     */
-    @PostMapping("/ticket/verification")
-    public ResponseEntity<?> verifyTicketOwner(@ModelAttribute FaceAuthRequestDTO.verifyTicketOwnerDTO requestDTO) {
-
-        faceAuthService.verifyTicketOwner(getCurrentMemberId(), requestDTO);
-
-        return ResponseEntity.ok().body(ApiUtils.success(null));
-    }
 }

@@ -1,6 +1,7 @@
 package ticketaka.mtvs3_final_backend.sticker.command.domain.model;
 
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
+import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 
 public enum StickerRarity {
     COMMON, RARE, UNIQUE;
@@ -28,5 +29,16 @@ public enum StickerRarity {
         }
 
         return stickerRarities[stickerRarities.length - rank];
+    }
+
+    public StickerRarity getLowerRarity() {
+
+        int currentOrdinal = this.ordinal();
+
+        if (currentOrdinal == 0) {
+            return null;
+        }
+
+        return StickerRarity.values()[currentOrdinal - 1];
     }
 }

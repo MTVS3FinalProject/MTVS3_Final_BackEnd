@@ -11,7 +11,11 @@ import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminVerifica
 import ticketaka.mtvs3_final_backend.admin.command.domain.dto.KakaoFeignClientResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.domain.model.KakaoToken;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.KakaoTokenRepository;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthResponseDTO;
+import ticketaka.mtvs3_final_backend.file.command.application.service.FaceAuthService;
 import ticketaka.mtvs3_final_backend.file.command.application.service.FileCommandService;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.domain.TicketUsable;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.repository.TicketUsableRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
@@ -30,6 +34,7 @@ public class AdminCommandService {
 
     private final TitleAdminCommandService titleAdminCommandService;
     private final StickerAdminCommandService stickerAdminCommandService;
+    private final FaceAuthService faceAuthService;
     private final FileCommandService fileCommandService;
     private final KakaoAdminService kakaoAdminService;
 
@@ -38,6 +43,8 @@ public class AdminCommandService {
     private final TicketQueryRepository ticketQueryRepository;
     private final SeatQueryRepository seatQueryRepository;
     private final TicketCommandRepository ticketCommandRepository;
+
+    private final TicketUsableRedisRepository ticketUsableRedisRepository;
 
     /*
         Title 추가
@@ -81,7 +88,6 @@ public class AdminCommandService {
         kakaoAdminService.saveKakaoToken(responseDTO);
     }
 
-
     /*
         Kakao 친구 목록 조회
      */
@@ -104,6 +110,25 @@ public class AdminCommandService {
 
         kakaoTokenRepository.findTopByOrderByCreatedAtAsc()
                 .ifPresent(kakaoToken -> kakaoAdminService.sendKakaoMessage(kakaoToken, userName));
+    }
+
+    /*
+        티켓 사용 신원 인증
+     */
+    public void verifyTicketOwner(AdminVerificationResponseDTO.verifyTicketOwnerDTO requestDTO) {
+
+        // Ticket 조회
+        Ticket ticket = getTicket(requestDTO.ticketId());
+
+        String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
+
+        // 얼굴 인증
+        FaceAuthResponseDTO.identifyFaceDTO responseDTO = faceAuthService.getIdentifyFaceDTO(ticket.getMemberId(), imgUrl);
+
+        log.info("{}", responseDTO);
+
+        // 인증 결과 저장
+        newTicketUsable(ticket.getId(), ticket.getMemberId());
     }
 
     /*
@@ -144,6 +169,15 @@ public class AdminCommandService {
     private Ticket getTicket(Long ticketId) {
         return ticketQueryRepository.findById(ticketId)
                 .orElseThrow(() -> new Exception403("해당 번호의 티켓은 존재하지 않습니다."));
+    }
+
+    // TicketUsable 생성
+    private void newTicketUsable(Long ticketId, Long memberId) {
+        TicketUsable ticketUsable = TicketUsable.builder()
+                .ticketId(ticketId)
+                .memberId(memberId)
+                .build();
+        ticketUsableRedisRepository.save(ticketUsable);
     }
 
     // TicketStatus 유효성 검사

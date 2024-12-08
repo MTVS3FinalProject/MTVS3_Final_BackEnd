@@ -153,7 +153,7 @@ public class FileCommandService {
     }
 
     // 파일 업로드 기능
-    protected String uploadImg(MultipartFile image, String fileName) {
+    public String uploadImg(MultipartFile image, String fileName) {
 
         return s3Service.uploadImage(image, fileName, IMAGE_CONTENT_TYPE);
     }

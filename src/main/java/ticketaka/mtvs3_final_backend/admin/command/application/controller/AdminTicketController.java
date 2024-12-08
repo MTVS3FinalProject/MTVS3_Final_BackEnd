@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
 import ticketaka.mtvs3_final_backend.admin.command.application.dto.AdminVerificationResponseDTO;
 import ticketaka.mtvs3_final_backend.admin.command.application.service.AdminCommandService;
+import ticketaka.mtvs3_final_backend.file.command.application.dto.FaceAuthRequestDTO;
+
+import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrentMemberId;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,6 +37,17 @@ public class AdminTicketController {
     public ResponseEntity<?> consumeTicket(@PathVariable("ticketId") Long ticketId) {
 
         adminCommandService.consumeTicket(ticketId);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
+        티켓 신원 인증
+     */
+    @PostMapping("/admin/ticket/member/verification")
+    public ResponseEntity<?> verifyTicketOwner(@ModelAttribute AdminVerificationResponseDTO.verifyTicketOwnerDTO requestDTO) {
+
+        adminCommandService.verifyTicketOwner(requestDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }

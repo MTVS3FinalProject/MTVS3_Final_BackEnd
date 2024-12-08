@@ -190,8 +190,7 @@ public class ConcertCommandService {
 
         Member member = getMember(memberId);
 
-        DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(memberId))
-                .orElseThrow(() -> new Exception403("해당 좌석에 대한 결제 권한이 없습니다."));
+        DrawResult drawResult = getDrawResult(memberId, concertId, seatId);
 
         TicketAddress ticketAddress = newTicketAddress(memberId, concertId, seatId, requestDTO);
         ticketAddressRedisRepository.save(ticketAddress);
@@ -237,6 +236,13 @@ public class ConcertCommandService {
                 .userAddress1(requestDTO.userAddress1())
                 .userAddress2(requestDTO.userAddress2())
                 .build();
+    }
+
+    // DrawResult 조회
+    private DrawResult getDrawResult(Long memberId, Long concertId, Long seatId) {
+        String id = memberId + "-" + concertId + "-" + seatId;
+        return drawResultRedisRepository.findById(id)
+                .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
     }
 
     // PuzzleResult 생성
