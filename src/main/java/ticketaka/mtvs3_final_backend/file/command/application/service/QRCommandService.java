@@ -112,12 +112,11 @@ public class QRCommandService {
         회원 인증 용 사진 업로드 성공 확인
      */
     @Transactional
-    public QRResponseDTO.checkVerificationQR checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long currentMemberId) {
+    public QRResponseDTO.checkVerificationQR checkVerificationQR(QRRequestDTO.checkVerificationQRDTO requestDTO, Long memberId) {
 
-        validateMember(currentMemberId);
+        validateMember(memberId);
 
-        DrawResult drawResult = drawResultRedisRepository.findById(String.valueOf(currentMemberId))
-                .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
+        DrawResult drawResult = getDrawResult(memberId, (long) requestDTO.concertId(), (long) requestDTO.seatId());
 
 //        FileUploadForAuth fileUpload = fileUploadForAuthRedisRepository.findById(requestDTO.userCode())
 //                .orElseThrow(() -> new Exception400("사진 인증 대기 상태가 아닙니다."));
@@ -140,6 +139,13 @@ public class QRCommandService {
                 seat.getSection() + "구역 " + seat.getNumber() + "번",
                 seat.getPrice()
         );
+    }
+
+    // DrawResult 조회
+    private DrawResult getDrawResult(Long memberId, Long concertId, Long seatId) {
+        String id = memberId + "-" + concertId + "-" + seatId;
+        return drawResultRedisRepository.findById(id)
+                .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
     }
 
     // QR 생성

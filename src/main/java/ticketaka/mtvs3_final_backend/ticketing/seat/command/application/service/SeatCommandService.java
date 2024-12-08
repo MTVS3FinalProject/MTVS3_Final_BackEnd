@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
-import ticketaka.mtvs3_final_backend.admin.command.application.service.AdminCommandService;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
@@ -49,7 +48,6 @@ public class SeatCommandService {
     private final SeatDrawingService seatDrawingService;
     private final TicketCommandService ticketCommandService;
     private final CoinHistoryService coinHistoryService;
-    private final AdminCommandService adminCommandService;
     private final MailCommandService mailCommandService;
 
     private final ConcertQueryRepository concertQueryRepository;
@@ -189,7 +187,7 @@ public class SeatCommandService {
         Seat seat = getSeat(seatId);
 
         // 좌석 결제 권한 확인
-        validateDrawResult(getDrawResult(member));
+        validateDrawResult(getDrawResult(memberId, concertId, seatId));
         // 좌석 결제
         calculateCoin(member, seat);
 
@@ -315,15 +313,16 @@ public class SeatCommandService {
     }
 
     // DrawResult 조회
-    private DrawResult getDrawResult(Member member) {
-        return drawResultRedisRepository.findById(String.valueOf(member.getId()))
+    private DrawResult getDrawResult(Long memberId, Long concertId, Long seatId) {
+        String id = memberId + "-" + concertId + "-" + seatId;
+        return drawResultRedisRepository.findById(id)
                 .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
     }
 
     // DrawResult 생성
-    private void newDrawResult(Long currentMemberId, Long concertId, Long seatId) {
+    private void newDrawResult(Long memberId, Long concertId, Long seatId) {
         DrawResult drawResult = DrawResult.builder()
-                .id(String.valueOf(currentMemberId))
+                .memberId(memberId)
                 .concertId(concertId)
                 .seatId(seatId)
                 .paymentStatus(PaymentStatus.PENDING)

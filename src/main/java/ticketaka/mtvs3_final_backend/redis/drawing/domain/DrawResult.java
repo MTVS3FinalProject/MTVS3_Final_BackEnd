@@ -12,6 +12,8 @@ public class DrawResult {
     @Id
     private String id;
     @Setter
+    private Long memberId;
+    @Setter
     private Long concertId;
     @Setter
     private Long seatId;
@@ -19,8 +21,9 @@ public class DrawResult {
     private PaymentStatus paymentStatus;
 
     @Builder
-    public DrawResult(String id, Long concertId, Long seatId, PaymentStatus paymentStatus) {
-        this.id = id;
+    public DrawResult(Long memberId, Long concertId, Long seatId, PaymentStatus paymentStatus) {
+        this.id = memberId + "-" + concertId + "-" + seatId;
+        this.memberId = memberId;
         this.concertId = concertId;
         this.seatId = seatId;
         this.paymentStatus = paymentStatus;
