@@ -19,8 +19,9 @@ public class StaffConcertCommandRequestDTO {
 
     // 구역 정보
     public record SeatSectionDTO(
-            String section,
             Integer floor,
+            String section,
+            Integer seatCount,
             Integer price,
             LocalDateTime drawingTime
     ) {
