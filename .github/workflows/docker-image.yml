@@ -105,7 +105,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ secrets.EB_APP_NAME }}
           environment_name: ${{ secrets.EB_ENV_NAME }}
-          version_label: todorian-docker-${{steps.current-time.outputs.formattedTime}}
+          version_label: ticketaka-${{steps.current-time.outputs.formattedTime}}
           region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy/deploy.zip
           wait_for_environment_recovery: 90
