@@ -116,19 +116,19 @@ public class MailCommandService {
     }
 
     private String generateSubject(String nickname, String concertName, String seatInfo, String mailCategory) {
-        return nickname + " 님이 " +
+        return nickname + " 님이 \n" +
                 concertName + " 의 " +
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
     }
 
     private String generatePuzzleResultContent(String nickname, String concertName, int rank, String titleName, String stickerName) {
-        return nickname + " 님이 " +
+        return nickname + " 님이 \n" +
                 concertName + " 의 " +
-                LocalDate.now() + " Puzzle 게임에서 " +
-                rank + " 등 보상으로 " +
+                LocalDate.now() + " Puzzle 게임에서 \n" +
+                rank + " 등 보상으로 \n" +
                 titleName + " 칭호와 " +
-                stickerName + " 스티커를 " +
+                stickerName + " 스티커를 \n" +
                 "획득하였습니다.";
     }
 
