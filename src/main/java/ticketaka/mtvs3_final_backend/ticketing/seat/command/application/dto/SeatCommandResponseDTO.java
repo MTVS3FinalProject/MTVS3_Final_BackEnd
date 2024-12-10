@@ -57,7 +57,8 @@ public class SeatCommandResponseDTO {
     // 좌석 추첨 알림
     public record createDrawingNotificationDTO(
             List<String> nicknameList,
-            int competitionRate
+            int competitionRate,
+            String seatInfo
     ) {
     }
 

@@ -118,14 +118,15 @@ public class SeatCommandService {
         // Concert 조회
         getReservingConcert(concertId);
         // Seat 조회
-        getSeat(seatId);
+        Seat seat = getSeat(seatId);
 
         // 추첨 시작 알림
         List<String> nicknameList = seatDrawingService.drawingNotification(concertId, seatId);
 
         return new SeatCommandResponseDTO.createDrawingNotificationDTO(
                 nicknameList,
-                getCompetitionRate(nicknameList.size())
+                getCompetitionRate(nicknameList.size()),
+                formatSeatInfo(seat)
         );
     }
 
