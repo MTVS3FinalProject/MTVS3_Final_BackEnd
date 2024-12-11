@@ -123,9 +123,9 @@ public class AdminCommandService {
         String imgUrl = fileCommandService.uploadImg(requestDTO.image(), requestDTO.image().getOriginalFilename());
 
         // 얼굴 인증
-        FaceAuthResponseDTO.identifyFaceDTO responseDTO = faceAuthService.getIdentifyFaceDTO(ticket.getMemberId(), imgUrl);
-
-        log.info("{}", responseDTO);
+//        FaceAuthResponseDTO.identifyFaceDTO responseDTO = faceAuthService.getIdentifyFaceDTO(ticket.getMemberId(), imgUrl);
+//
+//        log.info("{}", responseDTO);
 
         // 인증 결과 저장
         newTicketUsable(ticket.getId(), ticket.getMemberId());

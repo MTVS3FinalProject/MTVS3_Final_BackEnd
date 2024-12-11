@@ -72,14 +72,14 @@ public class Mtvs3FinalBackendApplication {
         return args -> {
             
             // Member 저장
-            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 1, 0, passwordEncoder);
-            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 2, 0, passwordEncoder);
-            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 1, 0, passwordEncoder);
-            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 1, 0, passwordEncoder);
-            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 2, 0, passwordEncoder);
-            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 3, 0, passwordEncoder);
-            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 4, 0, passwordEncoder);
-            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 2, 0, passwordEncoder);
+            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 1, 0, passwordEncoder, false);
+            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 2, 0, passwordEncoder, false);
+            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 1, 0, passwordEncoder, false);
+            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 1, 0, passwordEncoder, false);
+            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 2, 0, passwordEncoder, false);
+            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 3, 0, passwordEncoder, false);
+            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 4, 0, passwordEncoder, false);
+            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 2, 0, passwordEncoder, false);
             member1.setCoin(100000);
             member2.setCoin(100000);
             member3.setCoin(100000);
@@ -89,7 +89,9 @@ public class Mtvs3FinalBackendApplication {
             member7.setCoin(100000);
             member8.setCoin(100000);
             memberRepository.saveAll(Arrays.asList(
-                    member1, member2, member3, member4, member5, member6, member7, member8
+                    member1, member2, member3, member4, member5, member6, member7, member8,
+                    newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true),
+                    newMember("ADMIN", "admin1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 2, passwordEncoder, false)
             ));
             fileCommandRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
@@ -326,7 +328,7 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder) {
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder, boolean isHost) {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
@@ -336,6 +338,7 @@ public class Mtvs3FinalBackendApplication {
                 .avatarData(avatarData)
                 .authority(Authority.fromInt(authority))
                 .status(Status.ACTIVE)
+                .host(isHost)
                 .build();
     }
 
