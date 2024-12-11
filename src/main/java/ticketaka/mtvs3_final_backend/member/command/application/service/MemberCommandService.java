@@ -90,7 +90,7 @@ public class MemberCommandService {
 
         String content = generateReserveSMS(concertName, seatInfo, concertDateTime);
 
-        coolsmsService.sendOne(phoneNumber, content);
+//        coolsmsService.sendOne(phoneNumber, content);
     }
 
     // Address 생성
