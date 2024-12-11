@@ -25,6 +25,9 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAu
 import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadRedisRepository;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertCommandResponseDTO;
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.domain.model.Concert;
+import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.TicketStatus;
@@ -55,6 +58,7 @@ public class QRCommandService {
     private static final String QR_FOR_VERIFICATION = "https://ticketaka.shop/verification/guide";
     private static final String TICKET_QR_PREFIX = "TICKETAKA_";
     private static final String TICKET_QR = "https://ticketaka.shop/api/admin/ticket/verification";
+    private final ConcertQueryRepository concertQueryRepository;
 
     /*
         회원 가입 용 QR 생성
@@ -130,6 +134,9 @@ public class QRCommandService {
 //        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
 //        fileUploadRedisRepository.save(fileUpload);
 
+        Concert concert = concertQueryRepository.findById(drawResult.getConcertId())
+                .orElseThrow(() -> new Exception400("해당 공연을 찾을 수 없습니다."));
+
         Seat seat =  seatQueryRepository.findById(drawResult.getSeatId())
                 .orElseThrow(() -> new Exception400("해당 좌석을 찾을 수 없습니다."));
 
@@ -137,7 +144,15 @@ public class QRCommandService {
                 seat.getFloor(),
                 1,
                 seat.getSection() + "구역 " + seat.getNumber() + "번",
-                seat.getPrice()
+                seat.getPrice(),
+                concert.getId().intValue(),
+                concert.getName(),
+                new ConcertCommandResponseDTO.timeDTO(
+                        concert.getConcertDate().getYear(),
+                        concert.getConcertDate().getMonthValue(),
+                        concert.getConcertDate().getDayOfMonth(),
+                        concert.getConcertDate().toLocalTime().toString()
+                )
         );
     }
 

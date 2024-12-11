@@ -1,5 +1,7 @@
 package ticketaka.mtvs3_final_backend.file.command.application.dto;
 
+import ticketaka.mtvs3_final_backend.ticketing.concert.command.application.dto.ConcertCommandResponseDTO;
+
 public class QRResponseDTO {
 
     public record generateVerificationQRDTO(
@@ -12,7 +14,10 @@ public class QRResponseDTO {
             int floor,
             int seatNum,
             String seatInfo,
-            int seatPrice
+            int seatPrice,
+            int concertId,
+            String concertName,
+            ConcertCommandResponseDTO.timeDTO concertTime
     ) {
     }
 }
