@@ -141,13 +141,16 @@ public class SeatCommandService {
         // Concert 조회
         getReservingConcert(concertId);
         // Seat 조회
-        getSeat(seatId);
+        Seat seat = getSeat(seatId);
         // MemberSeat 조회
         MemberSeat memberSeat = getMemberSeat(memberId, concertId, seatId, MemberSeatStatus.RECEIVED);
 
         // 임시 결제 권한 획득
         newDrawResult(memberId, concertId, seatId);
+
+        seat.setSeatStatus(SeatStatus.RESERVED);
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
+        seatCommandRepository.save(seat);
         memberSeatCommandRepository.save(memberSeat);
     }
 
@@ -194,9 +197,6 @@ public class SeatCommandService {
 
         // Seat 예약
         reserveMemberSeat(member, concert, seat);
-
-        seat.setSeatStatus(SeatStatus.RESERVED);
-        seatCommandRepository.save(seat);
 
         String seatInfo = formatSeatInfo(seat);
 
