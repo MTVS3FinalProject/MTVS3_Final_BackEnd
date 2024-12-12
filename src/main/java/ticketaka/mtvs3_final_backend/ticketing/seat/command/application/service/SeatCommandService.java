@@ -403,8 +403,15 @@ public class SeatCommandService {
 
     // MemberSeat 예약 상태 전환
     private void reserveMemberSeat(Member member, Concert concert, Seat seat) {
-        MemberSeat memberSeat = getMemberSeat(member.getId(), concert.getId(), seat.getId(), MemberSeatStatus.WAITING_RESERVE);
+        MemberSeat memberSeat = getReserveMemberSeat(member.getId(), concert.getId(), seat.getId());
         memberSeat.setMemberSeatStatus(MemberSeatStatus.RESERVED);
         memberSeatCommandRepository.save(memberSeat);
+    }
+
+    // MemberSeat 조회
+    private MemberSeat getReserveMemberSeat(Long memberId, Long concertId, Long seatId) {
+        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(memberId, concertId, seatId, MemberSeatStatus.WAITING_RESERVE)
+                .orElse(memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(memberId, concertId, seatId, MemberSeatStatus.POSTPONE)
+                        .orElseThrow(() -> new Exception403("해당 좌석을 결제할 권한이 없습니다.")));
     }
 }
