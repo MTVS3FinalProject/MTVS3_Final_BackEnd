@@ -15,6 +15,7 @@ public class SeatQueryResponseDTO {
 
     // 좌석 정보 조회
     public record getSeatInfoDTO(
+            int seatId,
             int floor,
             String seatInfo,
             boolean isReceived,
