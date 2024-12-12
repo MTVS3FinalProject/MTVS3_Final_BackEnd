@@ -30,6 +30,8 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.repository.MemberSeatCommandRepository;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.model.PuzzleResult;
 import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.repository.PuzzleResultCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
@@ -68,6 +70,8 @@ public class ConcertCommandService {
     private final PuzzleResultCommandRepository puzzleResultCommandRepository;
     private final MailCommandService mailCommandService;
     private final MailPuzzleResultCommandRepository mailPuzzleResultCommandRepository;
+    private final MemberSeatQueryRepository memberSeatQueryRepository;
+    private final MemberSeatCommandRepository memberSeatCommandRepository;
 
     /*
         공연장 정보 조회
@@ -89,9 +93,9 @@ public class ConcertCommandService {
     /*
         공연장 입장
      */
-    public ConcertCommandResponseDTO.entranceConcertDTO entranceConcert(Long concertId, Long currentMemberId) {
+    public ConcertCommandResponseDTO.entranceConcertDTO entranceConcert(Long concertId, Long memberId) {
 
-        Member member = getMember(currentMemberId);
+        Member member = getMember(memberId);
         Concert concert = getConcert(concertId);
 
         checkMemberAge(member, concert);
@@ -102,14 +106,14 @@ public class ConcertCommandService {
         List<Seat> reservedSeatList = seatCommandRepository.findAllByConcertAndSeatStatus(concert, SeatStatus.RESERVED);
         // 내가 접수한 좌석 조회
         List<Seat> myReceptionSeatList = seatQueryRepository.findAllSeatsByMemberIdAndConcertIdAndMemberSeatStatus(
-                currentMemberId, concert.getId(), MemberSeatStatus.RECEIVED
+                memberId, concert.getId(), MemberSeatStatus.RECEIVED
         );
 
         List<ConcertCommandResponseDTO.SeatIdDTO> availableSeats = getSeatIdDTOList(availableSeatList, concert);
         List<ConcertCommandResponseDTO.SeatIdDTO> reservedSeats = getSeatIdDTOList(reservedSeatList, concert);
         List<ConcertCommandResponseDTO.SeatIdDTO> myReceptionSeats = getSeatIdDTOList(myReceptionSeatList, concert);
 
-        int remainingTickets = concert.getReceptionLimit() - myReceptionSeats.size();
+        int remainingTickets = concert.getReceptionLimit() - countMySeat(memberId, concertId);
 
         return new ConcertCommandResponseDTO.entranceConcertDTO(
                 concert.getId().intValue(),
@@ -120,6 +124,10 @@ public class ConcertCommandService {
                 myReceptionSeats,
                 remainingTickets
         );
+    }
+
+    private Integer countMySeat(Long memberId, Long concertId) {
+        return memberSeatCommandRepository.countByMemberIdAndConcertId(memberId, concertId);
     }
 
     /*

@@ -152,6 +152,9 @@ public class SeatCommandService {
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         seatCommandRepository.save(seat);
         memberSeatCommandRepository.save(memberSeat);
+
+        // 당첨되지 않은 다른 인원들 MemberSeatStatus - FAILED
+        memberSeatCommandRepository.updateStatusToFailedForOthers(memberId, concertId, seatId);
     }
 
     /*
@@ -236,7 +239,7 @@ public class SeatCommandService {
         Member member = getMember(memberId);
         Concert concert = getReservingConcert(concertId);
 
-        MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
+        MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.FAILED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         memberSeatCommandRepository.save(memberSeat);
