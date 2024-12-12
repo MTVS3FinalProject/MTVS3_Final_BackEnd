@@ -410,8 +410,8 @@ public class SeatCommandService {
 
     // MemberSeat 조회
     private MemberSeat getReserveMemberSeat(Long memberId, Long concertId, Long seatId) {
-        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(memberId, concertId, seatId, MemberSeatStatus.WAITING_RESERVE)
-                .orElse(memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(memberId, concertId, seatId, MemberSeatStatus.POSTPONE)
-                        .orElseThrow(() -> new Exception403("해당 좌석을 결제할 권한이 없습니다.")));
+        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatusIn(
+                        memberId, concertId, seatId, List.of(MemberSeatStatus.WAITING_RESERVE, MemberSeatStatus.POSTPONE))
+                .orElseThrow(() -> new Exception403("해당 좌석을 결제할 권한이 없습니다."));
     }
 }

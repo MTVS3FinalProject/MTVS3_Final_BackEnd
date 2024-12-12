@@ -46,7 +46,7 @@ public class MailCommandService {
         String subject = generateSubject(nickname, concertName, seatInfo, "좌석 접수를");
 
         // generate Content
-        String content = subject + "\n행운을 빕니다.";
+        String content = subject + " 행운을 빕니다.";
 
         saveMail(memberId, subject, content, MailCategory.RECEIPT);
     }
@@ -59,7 +59,7 @@ public class MailCommandService {
         String subject = generateSubject(nickname, concertName, seatInfo, "좌석 접수 취소를");
 
         // generate Content
-        String content = subject + "\n왜죠?";
+        String content = subject + " 왜죠?";
 
         saveMail(memberId, subject, content, MailCategory.CANCEL);
     }
@@ -72,7 +72,7 @@ public class MailCommandService {
         String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제 미루기를");
 
         // generate Content
-        String content = subject + "\n24시간 내 결제를 완료하지 않을 경우 결제 권한을 잃습니다.\n유의해 주시길 바랍니다.";
+        String content = subject + " 24시간 내 결제를 완료하지 않을 경우 결제 권한을 잃습니다. 유의해 주시길 바랍니다.";
 
         return saveMail(memberId, subject, content, MailCategory.POSTPONE);
     }
@@ -85,7 +85,7 @@ public class MailCommandService {
         String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제를 ");
 
         // generate Content
-        String content = subject + "\n축하드립니다.";
+        String content = subject + " 축하드립니다.";
 
         saveMail(memberId, subject, content, MailCategory.RESERVE);
     }
@@ -116,20 +116,17 @@ public class MailCommandService {
     }
 
     private String generateSubject(String nickname, String concertName, String seatInfo, String mailCategory) {
-        return nickname + " 님이 \n" +
+        return nickname + " 님이 " +
                 concertName + " 의 " +
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
     }
 
     private String generatePuzzleResultContent(String nickname, String concertName, int rank, String titleName, String stickerName) {
-        return nickname + " 님이 \n" +
+        return nickname + " 님이 " +
                 concertName + " 의 " +
-                LocalDate.now() + " Puzzle 게임에서 \n" +
-                rank + " 등 보상으로 \n" +
-                titleName + " 칭호와 " +
-                stickerName + " 스티커를 \n" +
-                "획득하였습니다.";
+                LocalDate.now() + " Puzzle 게임에서 " +
+                rank + " 등 보상으로 칭호와 스티커를 획득하였습니다.";
     }
 
     // 특정 우편 조회

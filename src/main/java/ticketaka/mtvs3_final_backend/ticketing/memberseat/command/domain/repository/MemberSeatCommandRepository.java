@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,6 @@ public interface MemberSeatCommandRepository extends JpaRepository<MemberSeat, L
     Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(Long memberId, Long concertId, Long seatId, MemberSeatStatus status);
 
     Optional<MemberSeat> findFirstByMemberIdAndConcertIdAndMemberSeatStatus(Long memberId, Long concertId, MemberSeatStatus memberSeatStatus);
+
+    Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatusIn(Long memberId, Long concertId, Long seatId, List<MemberSeatStatus> waitingReserve);
 }
