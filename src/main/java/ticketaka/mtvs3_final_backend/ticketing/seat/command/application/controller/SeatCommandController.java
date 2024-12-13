@@ -93,6 +93,18 @@ public class SeatCommandController {
     }
 
     /*
+        좌석 결제 취소
+     */
+    @DeleteMapping("/{concertId}/seats/{seatId}/cancel")
+    public ResponseEntity<?> cancelReserveSeat(@PathVariable("concertId") Long concertId,
+                                               @PathVariable("seatId") Long seatId) {
+
+        seatCommandService.cancelReserveSeat(getCurrentMemberId(), concertId, seatId);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    /*
         좌석 추첨 결과 - 치트
      */
     @PostMapping("/{concertId}/draw-cheat")
