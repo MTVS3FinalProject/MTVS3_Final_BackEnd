@@ -10,7 +10,9 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
+import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinHistory;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
+import ticketaka.mtvs3_final_backend.coin.query.repository.CoinHistoryQueryRepository;
 import ticketaka.mtvs3_final_backend.mail.command.application.service.MailCommandService;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
@@ -26,6 +28,7 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
@@ -58,6 +61,8 @@ public class SeatCommandService {
 
     private final DrawResultRedisRepository drawResultRedisRepository;
     private final SeatPostponeRedisRepository seatPostponeRedisRepository;
+    private final MemberSeatQueryRepository memberSeatQueryRepository;
+    private final CoinHistoryQueryRepository coinHistoryQueryRepository;
 
     /*
         좌석 접수
@@ -229,6 +234,24 @@ public class SeatCommandService {
      */
     public void cancelReserveSeat(Long memberId, Long concertId, Long seatId) {
 
+        Member member = getMember(memberId);
+        Concert concert = getReservingConcert(concertId);
+        Seat seat = getSeat(seatId);
+
+        MemberSeat memberSeat = memberSeatQueryRepository.findByMemberIdAndConcertIdAndSeatId(memberId, concertId, seatId)
+                .orElseThrow(() -> new Exception403("해당 좌석에 대한 권한이 없습니다."));
+
+        validateReserveSeat(memberSeat.getMemberSeatStatus());
+
+        // 취소 처리
+        seat.setSeatStatus(SeatStatus.AVAILABLE);
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.CANCEL_RESERVE);
+
+        seatCommandRepository.save(seat);
+        memberSeatCommandRepository.save(memberSeat);
+
+        // Coin 환불
+        refundReserveSeat(member, seatId);
     }
 
     /*
@@ -377,6 +400,15 @@ public class SeatCommandService {
         return (int) Math.round(competitionRate);
     }
 
+    // MemberSeatStatus 유효성 검사
+    private void validateReserveSeat(MemberSeatStatus memberSeatStatus) {
+        switch (memberSeatStatus) {
+            case FAILED -> throw new Exception400("추첨에 떨어진 좌석입니다.");
+            case RECEIVED -> throw new Exception400("결제 권한을 얻지 못한 좌석입니다.");
+            case CANCEL_RESERVE -> throw new Exception400("예약을 취소한 좌석입니다.");
+        }
+    }
+
     // DrawResult 유효성 검사
     private void validateDrawResult(DrawResult drawResult) {
         switch (drawResult.getPaymentStatus()) {
@@ -399,7 +431,28 @@ public class SeatCommandService {
                 member.getId(),
                 AcquisitionType.SEAT_RESERVATION,
                 seat.getId(),
-                CoinUsageType.USAGE
+                CoinUsageType.USAGE,
+                seat.getPrice()
+        ));
+    }
+
+    // 예약 좌석 환불
+    private void refundReserveSeat(Member member, Long seatId) {
+
+        CoinHistory coinHistory = coinHistoryQueryRepository.findByMemberIdAndAcquisitionTypeAndCoinAcquisitionId(
+                member.getId(), AcquisitionType.SEAT_RESERVATION, seatId
+        ).orElseThrow(() -> new Exception400("해당 결제 내역을 찾을 수 없습니다."));
+
+        Integer seatPrice = coinHistory.getAmount();
+        member.setCoin(member.getCoin() + seatPrice);
+        memberRepository.save(member);
+
+        coinHistoryService.saveCoinHistory(new CoinHistoryRequestDTO.saveCoinHistoryDTO(
+                member.getId(),
+                AcquisitionType.SEAT_RESERVATION,
+                seatId,
+                CoinUsageType.CANCEL,
+                seatPrice
         ));
     }
 
