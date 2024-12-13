@@ -9,7 +9,8 @@ public class CoinHistoryRequestDTO {
             Long memberId,
             AcquisitionType acquisitionType,
             Long coinAcquisitionId,
-            CoinUsageType coinUsageType
+            CoinUsageType coinUsageType,
+            Integer amount
     ) {
     }
 }

@@ -27,12 +27,15 @@ public class CoinHistory extends BaseTimeEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private CoinUsageType coinUsageType;
+    @Column
+    private Integer amount;
 
     @Builder
-    public CoinHistory(Long memberId, AcquisitionType acquisitionType, Long coinAcquisitionId, CoinUsageType coinUsageType) {
+    public CoinHistory(Long memberId, AcquisitionType acquisitionType, Long coinAcquisitionId, CoinUsageType coinUsageType, Integer amount) {
         this.memberId = memberId;
         this.acquisitionType = acquisitionType;
         this.coinAcquisitionId = coinAcquisitionId;
         this.coinUsageType = coinUsageType;
+        this.amount = amount;
     }
 }
