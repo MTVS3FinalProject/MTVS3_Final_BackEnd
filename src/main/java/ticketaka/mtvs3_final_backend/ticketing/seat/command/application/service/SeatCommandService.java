@@ -38,7 +38,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.servic
 import java.util.List;
 
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class SeatCommandService {
@@ -62,7 +62,6 @@ public class SeatCommandService {
     /*
         좌석 접수
      */
-    @Transactional
     public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -87,7 +86,6 @@ public class SeatCommandService {
     /*
         좌석 접수 취소
      */
-    @Transactional
     public SeatCommandResponseDTO.cancelReceptionSeatDTO cancelReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -112,7 +110,6 @@ public class SeatCommandService {
     /*
         추첨 시작 알림
      */
-    @Transactional
     public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long memberId, Long concertId, Long seatId) {
 
         // Concert 조회
@@ -133,7 +130,6 @@ public class SeatCommandService {
     /*
         좌석 추첨 결과 반영
      */
-    @Transactional
     public void processDrawResult(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -160,7 +156,6 @@ public class SeatCommandService {
     /*
         좌석 결제 연기
      */
-    @Transactional
     public void postponeSeat(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -183,7 +178,6 @@ public class SeatCommandService {
     /*
         좌석 결제
      */
-    @Transactional
     public SeatCommandResponseDTO.reserveSeatDTO reserveSeat(Long memberId, Long concertId, Long seatId) {
 
         // Member 확인
@@ -240,7 +234,6 @@ public class SeatCommandService {
     /*
         추첨 결과 치트
      */
-    @Transactional
     public void cheatDrawResult(Long memberId, Long concertId) {
 
         Member member = getMember(memberId);
@@ -257,7 +250,6 @@ public class SeatCommandService {
     /*
         좌석 결제 - 치트
      */
-    @Transactional
     public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long memberId, Long concertId) {
 
         // Member 확인
