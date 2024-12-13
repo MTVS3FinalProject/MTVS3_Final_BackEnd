@@ -231,6 +231,13 @@ public class SeatCommandService {
     }
 
     /*
+        좌석 결제 취소
+     */
+    public void cancelReserveSeat(Long memberId, Long concertId, Long seatId) {
+
+    }
+
+    /*
         추첨 결과 치트
      */
     @Transactional
