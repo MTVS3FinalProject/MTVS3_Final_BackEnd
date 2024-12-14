@@ -131,9 +131,9 @@ public class Mtvs3FinalBackendApplication {
 
                     newSeat(1, "C1", "11", 19999, LocalDateTime.of(2024, 10, 22, 21, 45), concert01, SeatStatus.AVAILABLE),
                     newSeat(1, "C2", "12", 19999, LocalDateTime.of(2024, 10, 22, 22, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "C3", "13", 19999, LocalDateTime.of(2024, 10, 22, 22, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "C3", "13", 19999, LocalDateTime.of(2024, 10, 22, 22, 15), concert01, SeatStatus.RESERVED),
                     newSeat(1, "C4", "14", 19999, LocalDateTime.of(2024, 10, 22, 22, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "C5", "15", 19999, LocalDateTime.of(2024, 10, 22, 22, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "C5", "15", 19999, LocalDateTime.of(2024, 10, 22, 22, 45), concert01, SeatStatus.RESERVED),
 
                     newSeat(1, "D1", "16", 19999, LocalDateTime.of(2024, 10, 22, 23, 0), concert01, SeatStatus.AVAILABLE),
                     newSeat(1, "D2", "17", 19999, LocalDateTime.of(2024, 10, 22, 23, 15), concert01, SeatStatus.AVAILABLE),
@@ -201,7 +201,8 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 할당
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(2L, 1L, 13L, "InukTicket", 11110)
+                    newTicket(2L, 1L, 13L, "InukTicket", 11110),
+                    newTicket(5L, 1L, 15L, "TestTicket", 11110)
             ));
 
             // Title 저장
@@ -272,7 +273,7 @@ public class Mtvs3FinalBackendApplication {
                     newSticker(concert01.getId(), "Cheers Together", "팬들과의 축배를 의미하는 건배 스티커", "Collection", "Common")
             ));
             fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.STICKER, 1L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_321731386008486?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311734072715953", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 2L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_321731995947702", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 3L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_331731386036518?alt=media", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 4L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_341731386055244?alt=media", FilePurpose.CUSTOM),
