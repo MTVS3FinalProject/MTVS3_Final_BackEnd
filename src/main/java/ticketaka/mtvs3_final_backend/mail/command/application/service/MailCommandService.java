@@ -13,6 +13,7 @@ import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandRes
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
+import ticketaka.mtvs3_final_backend.mail.query.repository.MailQueryRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.domain.SeatPostpone;
 import ticketaka.mtvs3_final_backend.redis.seat.postpone.repository.SeatPostponeRedisRepository;
@@ -37,13 +38,17 @@ public class MailCommandService {
     private final TitleQueryRepository titleQueryRepository;
     private final StickerQueryRepository stickerQueryRepository;
     private final FileQueryRepository fileQueryRepository;
+    private final MailQueryRepository mailQueryRepository;
 
     // 좌석 접수 Mail
     @Transactional
     public void mailForSeatReception(Long memberId, String nickname, String concertName, String seatInfo) {
 
+        // get Mail index
+        Integer mailIndex = mailQueryRepository.countAllByMemberId(memberId);
+
         // generate Subject
-        String subject = generateSubject(nickname, concertName, seatInfo, "좌석 접수를");
+        String subject = generateSubject(mailIndex, nickname, concertName, seatInfo, "좌석 접수를");
 
         // generate Content
         String content = subject + " 행운을 빕니다.";
@@ -55,8 +60,11 @@ public class MailCommandService {
     @Transactional
     public void mailForCancelSeatReception(Long memberId, String nickname, String concertName, String seatInfo) {
 
+        // get Mail index
+        Integer mailIndex = mailQueryRepository.countAllByMemberId(memberId);
+
         // generate Subject
-        String subject = generateSubject(nickname, concertName, seatInfo, "좌석 접수 취소를");
+        String subject = generateSubject(mailIndex, nickname, concertName, seatInfo, "좌석 접수 취소를");
 
         // generate Content
         String content = subject + " 왜죠?";
@@ -68,8 +76,11 @@ public class MailCommandService {
     @Transactional
     public Mail mailForPostponeSeatReservation(Long memberId, String nickname, String concertName, String seatInfo) {
 
+        // get Mail index
+        Integer mailIndex = mailQueryRepository.countAllByMemberId(memberId);
+
         // generate Subject
-        String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제 미루기를");
+        String subject = generateSubject(mailIndex, nickname, concertName, seatInfo, "좌석 결제 미루기를");
 
         // generate Content
         String content = subject + " 24시간 내 결제를 완료하지 않을 경우 결제 권한을 잃습니다. 유의해 주시길 바랍니다.";
@@ -81,8 +92,11 @@ public class MailCommandService {
     @Transactional
     public void mailForSeatReservation(Long memberId, String nickname, String concertName, String seatInfo) {
 
+        // get Mail index
+        Integer mailIndex = mailQueryRepository.countAllByMemberId(memberId);
+
         // generate Subject
-        String subject = generateSubject(nickname, concertName, seatInfo, "좌석 결제를 ");
+        String subject = generateSubject(mailIndex, nickname, concertName, seatInfo, "좌석 결제를 ");
 
         // generate Content
         String content = subject + " 축하드립니다.";
@@ -94,8 +108,11 @@ public class MailCommandService {
     @Transactional
     public Mail mailForPuzzleResult(Long memberId, String nickname, String concertName, int rank, String titleName, String stickerName) {
 
+        // get Mail index
+        Integer mailIndex = mailQueryRepository.countAllByMemberId(memberId);
+
         // generate PuzzleResultSubject
-        String subject = "퍼즐 이벤트가 종료되었습니다. 기여도 순위와 보상을 확인해보세요.";
+        String subject = mailIndex +  ". 퍼즐 이벤트가 종료되었습니다. 기여도 순위와 보상을 확인해보세요.";
 
         // generate PuzzleResultSubject
         String content = generatePuzzleResultContent(nickname, concertName, rank, titleName, stickerName);
@@ -115,8 +132,9 @@ public class MailCommandService {
         return mail;
     }
 
-    private String generateSubject(String nickname, String concertName, String seatInfo, String mailCategory) {
-        return nickname + " 님이 " +
+    private String generateSubject(Integer mailIndex, String nickname, String concertName, String seatInfo, String mailCategory) {
+        return (mailIndex + 1) + ". " +
+                nickname + " 님이 " +
                 concertName + " 의 " +
                 seatInfo + " " +
                 mailCategory + " 완료하였습니다.";
