@@ -79,20 +79,20 @@ public class FaceAuthService {
             throw new Exception401("회원 인증에 실패하였습니다.");
         }
 
-//        FaceAuthResponseDTO.identifyFaceDTO responseDTO = getIdentifyFaceDTO(currentMemberId, fileUpload.getImgUrl());
-//
-//        log.info("{}", responseDTO);
-//
-//        // 결과 확인
-//        if (responseDTO.match_result() == 0) {
-//
-//            fileUpload.setUploadStatus(UploadStatus.FAIL);
-//            fileCommandService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
-//
-//            throw new Exception401("얼굴 인식에 실패하였습니다.");
-//        }
-//
-//        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
+        FaceAuthResponseDTO.identifyFaceDTO responseDTO = getIdentifyFaceDTO(currentMemberId, fileUpload.getImgUrl());
+
+        log.info("{}", responseDTO);
+
+        // 결과 확인
+        if (responseDTO.match_result() == 0) {
+
+            fileUpload.setUploadStatus(UploadStatus.FAIL);
+            fileCommandService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
+
+            throw new Exception401("얼굴 인식에 실패하였습니다.");
+        }
+
+        fileUpload.setUploadStatus(UploadStatus.SUCCESS);
 
         // File 생성
         fileCommandService.newFile(RelationType.MEMBER, currentMemberId, fileUpload.getImgUrl(), FilePurpose.VERIFICATION);
