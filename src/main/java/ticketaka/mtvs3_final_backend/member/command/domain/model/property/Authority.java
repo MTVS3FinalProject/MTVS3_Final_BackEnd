@@ -7,6 +7,7 @@ public enum Authority {
         return switch (authority) {
             case 0 -> FAN;
             case 1 -> MANAGER;
+            case 2 -> ADMIN;
             default -> GUEST;
         };
     }

@@ -72,14 +72,14 @@ public class Mtvs3FinalBackendApplication {
         return args -> {
             
             // Member 저장
-            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 1, 0, passwordEncoder);
-            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 2, 0, passwordEncoder);
-            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 1, 0, passwordEncoder);
-            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 1, 0, passwordEncoder);
-            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 2, 0, passwordEncoder);
-            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 3, 0, passwordEncoder);
-            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 4, 0, passwordEncoder);
-            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 2, 0, passwordEncoder);
+            Member member1 = newMember("Dorian", "test@test.com", "test1234", "1234", LocalDate.of(1996, 3, 15), 1, 0, passwordEncoder, false);
+            Member member2 = newMember("INUK", "inuk@test.com", "test1234", "1234", LocalDate.of(1998, 9, 5), 2, 0, passwordEncoder, false);
+            Member member3 = newMember("kjm", "wjdals4433@naver.com", "test1234", "1234", LocalDate.of(1998, 3, 19), 1, 0, passwordEncoder, false);
+            Member member4 = newMember("lee", "lee@test.com", "test1234", "1234", LocalDate.of(1996, 10, 12), 1, 0, passwordEncoder, false);
+            Member member5 = newMember("guswns", "whgdk0513@gmail.com", "test1234", "1234", LocalDate.of(1997, 5, 13), 2, 0, passwordEncoder, false);
+            Member member6 = newMember("g0r0kke", "g0r0kke@test.com", "test1234", "1234", LocalDate.of(2003, 2, 10), 3, 0, passwordEncoder, false);
+            Member member7 = newMember("0314", "sdco3062@naver.com", "test1234", "1234", LocalDate.of(2000, 11, 6), 4, 0, passwordEncoder, false);
+            Member member8 = newMember("슈가룬", "may@naver.com", "test1234", "1234", LocalDate.of(1993, 4, 21), 2, 0, passwordEncoder, false);
             member1.setCoin(100000);
             member2.setCoin(100000);
             member3.setCoin(100000);
@@ -89,7 +89,10 @@ public class Mtvs3FinalBackendApplication {
             member7.setCoin(100000);
             member8.setCoin(100000);
             memberRepository.saveAll(Arrays.asList(
-                    member1, member2, member3, member4, member5, member6, member7, member8
+                    member1, member2, member3, member4, member5, member6, member7, member8,
+                    newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true),
+                    newMember("ADMIN", "admin1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 2, passwordEncoder, false),
+                    newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true)
             ));
             fileCommandRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
@@ -115,84 +118,82 @@ public class Mtvs3FinalBackendApplication {
             
             // Seat 저장
             seatCommandRepository.saveAll(Arrays.asList(
-                    newSeat(1, "A", "1", 19999, LocalDateTime.of(2024, 10, 22, 19, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "A", "2", 19999, LocalDateTime.of(2024, 10, 22, 19, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "A", "3", 19999, LocalDateTime.of(2024, 10, 22, 19, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "A", "4", 19999, LocalDateTime.of(2024, 10, 22, 20, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "A", "5", 19999, LocalDateTime.of(2024, 10, 22, 20, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "1", 19999, LocalDateTime.of(2024, 10, 22, 19, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "2", 19999, LocalDateTime.of(2024, 10, 22, 19, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "3", 19999, LocalDateTime.of(2024, 10, 22, 19, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "4", 19999, LocalDateTime.of(2024, 10, 22, 20, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "5", 19999, LocalDateTime.of(2024, 10, 22, 20, 15), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "B", "1", 19999, LocalDateTime.of(2024, 10, 22, 20, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "B", "2", 19999, LocalDateTime.of(2024, 10, 22, 20, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "B", "3", 19999, LocalDateTime.of(2024, 10, 22, 21, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "B", "4", 19999, LocalDateTime.of(2024, 10, 22, 21, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "B", "5", 19999, LocalDateTime.of(2024, 10, 22, 21, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "6", 19999, LocalDateTime.of(2024, 10, 22, 20, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "7", 19999, LocalDateTime.of(2024, 10, 22, 20, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "8", 19999, LocalDateTime.of(2024, 10, 22, 21, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "9", 19999, LocalDateTime.of(2024, 10, 22, 21, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "10", 19999, LocalDateTime.of(2024, 10, 22, 21, 30), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "C", "1", 19999, LocalDateTime.of(2024, 10, 22, 21, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "C", "2", 19999, LocalDateTime.of(2024, 10, 22, 22, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "C", "3", 19999, LocalDateTime.of(2024, 10, 22, 22, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "C", "4", 19999, LocalDateTime.of(2024, 10, 22, 22, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "C", "5", 19999, LocalDateTime.of(2024, 10, 22, 22, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "11", 19999, LocalDateTime.of(2024, 10, 22, 21, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "12", 19999, LocalDateTime.of(2024, 10, 22, 22, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "13", 19999, LocalDateTime.of(2024, 10, 22, 22, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "14", 19999, LocalDateTime.of(2024, 10, 22, 22, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "15", 19999, LocalDateTime.of(2024, 10, 22, 22, 45), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "D", "1", 19999, LocalDateTime.of(2024, 10, 22, 23, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "D", "2", 19999, LocalDateTime.of(2024, 10, 22, 23, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "D", "3", 19999, LocalDateTime.of(2024, 10, 22, 23, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "D", "4", 19999, LocalDateTime.of(2024, 10, 22, 23, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "D", "5", 19999, LocalDateTime.of(2024, 10, 23, 0, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "D", "6", 19999, LocalDateTime.of(2024, 10, 23, 0, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "16", 19999, LocalDateTime.of(2024, 10, 22, 23, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "17", 19999, LocalDateTime.of(2024, 10, 22, 23, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "18", 19999, LocalDateTime.of(2024, 10, 22, 23, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "19", 19999, LocalDateTime.of(2024, 10, 22, 23, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "20", 19999, LocalDateTime.of(2024, 10, 23, 0, 0), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "E", "1", 19999, LocalDateTime.of(2024, 10, 23, 0, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "E", "2", 19999, LocalDateTime.of(2024, 10, 23, 0, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "E", "3", 19999, LocalDateTime.of(2024, 10, 23, 1, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "E", "4", 19999, LocalDateTime.of(2024, 10, 23, 1, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "E", "5", 19999, LocalDateTime.of(2024, 10, 23, 1, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "E", "6", 19999, LocalDateTime.of(2024, 10, 23, 1, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "21", 19999, LocalDateTime.of(2024, 10, 23, 0, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "22", 19999, LocalDateTime.of(2024, 10, 23, 0, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "23", 19999, LocalDateTime.of(2024, 10, 23, 1, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "24", 19999, LocalDateTime.of(2024, 10, 23, 1, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "25", 19999, LocalDateTime.of(2024, 10, 23, 1, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "26", 19999, LocalDateTime.of(2024, 10, 23, 1, 45), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "F", "1", 19999, LocalDateTime.of(2024, 10, 23, 2, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "F", "2", 19999, LocalDateTime.of(2024, 10, 23, 2, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "F", "3", 19999, LocalDateTime.of(2024, 10, 23, 2, 30), concert01, SeatStatus.RESERVED),
-                    newSeat(1, "F", "4", 19999, LocalDateTime.of(2024, 10, 23, 2, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "F", "5", 19999, LocalDateTime.of(2024, 10, 23, 3, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "F", "6", 19999, LocalDateTime.of(2024, 10, 23, 3, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "27", 19999, LocalDateTime.of(2024, 10, 23, 2, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "28", 19999, LocalDateTime.of(2024, 10, 23, 2, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "29", 19999, LocalDateTime.of(2024, 10, 23, 2, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "30", 19999, LocalDateTime.of(2024, 10, 23, 2, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "31", 19999, LocalDateTime.of(2024, 10, 23, 3, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "32", 19999, LocalDateTime.of(2024, 10, 23, 3, 15), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "G", "1", 19999, LocalDateTime.of(2024, 10, 23, 3, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "G", "2", 19999, LocalDateTime.of(2024, 10, 23, 3, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "G", "3", 19999, LocalDateTime.of(2024, 10, 23, 4, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "G", "4", 19999, LocalDateTime.of(2024, 10, 23, 4, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "G", "5", 19999, LocalDateTime.of(2024, 10, 23, 4, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "G", "6", 19999, LocalDateTime.of(2024, 10, 23, 4, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "33", 19999, LocalDateTime.of(2024, 10, 23, 3, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "34", 19999, LocalDateTime.of(2024, 10, 23, 3, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "35", 19999, LocalDateTime.of(2024, 10, 23, 4, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "36", 19999, LocalDateTime.of(2024, 10, 23, 4, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "37", 19999, LocalDateTime.of(2024, 10, 23, 4, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "38", 19999, LocalDateTime.of(2024, 10, 23, 4, 45), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "H", "1", 19999, LocalDateTime.of(2024, 10, 23, 5, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "H", "2", 19999, LocalDateTime.of(2024, 10, 23, 5, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "H", "3", 19999, LocalDateTime.of(2024, 10, 23, 5, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "H", "4", 19999, LocalDateTime.of(2024, 10, 23, 5, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "H", "5", 19999, LocalDateTime.of(2024, 10, 23, 6, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "H", "6", 19999, LocalDateTime.of(2024, 10, 23, 6, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "H", "7", 19999, LocalDateTime.of(2024, 10, 23, 6, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "39", 19999, LocalDateTime.of(2024, 10, 23, 5, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "40", 19999, LocalDateTime.of(2024, 10, 23, 5, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "41", 19999, LocalDateTime.of(2024, 10, 23, 5, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "42", 19999, LocalDateTime.of(2024, 10, 23, 5, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "43", 19999, LocalDateTime.of(2024, 10, 23, 6, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "44", 19999, LocalDateTime.of(2024, 10, 23, 6, 15), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "I", "1", 19999, LocalDateTime.of(2024, 10, 23, 6, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "I", "2", 19999, LocalDateTime.of(2024, 10, 23, 7, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "I", "3", 19999, LocalDateTime.of(2024, 10, 23, 7, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "I", "4", 19999, LocalDateTime.of(2024, 10, 23, 7, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "I", "5", 19999, LocalDateTime.of(2024, 10, 23, 7, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "I", "6", 19999, LocalDateTime.of(2024, 10, 23, 8, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "I", "7", 19999, LocalDateTime.of(2024, 10, 23, 8, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "45", 19999, LocalDateTime.of(2024, 10, 23, 6, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "46", 19999, LocalDateTime.of(2024, 10, 23, 7, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "47", 19999, LocalDateTime.of(2024, 10, 23, 7, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "48", 19999, LocalDateTime.of(2024, 10, 23, 7, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "49", 19999, LocalDateTime.of(2024, 10, 23, 7, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "50", 19999, LocalDateTime.of(2024, 10, 23, 8, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "51", 19999, LocalDateTime.of(2024, 10, 23, 8, 15), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "J", "1", 19999, LocalDateTime.of(2024, 10, 23, 6, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "J", "2", 19999, LocalDateTime.of(2024, 10, 23, 7, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "J", "3", 19999, LocalDateTime.of(2024, 10, 23, 7, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "J", "4", 19999, LocalDateTime.of(2024, 10, 23, 7, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "J", "5", 19999, LocalDateTime.of(2024, 10, 23, 7, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "J", "6", 19999, LocalDateTime.of(2024, 10, 23, 8, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "J", "7", 19999, LocalDateTime.of(2024, 10, 23, 8, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "52", 19999, LocalDateTime.of(2024, 10, 23, 6, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "53", 19999, LocalDateTime.of(2024, 10, 23, 7, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "54", 19999, LocalDateTime.of(2024, 10, 23, 7, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "55", 19999, LocalDateTime.of(2024, 10, 23, 7, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "56", 19999, LocalDateTime.of(2024, 10, 23, 7, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "57", 19999, LocalDateTime.of(2024, 10, 23, 8, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "58", 19999, LocalDateTime.of(2024, 10, 23, 8, 15), concert01, SeatStatus.AVAILABLE),
 
-                    newSeat(1, "K", "1", 19999, LocalDateTime.of(2024, 10, 23, 6, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "K", "2", 19999, LocalDateTime.of(2024, 10, 23, 7, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "K", "3", 19999, LocalDateTime.of(2024, 10, 23, 7, 15), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "K", "4", 19999, LocalDateTime.of(2024, 10, 23, 7, 30), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "K", "5", 19999, LocalDateTime.of(2024, 10, 23, 7, 45), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "K", "6", 19999, LocalDateTime.of(2024, 10, 23, 8, 0), concert01, SeatStatus.AVAILABLE),
-                    newSeat(1, "K", "7", 19999, LocalDateTime.of(2024, 10, 23, 8, 15), concert01, SeatStatus.AVAILABLE)
-            ));
+                    newSeat(1, "B4", "59", 19999, LocalDateTime.of(2024, 10, 23, 6, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "60", 19999, LocalDateTime.of(2024, 10, 23, 7, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "61", 19999, LocalDateTime.of(2024, 10, 23, 7, 15), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "62", 19999, LocalDateTime.of(2024, 10, 23, 7, 30), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "63", 19999, LocalDateTime.of(2024, 10, 23, 7, 45), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "64", 19999, LocalDateTime.of(2024, 10, 23, 8, 0), concert01, SeatStatus.AVAILABLE),
+                    newSeat(1, "B4", "65", 19999, LocalDateTime.of(2024, 10, 23, 8, 15), concert01, SeatStatus.AVAILABLE)
+                    ));
 
             // Ticket 기본 이미지 저장
             fileCommandRepository.save(
@@ -201,7 +202,8 @@ public class Mtvs3FinalBackendApplication {
 
             // Ticket 할당
             ticketCommandRepository.saveAll(Arrays.asList(
-                    newTicket(2L, 1L, 13L, "InukTicket", 11110)
+                    newTicket(2L, 1L, 13L, "InukTicket", 11110),
+                    newTicket(5L, 1L, 15L, "TestTicket", 11110)
             ));
 
             // Title 저장
@@ -272,7 +274,7 @@ public class Mtvs3FinalBackendApplication {
                     newSticker(concert01.getId(), "Cheers Together", "팬들과의 축배를 의미하는 건배 스티커", "Collection", "Common")
             ));
             fileCommandRepository.saveAll(Arrays.asList(
-                    newFile(RelationType.STICKER, 1L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_321731386008486?alt=media", FilePurpose.CUSTOM),
+                    newFile(RelationType.STICKER, 1L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_311734072715953", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 2L, "https://ticketaka-demo.s3.ap-northeast-2.amazonaws.com/STICKER_321731995947702", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 3L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_331731386036518?alt=media", FilePurpose.CUSTOM),
                     newFile(RelationType.STICKER, 4L, "https://firebasestorage.googleapis.com/v0/b/mtvs3-final-storage.appspot.com/o/STICKER_341731386055244?alt=media", FilePurpose.CUSTOM),
@@ -328,7 +330,7 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder) {
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder, boolean isHost) {
         return Member.builder()
                 .nickname(nickname)
                 .email(email)
@@ -338,6 +340,7 @@ public class Mtvs3FinalBackendApplication {
                 .avatarData(avatarData)
                 .authority(Authority.fromInt(authority))
                 .status(Status.ACTIVE)
+                .host(isHost)
                 .build();
     }
 

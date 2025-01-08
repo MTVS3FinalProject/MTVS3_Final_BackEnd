@@ -44,7 +44,7 @@ public class AdminTicketController {
     /*
         티켓 신원 인증
      */
-    @PostMapping("/admin/ticket/member/verification")
+    @PostMapping("/face/ticket/member/verification")
     public ResponseEntity<?> verifyTicketOwner(@ModelAttribute AdminVerificationResponseDTO.verifyTicketOwnerDTO requestDTO) {
 
         adminCommandService.verifyTicketOwner(requestDTO);

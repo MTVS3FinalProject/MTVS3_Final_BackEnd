@@ -10,4 +10,6 @@ import java.util.List;
 public interface MailQueryRepository extends JpaRepository<Mail, Long> {
 
     List<Mail> findAllByMemberId(Long memberId);
+
+    Integer countAllByMemberId(Long memberId);
 }

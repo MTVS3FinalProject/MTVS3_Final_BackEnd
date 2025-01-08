@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
+import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
 import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
@@ -15,6 +17,8 @@ import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTitleDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.domain.TicketUsable;
+import ticketaka.mtvs3_final_backend.redis.ticket.usable.repository.TicketUsableRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
@@ -26,6 +30,7 @@ import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -39,7 +44,8 @@ public class MemberQueryService {
     private final AddressRepository addressRepository;
     private final TitleQueryRepository titleQueryRepository;
     private final StickerQueryRepository stickerQueryRepository;
-    
+    private final TicketUsableRedisRepository ticketUsableRedisRepository;
+
     /*
         최근 배송지 조회
      */
@@ -90,6 +96,19 @@ public class MemberQueryService {
                 memberStickerDTOList,
                 memberTicketDTOList
         );
+    }
+
+    /*
+        티켓 사용 권한 확인
+     */
+    public void checkTicketVerification(Long memberId, Long ticketId) {
+
+        TicketUsable ticketUsable = ticketUsableRedisRepository.findById(ticketId.toString())
+                .orElseThrow(() -> new Exception403("해당 티켓을 사용할 권한이 없습니다."));
+
+        if (!ticketUsable.getMemberId().equals(memberId)) {
+            throw new Exception400("해당 티켓의 소유자가 아닙니다.");
+        }
     }
 
     // Member 조회

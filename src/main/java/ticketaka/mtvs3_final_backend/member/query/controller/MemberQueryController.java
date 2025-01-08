@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ticketaka.mtvs3_final_backend._core.utils.ApiUtils;
@@ -43,5 +44,16 @@ public class MemberQueryController {
         MemberQueryResponseDTO.getMemberInventoryDTO responseDTO = memberQueryService.getMemberInventory(getCurrentMemberId());
 
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
+    }
+
+    /*
+        티켓 사용 권한 확인
+     */
+    @GetMapping("/tickets/{ticketId}/verification")
+    public ResponseEntity<?> checkTicketVerification(@PathVariable("ticketId") Long ticketId) {
+
+        memberQueryService.checkTicketVerification(getCurrentMemberId(), ticketId);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 }

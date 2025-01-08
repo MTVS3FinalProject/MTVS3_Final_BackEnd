@@ -42,6 +42,14 @@ public class SecurityConfig {
             "/h2-console/**"  // h2-console 경로 추가
     };
 
+    private static final String[] ADMIN_LIST = {
+            "/api/admin/**"
+    };
+
+    private static final String[] STAFF_LIST = {
+            "/api/staff/**"
+    };
+
     private static final String[] BAN_LIST = {
             "/vendor/**"
     };
@@ -69,6 +77,8 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(ADMIN_LIST).hasAuthority("ADMIN")
+                        .requestMatchers(STAFF_LIST).hasAuthority("STAFF")
                         .requestMatchers(BAN_LIST).denyAll()
                         .anyRequest().authenticated())
                 .headers(AbstractHttpConfigurer::disable  // H2 콘솔에서 프레임 사용 허용

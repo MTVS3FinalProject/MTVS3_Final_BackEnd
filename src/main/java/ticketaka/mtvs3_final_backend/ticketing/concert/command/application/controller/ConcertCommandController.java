@@ -16,7 +16,7 @@ import static ticketaka.mtvs3_final_backend._core.utils.SecurityUtils.getCurrent
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/concerts")
-@Tag(name = "04_ConcertController")
+@Tag(name = "ConcertCommandController")
 public class ConcertCommandController {
 
     private final ConcertCommandService concertCommandService;

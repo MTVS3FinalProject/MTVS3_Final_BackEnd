@@ -1,11 +1,7 @@
 package ticketaka.mtvs3_final_backend.file.command.application.service;
 
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.Bucket;
-import com.google.firebase.cloud.StorageClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +23,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -54,7 +49,7 @@ public class FileCommandService {
     */
     public FileUploadForAuth uploadImgForVerification(FaceAuthRequestDTO.verificationMemberDTO requestDTO) {
 
-        String imgUrl = s3Service.uploadImage(requestDTO.image(), requestDTO.image().getOriginalFilename(), IMAGE_CONTENT_TYPE);
+        String imgUrl = s3Service.uploadImageByFireBase(requestDTO.image(), requestDTO.image().getOriginalFilename(), IMAGE_CONTENT_TYPE);
 
         return setFileUploadForAuth(requestDTO.code(), imgUrl);
     }
@@ -63,7 +58,7 @@ public class FileCommandService {
     public void saveStickerImage(Long stickerId, MultipartFile stickerImage) {
 
         String fileName = STICKER_FILENAME_PREFIX + stickerId + System.currentTimeMillis();
-        String fileUrl = s3Service.uploadImage(stickerImage, fileName, IMAGE_CONTENT_TYPE);
+        String fileUrl = s3Service.uploadImageByFireBase(stickerImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
         newFile(RelationType.STICKER, stickerId, fileUrl, FilePurpose.CUSTOM);
@@ -73,7 +68,7 @@ public class FileCommandService {
     public File saveAIBackgroundImage(Long backgroundId, MultipartFile backgroundImage) {
 
         String fileName = AI_BACKGROUND_FILENAME_PREFIX + backgroundId + System.currentTimeMillis();
-        String fileUrl = s3Service.uploadImage(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
+        String fileUrl = s3Service.uploadImageByFireBase(backgroundImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
         return newFile(RelationType.BACKGROUND, backgroundId, fileUrl, FilePurpose.CUSTOM);
@@ -86,7 +81,7 @@ public class FileCommandService {
         MultipartFile customTicketImage = cropCustomTicketImage(requestDTO);
 
         String fileName = CUSTOM_TICKET_FILENAME_PREFIX + System.currentTimeMillis();
-        String fileUrl = s3Service.uploadImage(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
+        String fileUrl = s3Service.uploadImageByFireBase(customTicketImage, fileName, IMAGE_CONTENT_TYPE);
 
         // File 생성 및 저장
         newFile(RelationType.CUSTOM_TICKET, customTicketId, fileUrl, FilePurpose.CUSTOM);
@@ -95,7 +90,7 @@ public class FileCommandService {
     // TicketQR 업로드
     public void saveTicketQRImage(Long ticketId, MultipartFile ticketQRData) {
 
-        String fileUrl = s3Service.uploadImage(ticketQRData, ticketQRData.getOriginalFilename(), IMAGE_CONTENT_TYPE);
+        String fileUrl = s3Service.uploadImageByFireBase(ticketQRData, ticketQRData.getOriginalFilename(), IMAGE_CONTENT_TYPE);
 
         newFile(RelationType.TICKET, ticketId, fileUrl, FilePurpose.VERIFICATION);
     }
@@ -155,7 +150,7 @@ public class FileCommandService {
     // 파일 업로드 기능
     public String uploadImg(MultipartFile image, String fileName) {
 
-        return s3Service.uploadImage(image, fileName, IMAGE_CONTENT_TYPE);
+        return s3Service.uploadImageByFireBase(image, fileName, IMAGE_CONTENT_TYPE);
     }
 
     // File 객체 생성

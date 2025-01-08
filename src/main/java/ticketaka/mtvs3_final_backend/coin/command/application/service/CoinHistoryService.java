@@ -27,6 +27,7 @@ public class CoinHistoryService {
                 .acquisitionType(requestDTO.acquisitionType())
                 .coinAcquisitionId(requestDTO.coinAcquisitionId())
                 .coinUsageType(requestDTO.coinUsageType())
+                .amount(requestDTO.amount())
                 .build();
 
         coinHistoryRepository.save(coinHistory);

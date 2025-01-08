@@ -48,7 +48,8 @@ public class CoinChargeService {
                 member.getId(),
                 AcquisitionType.CHARGE,
                 coinCharge.getId(),
-                CoinUsageType.USAGE
+                CoinUsageType.USAGE,
+                coinCharge.getAmount()
         ));
 
         // 변경 사항 저장

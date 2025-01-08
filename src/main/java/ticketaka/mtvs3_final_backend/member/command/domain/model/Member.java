@@ -57,7 +57,7 @@ public class Member extends BaseTimeEntity {
         this.avatarData = avatarData;
         this.authority = authority;
         this.status = status;
-        this.coin = 0;
+        this.coin = 100000;
         this.bIsHost = host;
     }
 }

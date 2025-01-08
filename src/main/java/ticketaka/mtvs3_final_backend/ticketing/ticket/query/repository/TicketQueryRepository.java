@@ -22,7 +22,9 @@ public interface TicketQueryRepository extends JpaRepository<Ticket, Long> {
             "CASE WHEN ct.id IS NOT NULL " +
             "   THEN ctf.fileUrl " +
             "   ELSE tf.fileUrl " +
-            "END ) " +
+            "END, " +
+            "c.concertDate" +
+            ") " +
             "FROM Ticket t " +
             "JOIN Concert c ON t.concertId = c.id " +
             "JOIN Seat s ON t.seatId = s.id " +

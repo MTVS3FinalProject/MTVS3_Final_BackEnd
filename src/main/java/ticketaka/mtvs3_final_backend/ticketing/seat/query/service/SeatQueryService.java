@@ -46,6 +46,7 @@ public class SeatQueryService {
 
         int receptionMemberCount = getReceptionMemberCount(concertId, seat.getId());
         return new SeatQueryResponseDTO.getSeatInfoDTO(
+                seat.getId().intValue(),
                 seat.getFloor(),
                 formatSeatInfo(seat),
                 isSeatReceivedByMember(memberId, concertId, seatId),

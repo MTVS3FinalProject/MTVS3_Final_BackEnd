@@ -1,10 +1,14 @@
 package ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +21,14 @@ public interface MemberSeatCommandRepository extends JpaRepository<MemberSeat, L
     Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatus(Long memberId, Long concertId, Long seatId, MemberSeatStatus status);
 
     Optional<MemberSeat> findFirstByMemberIdAndConcertIdAndMemberSeatStatus(Long memberId, Long concertId, MemberSeatStatus memberSeatStatus);
+
+    Optional<MemberSeat> findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatusIn(Long memberId, Long concertId, Long seatId, List<MemberSeatStatus> waitingReserve);
+
+    @Modifying
+    @Query("UPDATE MemberSeat ms " +
+            "SET ms.memberSeatStatus = 'FAILED' " +
+            "WHERE ms.concertId = :concertId " +
+            "AND ms.seatId = :seatId " +
+            "AND ms.memberId != :memberId")
+    void updateStatusToFailedForOthers(@Param("memberId") Long memberId, @Param("concertId") Long concertId, @Param("seatId") Long seatId);
 }

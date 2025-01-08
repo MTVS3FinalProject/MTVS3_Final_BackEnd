@@ -10,7 +10,9 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.coin.command.application.dto.CoinHistoryRequestDTO;
 import ticketaka.mtvs3_final_backend.coin.command.application.service.CoinHistoryService;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.AcquisitionType;
+import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinHistory;
 import ticketaka.mtvs3_final_backend.coin.command.domain.model.CoinUsageType;
+import ticketaka.mtvs3_final_backend.coin.query.repository.CoinHistoryQueryRepository;
 import ticketaka.mtvs3_final_backend.mail.command.application.service.MailCommandService;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.member.command.application.service.MemberCommandService;
@@ -26,6 +28,7 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.DrawResult;
 import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.concert.query.repositroy.ConcertQueryRepository;
+import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.application.dto.SeatCommandResponseDTO;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeat;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
@@ -38,7 +41,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.command.application.servic
 import java.util.List;
 
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class SeatCommandService {
@@ -58,11 +61,12 @@ public class SeatCommandService {
 
     private final DrawResultRedisRepository drawResultRedisRepository;
     private final SeatPostponeRedisRepository seatPostponeRedisRepository;
+    private final MemberSeatQueryRepository memberSeatQueryRepository;
+    private final CoinHistoryQueryRepository coinHistoryQueryRepository;
 
     /*
         좌석 접수
      */
-    @Transactional
     public SeatCommandResponseDTO.seatReceptionDTO seatReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -87,7 +91,6 @@ public class SeatCommandService {
     /*
         좌석 접수 취소
      */
-    @Transactional
     public SeatCommandResponseDTO.cancelReceptionSeatDTO cancelReception(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -112,27 +115,26 @@ public class SeatCommandService {
     /*
         추첨 시작 알림
      */
-    @Transactional
     public SeatCommandResponseDTO.createDrawingNotificationDTO drawingNotification(Long memberId, Long concertId, Long seatId) {
 
         // Concert 조회
         getReservingConcert(concertId);
         // Seat 조회
-        getSeat(seatId);
+        Seat seat = getSeat(seatId);
 
         // 추첨 시작 알림
         List<String> nicknameList = seatDrawingService.drawingNotification(concertId, seatId);
 
         return new SeatCommandResponseDTO.createDrawingNotificationDTO(
                 nicknameList,
-                getCompetitionRate(nicknameList.size())
+                getCompetitionRate(nicknameList.size()),
+                formatSeatInfo(seat)
         );
     }
 
     /*
         좌석 추첨 결과 반영
      */
-    @Transactional
     public void processDrawResult(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -140,20 +142,25 @@ public class SeatCommandService {
         // Concert 조회
         getReservingConcert(concertId);
         // Seat 조회
-        getSeat(seatId);
+        Seat seat = getSeat(seatId);
         // MemberSeat 조회
         MemberSeat memberSeat = getMemberSeat(memberId, concertId, seatId, MemberSeatStatus.RECEIVED);
 
         // 임시 결제 권한 획득
         newDrawResult(memberId, concertId, seatId);
+
+        seat.setSeatStatus(SeatStatus.RESERVED);
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
+        seatCommandRepository.save(seat);
         memberSeatCommandRepository.save(memberSeat);
+
+        // 당첨되지 않은 다른 인원들 MemberSeatStatus - FAILED
+        memberSeatCommandRepository.updateStatusToFailedForOthers(memberId, concertId, seatId);
     }
 
     /*
         좌석 결제 연기
      */
-    @Transactional
     public void postponeSeat(Long memberId, Long concertId, Long seatId) {
 
         // Member 조회
@@ -176,7 +183,6 @@ public class SeatCommandService {
     /*
         좌석 결제
      */
-    @Transactional
     public SeatCommandResponseDTO.reserveSeatDTO reserveSeat(Long memberId, Long concertId, Long seatId) {
 
         // Member 확인
@@ -193,9 +199,6 @@ public class SeatCommandService {
 
         // Seat 예약
         reserveMemberSeat(member, concert, seat);
-
-        seat.setSeatStatus(SeatStatus.RESERVED);
-        seatCommandRepository.save(seat);
 
         String seatInfo = formatSeatInfo(seat);
 
@@ -227,15 +230,39 @@ public class SeatCommandService {
     }
 
     /*
+        좌석 결제 취소
+     */
+    public void cancelReserveSeat(Long memberId, Long concertId, Long seatId) {
+
+        Member member = getMember(memberId);
+        Concert concert = getReservingConcert(concertId);
+        Seat seat = getSeat(seatId);
+
+        MemberSeat memberSeat = memberSeatQueryRepository.findByMemberIdAndConcertIdAndSeatId(memberId, concertId, seatId)
+                .orElseThrow(() -> new Exception403("해당 좌석에 대한 권한이 없습니다."));
+
+        validateReserveSeat(memberSeat.getMemberSeatStatus());
+
+        // 취소 처리
+        seat.setSeatStatus(SeatStatus.AVAILABLE);
+        memberSeat.setMemberSeatStatus(MemberSeatStatus.CANCEL_RESERVE);
+
+        seatCommandRepository.save(seat);
+        memberSeatCommandRepository.save(memberSeat);
+
+        // Coin 환불
+        refundReserveSeat(member, seatId);
+    }
+
+    /*
         추첨 결과 치트
      */
-    @Transactional
     public void cheatDrawResult(Long memberId, Long concertId) {
 
         Member member = getMember(memberId);
         Concert concert = getReservingConcert(concertId);
 
-        MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.RECEIVED)
+        MemberSeat memberSeat = memberSeatCommandRepository.findFirstByMemberIdAndConcertIdAndMemberSeatStatus(member.getId(), concert.getId(), MemberSeatStatus.FAILED)
                 .orElseThrow(() -> new Exception400("해당 콘서트에 접수한 좌석이 없습니다."));
         memberSeat.setMemberSeatStatus(MemberSeatStatus.WAITING_RESERVE);
         memberSeatCommandRepository.save(memberSeat);
@@ -246,7 +273,6 @@ public class SeatCommandService {
     /*
         좌석 결제 - 치트
      */
-    @Transactional
     public SeatCommandResponseDTO.reserveSeatDTO cheatReserveSeat(Long memberId, Long concertId) {
 
         // Member 확인
@@ -374,6 +400,15 @@ public class SeatCommandService {
         return (int) Math.round(competitionRate);
     }
 
+    // MemberSeatStatus 유효성 검사
+    private void validateReserveSeat(MemberSeatStatus memberSeatStatus) {
+        switch (memberSeatStatus) {
+            case FAILED -> throw new Exception400("추첨에 떨어진 좌석입니다.");
+            case RECEIVED -> throw new Exception400("결제 권한을 얻지 못한 좌석입니다.");
+            case CANCEL_RESERVE -> throw new Exception400("예약을 취소한 좌석입니다.");
+        }
+    }
+
     // DrawResult 유효성 검사
     private void validateDrawResult(DrawResult drawResult) {
         switch (drawResult.getPaymentStatus()) {
@@ -396,14 +431,42 @@ public class SeatCommandService {
                 member.getId(),
                 AcquisitionType.SEAT_RESERVATION,
                 seat.getId(),
-                CoinUsageType.USAGE
+                CoinUsageType.USAGE,
+                seat.getPrice()
+        ));
+    }
+
+    // 예약 좌석 환불
+    private void refundReserveSeat(Member member, Long seatId) {
+
+        CoinHistory coinHistory = coinHistoryQueryRepository.findByMemberIdAndAcquisitionTypeAndCoinAcquisitionId(
+                member.getId(), AcquisitionType.SEAT_RESERVATION, seatId
+        ).orElseThrow(() -> new Exception400("해당 결제 내역을 찾을 수 없습니다."));
+
+        Integer seatPrice = coinHistory.getAmount();
+        member.setCoin(member.getCoin() + seatPrice);
+        memberRepository.save(member);
+
+        coinHistoryService.saveCoinHistory(new CoinHistoryRequestDTO.saveCoinHistoryDTO(
+                member.getId(),
+                AcquisitionType.SEAT_RESERVATION,
+                seatId,
+                CoinUsageType.CANCEL,
+                seatPrice
         ));
     }
 
     // MemberSeat 예약 상태 전환
     private void reserveMemberSeat(Member member, Concert concert, Seat seat) {
-        MemberSeat memberSeat = getMemberSeat(member.getId(), concert.getId(), seat.getId(), MemberSeatStatus.WAITING_RESERVE);
+        MemberSeat memberSeat = getReserveMemberSeat(member.getId(), concert.getId(), seat.getId());
         memberSeat.setMemberSeatStatus(MemberSeatStatus.RESERVED);
         memberSeatCommandRepository.save(memberSeat);
+    }
+
+    // MemberSeat 조회
+    private MemberSeat getReserveMemberSeat(Long memberId, Long concertId, Long seatId) {
+        return memberSeatCommandRepository.findByMemberIdAndConcertIdAndSeatIdAndMemberSeatStatusIn(
+                        memberId, concertId, seatId, List.of(MemberSeatStatus.WAITING_RESERVE, MemberSeatStatus.POSTPONE))
+                .orElseThrow(() -> new Exception403("해당 좌석을 결제할 권한이 없습니다."));
     }
 }
