@@ -8,6 +8,7 @@ import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Author
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Entity
@@ -19,16 +20,12 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Embedded
+    private MemberInfo memberInfo;
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
     private String secondPwd;
-    @Column
-    private LocalDate birth;
     @Column
     private Integer avatarData;
 
@@ -45,19 +42,29 @@ public class Member extends BaseTimeEntity {
     @Column
     private Integer coin;
     @Column
+    @ColumnDefault("false")
     private Boolean bIsHost;
 
     @Builder
-    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Authority authority, Status status, Boolean host) {
-        this.nickname = nickname;
-        this.email = email;
+    private Member(MemberInfo memberInfo, String password, String secondPwd, Integer avatarData, Authority authority, Status status, Boolean host) {
+        this.memberInfo = memberInfo;
         this.password = password;
         this.secondPwd = secondPwd;
-        this.birth = birth;
         this.avatarData = avatarData;
         this.authority = authority;
-        this.status = status;
-        this.coin = 100000;
-        this.bIsHost = host;
+        this.status = Status.ACTIVE;
+        this.coin = 0;
+        this.bIsHost = false;
+    }
+
+    // Member 생성
+    public static Member createMember(MemberInfo memberInfo, String password, String secondPwd, Integer avatarData, Authority authority) {
+        return Member.builder()
+                .memberInfo(memberInfo)
+                .password(password)
+                .secondPwd(secondPwd)
+                .avatarData(avatarData)
+                .authority(authority)
+                .build();
     }
 }

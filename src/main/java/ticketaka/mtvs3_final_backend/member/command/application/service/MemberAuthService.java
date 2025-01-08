@@ -19,6 +19,7 @@ import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthDT
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberInfo;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
@@ -121,31 +122,19 @@ public class MemberAuthService {
         return new MemberAuthDTO.FileUploadDTO(imgUrl, secondPwd);
     }
 
-    // 생일 포맷 변환
-    private LocalDate getLocalDateBirth(String birth) {
-
-        System.out.println("birth = " + birth);
-
-        // 변환할 날짜 포맷 지정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-
-        // String 을 LocalDate 로 변환
-        return LocalDate.parse(birth, formatter);
-    }
-
     // 회원 생성
     protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO, String secondPwd) {
-        return Member.builder()
-                .nickname(requestDTO.nickname())
-                .email(requestDTO.email())
-                .password(passwordEncoder.encode(requestDTO.password()))
-                .secondPwd(passwordEncoder.encode(secondPwd))
-                .birth(getLocalDateBirth(requestDTO.birth()))
-                .avatarData(requestDTO.avatarData())
-                .authority(Authority.fromInt(requestDTO.isHost()))
-                .status(Status.ACTIVE)
-                .host(requestDTO.bisHost())
-                .build();
+        return Member.createMember(
+                new MemberInfo(
+                        requestDTO.nickname(),
+                        requestDTO.email(),
+                        requestDTO.birth()
+                ),
+                requestDTO.password(),
+                secondPwd,
+                requestDTO.avatarData(),
+                Authority.FAN
+        );
     }
 
     /*
@@ -179,8 +168,8 @@ public class MemberAuthService {
 
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getBIsHost(),
-                member.getNickname(),
-                member.getBirth().toString(),
+                member.getMemberInfo().getNickname(),
+                member.getMemberInfo().getBirth().toString(),
                 member.getCoin(),
                 member.getAvatarData(),
                 title != null ? title.getId().intValue() : -1,
