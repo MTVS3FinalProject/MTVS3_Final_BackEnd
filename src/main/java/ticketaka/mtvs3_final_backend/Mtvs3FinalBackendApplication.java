@@ -90,8 +90,12 @@ public class Mtvs3FinalBackendApplication {
             member8.setCoin(100000);
             memberRepository.saveAll(Arrays.asList(
                     member1, member2, member3, member4, member5, member6, member7, member8,
+<<<<<<< Updated upstream
                     newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true),
                     newMember("ADMIN", "admin1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 2, passwordEncoder, false)
+=======
+                    newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true)
+>>>>>>> Stashed changes
             ));
             fileCommandRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
