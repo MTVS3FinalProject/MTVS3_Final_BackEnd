@@ -128,13 +128,21 @@ public class MemberAuthService {
                 new MemberInfo(
                         requestDTO.nickname(),
                         requestDTO.email(),
-                        requestDTO.birth()
+                        getLocalDateBirth(requestDTO.birth())
                 ),
                 requestDTO.password(),
                 secondPwd,
                 requestDTO.avatarData(),
                 Authority.FAN
         );
+    }
+
+    // 생일 포맷 변환
+    private LocalDate getLocalDateBirth(String birth) {
+        // 변환할 날짜 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        // String 을 LocalDate 로 변환
+        return LocalDate.parse(birth, formatter);
     }
 
     /*

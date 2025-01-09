@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberInfo;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
@@ -330,18 +331,18 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder, boolean isHost) {
-        return Member.builder()
-                .nickname(nickname)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .secondPwd(passwordEncoder.encode(secondPwd))
-                .birth(birth)
-                .avatarData(avatarData)
-                .authority(Authority.fromInt(authority))
-                .status(Status.ACTIVE)
-                .host(isHost)
-                .build();
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Integer authority, PasswordEncoder passwordEncoder, boolean isHost) {
+        return Member.createMember(
+                new MemberInfo(
+                        nickname,
+                        email,
+                        birth
+                ),
+                passwordEncoder.encode(password),
+                passwordEncoder.encode(secondPwd),
+                avatarData,
+                Authority.fromInt(authority)
+        );
     }
 
     private File newFile(RelationType relationType, Long relationId, String fileUrl, FilePurpose filePurpose) {
