@@ -7,9 +7,6 @@ import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -150,7 +150,7 @@ public class ConcertCommandService {
         PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId(), requestDTO.rank());
 
         // Mail 저장
-        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getNickname(), concert.getName(), requestDTO.rank(), title.getTitleName(), sticker.getStickerName());
+        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getMemberInfo().getNickname(), concert.getName(), requestDTO.rank(), title.getTitleName(), sticker.getStickerName());
 
         // MailPuzzleResult 저장
         newMailPuzzleResult(mail.getId(), puzzleResult.getId());
@@ -308,8 +308,8 @@ public class ConcertCommandService {
 
     // 연령 확인
     private void checkMemberAge(Member member, Concert concert) {
-        int memberAge = LocalDate.now().getYear() - member.getBirth().getYear();
-        if (LocalDate.now().getDayOfYear() < member.getBirth().getDayOfYear()) {
+        int memberAge = LocalDate.now().getYear() - member.getMemberInfo().getBirth().getYear();
+        if (LocalDate.now().getDayOfYear() < member.getMemberInfo().getBirth().getDayOfYear()) {
             memberAge--; // 올해 생일이 아직 안 지났으면 1년을 뺀다
         }
 

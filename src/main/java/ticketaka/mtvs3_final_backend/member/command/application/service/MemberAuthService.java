@@ -29,7 +29,6 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAu
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
-import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.time.LocalDate;
@@ -82,14 +81,14 @@ public class MemberAuthService {
     private void checkDuplicatedEmail(String email) {
 
         // 이메일 중복 확인
-        memberRepository.findByEmail(email)
+        memberRepository.findByMemberInfo_Email(email)
                 .ifPresent(member -> { throw new Exception400("이미 가입된 이메일입니다."); });
     }
 
     // 닉네임 중복 확인
     private void checkDuplicatedNickname(String nickname) {
 
-        Optional<Member> member = memberRepository.findByNickname(nickname);
+        Optional<Member> member = memberRepository.findByMemberInfo_Nickname(nickname);
 
         if(member.isPresent()) {
             throw new Exception400("이미 사용 중인 이름입니다.");
@@ -152,7 +151,7 @@ public class MemberAuthService {
     public MemberAuthResponseDTO.loginDTO login(MemberAuthRequestDTO.authDTO requestDTO) {
 
         // 1. 이메일 확인
-        Member member = memberRepository.findByEmail(requestDTO.email())
+        Member member = memberRepository.findByMemberInfo_Email(requestDTO.email())
                 .orElseThrow(() -> new Exception400("가입 되지 않은 이메일입니다."));
 
         // 2. 비밀번호 확인
