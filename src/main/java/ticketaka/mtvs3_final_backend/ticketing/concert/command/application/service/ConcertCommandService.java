@@ -254,12 +254,12 @@ public class ConcertCommandService {
     }
 
     // PuzzleResult 생성
-    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId, int rank) {
+    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId, int ranking) {
         PuzzleResult puzzleResult = PuzzleResult.builder()
                 .concertId(concertId)
                 .titleId(titleId)
                 .stickerId(stickerId)
-                .rank(rank)
+                .ranking(ranking)
                 .build();
         return puzzleResultCommandRepository.save(puzzleResult);
     }

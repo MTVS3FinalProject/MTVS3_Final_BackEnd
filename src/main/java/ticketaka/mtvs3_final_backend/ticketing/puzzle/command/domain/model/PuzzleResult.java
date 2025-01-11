@@ -25,13 +25,13 @@ public class PuzzleResult extends BaseTimeEntity {
     private Long stickerId;
 
     @Column
-    private Integer rank;
+    private Integer ranking;
 
     @Builder
-    public PuzzleResult(Long concertId, Long titleId, Long stickerId, Integer rank) {
+    public PuzzleResult(Long concertId, Long titleId, Long stickerId, Integer ranking) {
         this.concertId = concertId;
         this.titleId = titleId;
         this.stickerId = stickerId;
-        this.rank = rank;
+        this.ranking = ranking;
     }
 }
