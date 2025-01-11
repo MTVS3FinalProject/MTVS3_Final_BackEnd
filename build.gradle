@@ -41,8 +41,11 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // (배포용) postgresql
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.2'
+    // (Command) mysql
+    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
+
+    // (Query) mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
     // (테스트용) H2 데이터베이스
     runtimeOnly 'com.h2database:h2'
