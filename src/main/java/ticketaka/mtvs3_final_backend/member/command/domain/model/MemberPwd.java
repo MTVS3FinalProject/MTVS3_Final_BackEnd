@@ -16,21 +16,13 @@ public class MemberPwd {
 
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
-    private String secondPwd;
 
-    public MemberPwd(String password, String secondPwd) {
+    public MemberPwd(String password) {
         this.password = password;
-        this.secondPwd = secondPwd;
     }
 
     // 비밀번호 일치 여부 확인
     public boolean matchPassword(String password, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(password, this.password);
-    }
-
-    // 2차 비밀번호 일치 여부 확인
-    public boolean matchSecondPassword(String secondPwd, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(secondPwd, this.secondPwd);
     }
 }

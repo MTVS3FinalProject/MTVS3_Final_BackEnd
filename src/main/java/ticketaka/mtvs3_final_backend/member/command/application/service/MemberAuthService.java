@@ -20,6 +20,7 @@ import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRe
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberInfo;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberPwd;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
@@ -129,8 +130,12 @@ public class MemberAuthService {
                         requestDTO.email(),
                         getLocalDateBirth(requestDTO.birth())
                 ),
-                requestDTO.password(),
-                secondPwd,
+                new MemberPwd(
+                        passwordEncoder.encode(requestDTO.password())
+                ),
+                new MemberPwd(
+                        passwordEncoder.encode(secondPwd)
+                ),
                 requestDTO.avatarData(),
                 Authority.FAN
         );

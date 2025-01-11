@@ -19,10 +19,10 @@ public class Member extends BaseTimeEntity {
 
     @Embedded
     private MemberInfo memberInfo;
-    @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
-    private String secondPwd;
+    @Embedded
+    private MemberPwd password;
+    @Embedded
+    private MemberPwd secondPassword;
     @Column
     private Integer avatarData;
 
@@ -43,10 +43,10 @@ public class Member extends BaseTimeEntity {
     private Boolean bIsHost;
 
     @Builder
-    private Member(MemberInfo memberInfo, String password, String secondPwd, Integer avatarData, Authority authority, Status status, Boolean host) {
+    private Member(MemberInfo memberInfo, MemberPwd password, MemberPwd secondPassword, Integer avatarData, Authority authority, Status status, Boolean host) {
         this.memberInfo = memberInfo;
         this.password = password;
-        this.secondPwd = secondPwd;
+        this.secondPassword = secondPassword;
         this.avatarData = avatarData;
         this.authority = authority;
         this.status = Status.ACTIVE;
@@ -55,11 +55,11 @@ public class Member extends BaseTimeEntity {
     }
 
     // Member 생성
-    public static Member createMember(MemberInfo memberInfo, String password, String secondPwd, Integer avatarData, Authority authority) {
+    public static Member createMember(MemberInfo memberInfo, MemberPwd password, MemberPwd secondPassword, Integer avatarData, Authority authority) {
         return Member.builder()
                 .memberInfo(memberInfo)
                 .password(password)
-                .secondPwd(secondPwd)
+                .secondPassword(secondPassword)
                 .avatarData(avatarData)
                 .authority(authority)
                 .build();
