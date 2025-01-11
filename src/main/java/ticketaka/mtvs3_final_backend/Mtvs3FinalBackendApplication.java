@@ -58,7 +58,7 @@ public class Mtvs3FinalBackendApplication {
         SpringApplication.run(Mtvs3FinalBackendApplication.class, args);
     }
 
-    @Profile("local")
+    @Profile("test")
     @Bean
     CommandLineRunner localServerStart(MemberRepository memberRepository,
                                        FileCommandRepository fileCommandRepository,
