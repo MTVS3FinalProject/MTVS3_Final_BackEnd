@@ -13,6 +13,7 @@ import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdmi
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberInfo;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberPwd;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
@@ -331,14 +332,18 @@ public class Mtvs3FinalBackendApplication {
     }
 
     private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Integer authority, PasswordEncoder passwordEncoder, boolean isHost) {
+
+        String encodedPassword = passwordEncoder.encode(password);
+        String encodedSecondPassword = passwordEncoder.encode(secondPwd);
+
         return Member.createMember(
                 new MemberInfo(
                         nickname,
                         email,
                         birth
                 ),
-                passwordEncoder.encode(password),
-                passwordEncoder.encode(secondPwd),
+                new MemberPwd(encodedPassword),
+                new MemberPwd(encodedSecondPassword),
                 avatarData,
                 Authority.fromInt(authority)
         );

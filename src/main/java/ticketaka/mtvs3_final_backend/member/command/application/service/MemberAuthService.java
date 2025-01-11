@@ -97,9 +97,9 @@ public class MemberAuthService {
     }
 
     // 비밀번호 확인
-    private void checkValidPassword(String rawPassword, String encodedPassword) {
+    private void checkValidPassword(String rawPassword, MemberPwd memberPwd) {
 
-        if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
+        if(!memberPwd.matchPassword(rawPassword, passwordEncoder)) {
             throw new Exception400("비밀번호가 유효하지 않습니다.");
         }
     }
@@ -124,18 +124,18 @@ public class MemberAuthService {
 
     // 회원 생성
     protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO, String secondPwd) {
+
+        String encodedPassword = passwordEncoder.encode(requestDTO.password());
+        String encodedSecondPassword = passwordEncoder.encode(secondPwd);
+
         return Member.createMember(
                 new MemberInfo(
                         requestDTO.nickname(),
                         requestDTO.email(),
                         getLocalDateBirth(requestDTO.birth())
                 ),
-                new MemberPwd(
-                        passwordEncoder.encode(requestDTO.password())
-                ),
-                new MemberPwd(
-                        passwordEncoder.encode(secondPwd)
-                ),
+                new MemberPwd(encodedPassword),
+                new MemberPwd(encodedSecondPassword),
                 requestDTO.avatarData(),
                 Authority.FAN
         );

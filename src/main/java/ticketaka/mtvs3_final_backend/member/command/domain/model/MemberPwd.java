@@ -15,14 +15,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MemberPwd {
 
     @Column(nullable = false)
-    private String password;
+    private String value;
 
-    public MemberPwd(String password) {
-        this.password = password;
+    public MemberPwd(String value) {
+        this.value = value;
     }
 
     // 비밀번호 일치 여부 확인
     public boolean matchPassword(String password, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(password, this.password);
+        return passwordEncoder.matches(password, this.value);
     }
 }

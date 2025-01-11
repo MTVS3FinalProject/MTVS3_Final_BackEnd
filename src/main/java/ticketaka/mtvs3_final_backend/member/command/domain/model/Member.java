@@ -20,8 +20,14 @@ public class Member extends BaseTimeEntity {
     @Embedded
     private MemberInfo memberInfo;
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "password"))
+    })
     private MemberPwd password;
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "second_password"))
+    })
     private MemberPwd secondPassword;
     @Column
     private Integer avatarData;
