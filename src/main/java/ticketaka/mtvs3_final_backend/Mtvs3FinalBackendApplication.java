@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
@@ -58,9 +59,27 @@ public class Mtvs3FinalBackendApplication {
         SpringApplication.run(Mtvs3FinalBackendApplication.class, args);
     }
 
+    @Profile("local")
+    @Bean
+    CommandLineRunner localServerStart(JdbcTemplate jdbcTemplate) {
+        return args -> {
+            truncateTable(jdbcTemplate, "member_title_tb");
+            truncateTable(jdbcTemplate, "member_sticker_tb");
+        };
+    }
+
+    private void truncateTable(JdbcTemplate jdbcTemplate, String tableName) {
+        try {
+            String truncateSql = "TRUNCATE TABLE " + tableName;
+            jdbcTemplate.execute(truncateSql);
+        } catch (Exception e) {
+            System.out.println("Failed to truncate table " + tableName);
+        }
+    }
+
     @Profile("test")
     @Bean
-    CommandLineRunner localServerStart(MemberRepository memberRepository,
+    CommandLineRunner testServerStart(MemberRepository memberRepository,
                                        FileCommandRepository fileCommandRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
