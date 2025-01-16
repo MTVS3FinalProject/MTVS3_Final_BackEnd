@@ -24,24 +24,4 @@ public interface TitleQueryRepository extends JpaRepository<Title, Long> {
             "JOIN MemberTitle mt ON t.id = mt.titleId " +
             "WHERE mt.memberId = :memberId")
     List<getMemberTitleDTO> findAllByMemberId(@Param("memberId") Long memberId);
-
-    @Query(value = """
-        SELECT t
-        FROM Title t
-        WHERE t.titleType = 'CONCERT'
-          AND t.concertId = :concertId
-          AND t.titleRarity = :titleRarity
-          AND t.id NOT IN (
-              SELECT mt.titleId
-              FROM MemberTitle mt
-              WHERE mt.memberId = :memberId
-          )
-        ORDER BY function('RAND')
-        LIMIT 1
-    """)
-    Optional<Title> getPuzzleResultByMemberIdAndConcertId(
-            @Param("memberId") Long memberId,
-            @Param("concertId") Long concertId,
-            @Param("titleRarity") TitleRarity titleRarity
-    );
 }
