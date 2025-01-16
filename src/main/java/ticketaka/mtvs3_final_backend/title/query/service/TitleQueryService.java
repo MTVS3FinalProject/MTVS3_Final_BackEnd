@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleType;
+import ticketaka.mtvs3_final_backend.title.command.domain.repository.TitleCommandRepository;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
@@ -23,6 +24,7 @@ public class TitleQueryService {
 
     private final TitleQueryRepository titleQueryRepository;
     private final MemberTitleQueryRepository memberTitleQueryRepository;
+    private final TitleCommandRepository titleCommandRepository;
 
     // 현재 장착 중인 Title 조회
     public Title getMemberTitle(Long memberId) {
@@ -41,25 +43,13 @@ public class TitleQueryService {
     // Title 할당
     public Title getPuzzleResult(Long memberId, Long concertId, TitleRarity titleRarity) {
 
-        List<Long> memberTitleList = getMemberTitleIdList(memberId);
-
-        TitleRarity currentRarity = titleRarity;
-        while (currentRarity != null) {
-            List<Title> availableTitleList = getAvailableTitleList(concertId, titleRarity, memberTitleList);
-
-            if (!availableTitleList.isEmpty()) {
-                return getRandomTitle(availableTitleList);
-            }
-
-            currentRarity = currentRarity.getLowerRarity();
-        }
-
-        throw new Exception400("더 이상 해당 공연에서 얻을 수 있는 칭호가 없습니다.");
+        return titleCommandRepository.getPuzzleResultByMemberIdAndConcertId(memberId, concertId, titleRarity)
+                .orElse(null);
     }
 
     // 회원이 소유한 Title Id 목록 조회
-    private List<Long> getMemberTitleIdList(Long memberId) {
-        return memberTitleQueryRepository.findAllByMemberId(memberId).stream()
+    private List<Long> getMemberTitleIdList(Long memberId, Long concertId) {
+        return memberTitleQueryRepository.findAllByMemberIdAndConcertId(memberId, concertId).stream()
                 .map(MemberTitle::getTitleId)
                 .toList();
     }
