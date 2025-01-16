@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 @Slf4j
 @Aspect
 @Component
-public class LoggingAspect {
+public class ControllerAspect {
 
     private static final Integer ErrorStackTraceNum = 3;
 
@@ -28,7 +28,7 @@ public class LoggingAspect {
         // 메소드 정보 추출
         Method method = getMethod(proceedingJoinPoint);
 
-        log.info("===== method name = {} =====", method.getName());
+        log.info("===== API 요청 : {} =====", method.getName());
 
         // 파라미터 추출
         Object[] args = proceedingJoinPoint.getArgs();
@@ -42,9 +42,17 @@ public class LoggingAspect {
             log.info("Parameter Value = {}", arg);
         }
 
+        // 시작 시간 측정
+        long startTime = System.currentTimeMillis();
+
         try {
             // 실제 메소드 실행
             Object response = proceedingJoinPoint.proceed(args);
+
+            // 종료 시간 측정
+            long endTime = System.currentTimeMillis();
+
+            log.info("===== API 응답 : {} 소요 시간 : {} =====", method.getName(), (endTime - startTime));
 
             log.info("Response Type = {}", response.getClass().getSimpleName());
 
@@ -64,6 +72,11 @@ public class LoggingAspect {
             return response;
 
         } catch (Exception e) {
+
+            // 종료 시간 측정
+            long endTime = System.currentTimeMillis();
+
+            log.info("===== API 응답 실패 : {} 소요 시간 : {} =====", method.getName(), (endTime - startTime));
 
             log.error("Exception occurred in method: {} with message: {}",
                     proceedingJoinPoint.getSignature().toShortString(), e.getMessage(), e);
