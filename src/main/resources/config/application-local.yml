@@ -21,6 +21,20 @@ spring:
       hibernate:
         format_sql: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA.BOOTSTRAP.SERVERS} # Kafka 브로커 주소
+    consumer:
+      group-id: ${KAFKA.CONSUMER.GROUP.ID}       # Consumer 그룹 ID
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"        # 역직렬화할 패키지 설정
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    template:
+      default-topic: ${KAFKA.DEFAULT.TOPIC}      # 기본 Kafka 토픽 (옵션)
+
   servlet:
     multipart:
       max-file-size: 50MB
