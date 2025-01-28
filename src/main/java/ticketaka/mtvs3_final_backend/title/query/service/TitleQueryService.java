@@ -40,13 +40,6 @@ public class TitleQueryService {
                 .orElse(null);
     }
 
-    // Title 할당
-    public Title getPuzzleResult(Long memberId, Long concertId, TitleRarity titleRarity) {
-
-        return titleCommandRepository.getPuzzleResultByMemberIdAndConcertId(memberId, concertId, titleRarity)
-                .orElse(null);
-    }
-
     // 회원이 소유한 Title Id 목록 조회
     private List<Long> getMemberTitleIdList(Long memberId, Long concertId) {
         return memberTitleQueryRepository.findAllByMemberIdAndConcertId(memberId, concertId).stream()

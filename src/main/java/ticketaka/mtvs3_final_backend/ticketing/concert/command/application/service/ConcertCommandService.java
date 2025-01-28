@@ -38,6 +38,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.TitleAcquireService;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
@@ -72,6 +73,7 @@ public class ConcertCommandService {
     private final MailPuzzleResultCommandRepository mailPuzzleResultCommandRepository;
     private final MemberSeatQueryRepository memberSeatQueryRepository;
     private final MemberSeatCommandRepository memberSeatCommandRepository;
+    private final TitleAcquireService titleAcquireService;
 
     /*
         공연장 정보 조회
@@ -142,7 +144,7 @@ public class ConcertCommandService {
         Concert concert = getConcert(concertId);
 
         // Title 할당
-        Title title = titleQueryService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
+        Title title = titleAcquireService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
         // Sticker 할당
         Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
 
