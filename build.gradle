@@ -41,6 +41,9 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Event
+    implementation 'org.springframework.kafka:spring-kafka'
+
     // (Command) mysql
     implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
 
@@ -70,6 +73,8 @@ dependencies {
 
     // 날짜/시간 유형 직렬화
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
+    // JSON 직렬화/역직렬화
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     // 개발 편의용
     compileOnly 'org.projectlombok:lombok'
