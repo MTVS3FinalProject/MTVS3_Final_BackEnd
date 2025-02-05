@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface MemberTitleDataRepository extends MongoRepository<MemberTitleData, String> {
 
     Optional<MemberTitleData> findByMemberId(Long memberId);
+
+    boolean existsByMemberIdAndTitleList_TitleId(Long memberId, Long titleId);
 }
