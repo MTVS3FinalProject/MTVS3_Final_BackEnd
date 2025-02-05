@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @NoArgsConstructor
 @Document(collection = "member_sticker")
-public class MemberStickerDAO {
+public class MemberStickerData {
 
     @Id
     private String id;
