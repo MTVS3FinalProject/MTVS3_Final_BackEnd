@@ -1,18 +1,19 @@
 package ticketaka.mtvs3_final_backend.member.query.dao;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 @Document(collection = "member_title")
-public class MemberTitleDAO {
+public class MemberTitleData {
 
     @Id
     private String id;
@@ -20,9 +21,9 @@ public class MemberTitleDAO {
     @Indexed
     private Long memberId;
 
-    private List<Title> titleList = List.of();
+    private List<Title> titleList;
 
-    @Data
+    @Getter
     @NoArgsConstructor
     public static class Title {
         private Long titleId;
@@ -40,8 +41,12 @@ public class MemberTitleDAO {
     }
 
     @Builder
-    public MemberTitleDAO(Long memberId, List<Title> titleList) {
+    public MemberTitleData(Long memberId, List<Title> titleList) {
         this.memberId = memberId;
-        this.titleList = titleList;
+        this.titleList = (titleList != null) ? new ArrayList<>(titleList) : new ArrayList<>();
+    }
+
+    public void addTitle(Title newTitle) {
+        this.titleList.add(newTitle);
     }
 }
