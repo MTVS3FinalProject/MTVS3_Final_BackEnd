@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.title.query.infrastructure.event;
+package ticketaka.mtvs3_final_backend.member.query.infrastructure.event;
 
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 
