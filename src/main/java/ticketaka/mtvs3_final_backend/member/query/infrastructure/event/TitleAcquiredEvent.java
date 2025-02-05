@@ -1,15 +1,24 @@
 package ticketaka.mtvs3_final_backend.member.query.infrastructure.event;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 
-public record TitleAcquiredEvent(
-        Long memberId,
-        Long titleId,
-        String titleName,
-        String titleScript,
-        String titleRarity
-) {
+@Getter
+@NoArgsConstructor
+public class TitleAcquiredEvent {
+
+    private Long memberId;
+    private Long titleId;
+    private String titleName;
+    private String titleScript;
+    private String titleRarity;
+
     public TitleAcquiredEvent(Long memberId, Title title) {
-        this(memberId, title.getId(), title.getTitleName(), title.getTitleScript(), title.getTitleRarity().toString());
+        this.memberId = memberId;
+        this.titleId = title.getId();
+        this.titleName = title.getTitleName();
+        this.titleScript = title.getTitleScript();
+        this.titleRarity = title.getTitleRarity().toString();
     }
 }
