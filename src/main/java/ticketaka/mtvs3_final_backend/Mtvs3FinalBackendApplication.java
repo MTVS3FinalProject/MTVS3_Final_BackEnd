@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
@@ -61,10 +62,12 @@ public class Mtvs3FinalBackendApplication {
 
     @Profile("local")
     @Bean
-    CommandLineRunner localServerStart(JdbcTemplate jdbcTemplate) {
+    CommandLineRunner localServerStart(JdbcTemplate jdbcTemplate, MongoTemplate mongoTemplate) {
         return args -> {
             truncateTable(jdbcTemplate, "member_title_tb");
             truncateTable(jdbcTemplate, "member_sticker_tb");
+
+            mongoTemplate.dropCollection("member_title");
         };
     }
 
