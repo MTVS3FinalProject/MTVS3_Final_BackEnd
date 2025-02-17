@@ -8,32 +8,21 @@ import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception401;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception403;
 import ticketaka.mtvs3_final_backend.file.command.domain.model.property.RelationType;
-import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
-import ticketaka.mtvs3_final_backend.member.query.dao.MemberTitleData;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTitleDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
-import ticketaka.mtvs3_final_backend.member.query.repository.MemberTitleDataRepository;
 import ticketaka.mtvs3_final_backend.redis.ticket.usable.domain.TicketUsable;
 import ticketaka.mtvs3_final_backend.redis.ticket.usable.repository.TicketUsableRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
 import ticketaka.mtvs3_final_backend.sticker.query.repository.StickerQueryRepository;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.query.service.TicketQueryService;
-import ticketaka.mtvs3_final_backend.title.member.query.repository.MemberTitleQueryRepository;
-import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
-import ticketaka.mtvs3_final_backend.ticketing.ticket.command.domain.model.Ticket;
 import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQueryRepository;
-import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
-import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -41,14 +30,13 @@ import java.util.Objects;
 @Service
 public class MemberQueryService {
 
+    private final MemberTitleQueryService memberTitleQueryService;
     private final MemberQueryRepository memberQueryRepository;
 
     private final TicketQueryRepository ticketQueryRepository;
     private final AddressRepository addressRepository;
     private final StickerQueryRepository stickerQueryRepository;
     private final TicketUsableRedisRepository ticketUsableRedisRepository;
-
-    private final MemberTitleDataRepository memberTitleDataRepository;
 
     /*
         최근 배송지 조회
@@ -84,10 +72,7 @@ public class MemberQueryService {
         getMember(memberId);
 
         // Title List 조회
-        List<getMemberTitleDTO> memberTitleDTOList =
-                memberTitleDataRepository.findByMemberId(memberId)
-                        .map(MemberTitleData::toTitleDTOList)
-                        .orElseGet(Collections::emptyList);
+        List<getMemberTitleDTO> memberTitleDTOList = memberTitleQueryService.getMemberTitleDTOList(memberId);
 
         // Sticker List 조회
         List<getMemberStickerDTO> memberStickerDTOList =

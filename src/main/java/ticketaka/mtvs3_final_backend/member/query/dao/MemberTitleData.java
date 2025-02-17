@@ -39,10 +39,6 @@ public class MemberTitleData {
             this.titleScript = titleScript;
             this.titleRarity = titleRarity;
         }
-
-        public getMemberTitleDTO toDTO() {
-            return new getMemberTitleDTO(titleId, titleName, titleScript, titleRarity);
-        }
     }
 
     @Builder
@@ -53,9 +49,5 @@ public class MemberTitleData {
 
     public void addTitle(Title newTitle) {
         this.titleList.add(newTitle);
-    }
-
-    public List<getMemberTitleDTO> toTitleDTOList() {
-        return titleList.stream().map(Title::toDTO).toList();
     }
 }
