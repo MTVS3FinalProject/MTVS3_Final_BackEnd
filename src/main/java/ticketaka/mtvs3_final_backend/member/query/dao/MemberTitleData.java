@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTitleDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,10 @@ public class MemberTitleData {
             this.titleScript = titleScript;
             this.titleRarity = titleRarity;
         }
+
+        public getMemberTitleDTO toDTO() {
+            return new getMemberTitleDTO(titleId, titleName, titleScript, titleRarity);
+        }
     }
 
     @Builder
@@ -48,5 +53,9 @@ public class MemberTitleData {
 
     public void addTitle(Title newTitle) {
         this.titleList.add(newTitle);
+    }
+
+    public List<getMemberTitleDTO> toTitleDTOList() {
+        return titleList.stream().map(Title::toDTO).toList();
     }
 }

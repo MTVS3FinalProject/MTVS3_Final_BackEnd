@@ -6,10 +6,9 @@ public record getMemberTitleDTO(
         int titleId,
         String titleName,
         String titleScript,
-        String titleRarity,
-        Boolean isRepresentative
+        String titleRarity
 ) {
-    public getMemberTitleDTO(Long titleId, String titleName, String titleScript, TitleRarity titleRarity, Boolean isRepresentative) {
-        this(titleId.intValue(), titleName, titleScript, titleRarity.toString(), isRepresentative);
+    public getMemberTitleDTO(Long titleId, String titleName, String titleScript, String titleRarity) {
+        this(titleId.intValue(), titleName, titleScript, titleRarity);
     }
 }
