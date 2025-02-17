@@ -12,11 +12,13 @@ import ticketaka.mtvs3_final_backend.file.query.service.FileQueryService;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Address;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.AddressRepository;
+import ticketaka.mtvs3_final_backend.member.query.dao.MemberTitleData;
 import ticketaka.mtvs3_final_backend.member.query.dto.MemberQueryResponseDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTicketDTO;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTitleDTO;
 import ticketaka.mtvs3_final_backend.member.query.repository.MemberQueryRepository;
+import ticketaka.mtvs3_final_backend.member.query.repository.MemberTitleDataRepository;
 import ticketaka.mtvs3_final_backend.redis.ticket.usable.domain.TicketUsable;
 import ticketaka.mtvs3_final_backend.redis.ticket.usable.repository.TicketUsableRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
@@ -29,6 +31,7 @@ import ticketaka.mtvs3_final_backend.ticketing.ticket.query.repository.TicketQue
 import ticketaka.mtvs3_final_backend.title.query.repository.TitleQueryRepository;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,9 +45,10 @@ public class MemberQueryService {
 
     private final TicketQueryRepository ticketQueryRepository;
     private final AddressRepository addressRepository;
-    private final TitleQueryRepository titleQueryRepository;
     private final StickerQueryRepository stickerQueryRepository;
     private final TicketUsableRedisRepository ticketUsableRedisRepository;
+
+    private final MemberTitleDataRepository memberTitleDataRepository;
 
     /*
         최근 배송지 조회
@@ -81,7 +85,9 @@ public class MemberQueryService {
 
         // Title List 조회
         List<getMemberTitleDTO> memberTitleDTOList =
-                titleQueryRepository.findAllByMemberId(memberId);
+                memberTitleDataRepository.findByMemberId(memberId)
+                        .map(MemberTitleData::toTitleDTOList)
+                        .orElseGet(Collections::emptyList);
 
         // Sticker List 조회
         List<getMemberStickerDTO> memberStickerDTOList =
