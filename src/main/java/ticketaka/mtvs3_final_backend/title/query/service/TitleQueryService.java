@@ -29,7 +29,7 @@ public class TitleQueryService {
     // 현재 장착 중인 Title 조회
     public Title getMemberTitle(Long memberId) {
 
-        MemberTitle memberTitle = memberTitleQueryRepository.findByMemberIdAndIsRepresentative(memberId, true)
+        MemberTitle memberTitle = memberTitleQueryRepository.findByMemberIdAndIsRepresentativeTrue(memberId)
                 .orElse(null);
 
         if (memberTitle == null) {

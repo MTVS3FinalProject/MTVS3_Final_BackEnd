@@ -18,7 +18,7 @@ public interface MemberTitleQueryRepository extends JpaRepository<MemberTitle, L
             "AND t.concertId = :concertId")
     List<MemberTitle> findAllByMemberIdAndConcertId(@Param("memberId") Long memberId, @Param("concertId") Long concertId);
 
-    Optional<MemberTitle> findByMemberIdAndIsRepresentative(Long memberId, boolean b);
+    Optional<MemberTitle> findByMemberIdAndIsRepresentativeTrue(Long memberId);
 
     Optional<MemberTitle> findByMemberIdAndTitleId(Long memberId, Long titleId);
 }

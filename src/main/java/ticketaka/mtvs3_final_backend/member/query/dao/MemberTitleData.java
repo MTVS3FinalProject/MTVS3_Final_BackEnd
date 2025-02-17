@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ticketaka.mtvs3_final_backend.member.query.dto.getMemberTitleDTO;
 
 import java.util.ArrayList;
 import java.util.List;
