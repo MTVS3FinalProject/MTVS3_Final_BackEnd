@@ -7,6 +7,7 @@ build/
 src/main/resources/config/
 src/main/resources/key/**
 src/main/resources/application.yml
+src/main/generated
 .env
 docker-compose-kafka.yml
 
