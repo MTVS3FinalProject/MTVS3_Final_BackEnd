@@ -8,10 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.StickerAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.admin.command.domain.repository.TitleAdminCommandRepository;
 import ticketaka.mtvs3_final_backend.file.command.application.service.QRCommandService;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberInfo;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberPwd;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerType;
@@ -58,7 +62,27 @@ public class Mtvs3FinalBackendApplication {
 
     @Profile("local")
     @Bean
-    CommandLineRunner localServerStart(MemberRepository memberRepository,
+    CommandLineRunner localServerStart(JdbcTemplate jdbcTemplate, MongoTemplate mongoTemplate) {
+        return args -> {
+            truncateTable(jdbcTemplate, "member_title_tb");
+            truncateTable(jdbcTemplate, "member_sticker_tb");
+
+            mongoTemplate.dropCollection("member_title");
+        };
+    }
+
+    private void truncateTable(JdbcTemplate jdbcTemplate, String tableName) {
+        try {
+            String truncateSql = "TRUNCATE TABLE " + tableName;
+            jdbcTemplate.execute(truncateSql);
+        } catch (Exception e) {
+            System.out.println("Failed to truncate table " + tableName);
+        }
+    }
+
+    @Profile("test")
+    @Bean
+    CommandLineRunner testServerStart(MemberRepository memberRepository,
                                        FileCommandRepository fileCommandRepository,
                                        PasswordEncoder passwordEncoder,
                                        ConcertRepository concertRepository,
@@ -91,8 +115,7 @@ public class Mtvs3FinalBackendApplication {
             memberRepository.saveAll(Arrays.asList(
                     member1, member2, member3, member4, member5, member6, member7, member8,
                     newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true),
-                    newMember("ADMIN", "admin1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 2, passwordEncoder, false),
-                    newMember("HOST", "host1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 0, passwordEncoder, true)
+                    newMember("ADMIN", "admin1@test.com", "test1234", "1234", LocalDate.of(2000, 1, 1), 4, 2, passwordEncoder, false)
             ));
             fileCommandRepository.saveAll(Arrays.asList(
                     newFile(RelationType.MEMBER, 3L, "https://storage.googleapis.com/download/storage/v1/b/mtvs3-final-storage.appspot.com/o/captured-photo-20241024163127.png?generation=1729755087790928&alt=media", FilePurpose.SIGNUP),
@@ -330,18 +353,22 @@ public class Mtvs3FinalBackendApplication {
         };
     }
 
-    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, int authority, PasswordEncoder passwordEncoder, boolean isHost) {
-        return Member.builder()
-                .nickname(nickname)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .secondPwd(passwordEncoder.encode(secondPwd))
-                .birth(birth)
-                .avatarData(avatarData)
-                .authority(Authority.fromInt(authority))
-                .status(Status.ACTIVE)
-                .host(isHost)
-                .build();
+    private Member newMember(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Integer authority, PasswordEncoder passwordEncoder, boolean isHost) {
+
+        String encodedPassword = passwordEncoder.encode(password);
+        String encodedSecondPassword = passwordEncoder.encode(secondPwd);
+
+        return Member.createMember(
+                new MemberInfo(
+                        nickname,
+                        email,
+                        birth
+                ),
+                new MemberPwd(encodedPassword),
+                new MemberPwd(encodedSecondPassword),
+                avatarData,
+                Authority.fromInt(authority)
+        );
     }
 
     private File newFile(RelationType relationType, Long relationId, String fileUrl, FilePurpose filePurpose) {

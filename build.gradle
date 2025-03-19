@@ -41,8 +41,20 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // (배포용) postgresql
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.2'
+    // Event
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // (Command) mysql
+    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.1.0'
+
+    // (Query) mongodb
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
     // (테스트용) H2 데이터베이스
     runtimeOnly 'com.h2database:h2'
@@ -67,6 +79,8 @@ dependencies {
 
     // 날짜/시간 유형 직렬화
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
+    // JSON 직렬화/역직렬화
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     // 개발 편의용
     compileOnly 'org.projectlombok:lombok'
@@ -100,6 +114,18 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
     }
+}
+
+def generated = 'src/main/generated'
+
+// queryDsl QClass 파일 생성 위치 지정
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+clean {
+    delete file(generated)
 }
 
 tasks.named('test') {

@@ -78,7 +78,7 @@ public class SeatCommandService {
         Seat seat = seatReceptionService.seatReception(memberId, concertId, seatId);
 
         // 좌석 접수 우편 전송
-        mailCommandService.mailForSeatReception(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        mailCommandService.mailForSeatReception(member.getId(), member.getMemberInfo().getNickname(), concert.getName(), formatSeatInfo(seat));
 
         return new SeatCommandResponseDTO.seatReceptionDTO(
                 seat.getPrice(),
@@ -104,7 +104,7 @@ public class SeatCommandService {
         seatReceptionService.cancelReception(memberId, concertId, seatId);
 
         // 우편 전송
-        mailCommandService.mailForCancelSeatReception(memberId, member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        mailCommandService.mailForCancelSeatReception(memberId, member.getMemberInfo().getNickname(), concert.getName(), formatSeatInfo(seat));
         
         return new SeatCommandResponseDTO.cancelReceptionSeatDTO(
                 concert.getReceptionLimit() - getReceptionCountForConcert(memberId, concertId),
@@ -174,7 +174,7 @@ public class SeatCommandService {
         memberSeat.setMemberSeatStatus(MemberSeatStatus.POSTPONE);
         memberSeatCommandRepository.save(memberSeat);
 
-        Mail mail = mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        Mail mail = mailCommandService.mailForPostponeSeatReservation(member.getId(), member.getMemberInfo().getNickname(), concert.getName(), formatSeatInfo(seat));
 
         SeatPostpone seatPostpone = newSeatPostpone(mail.getId(), memberId, concertId, seatId);
         seatPostponeRedisRepository.save(seatPostpone);
@@ -212,7 +212,7 @@ public class SeatCommandService {
         memberCommandService.sendReserveSMS(address.getPhoneNumber(), concert.getName(), seatInfo, concert.getConcertDate());
 
         // Mail 발송
-        mailCommandService.mailForSeatReservation(member.getId(), member.getNickname(), concert.getName(), formatSeatInfo(seat));
+        mailCommandService.mailForSeatReservation(member.getId(), member.getMemberInfo().getNickname(), concert.getName(), formatSeatInfo(seat));
 
         // TODO: seatNum
         return new SeatCommandResponseDTO.reserveSeatDTO(

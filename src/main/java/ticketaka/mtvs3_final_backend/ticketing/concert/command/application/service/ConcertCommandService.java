@@ -38,6 +38,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
+import ticketaka.mtvs3_final_backend.title.command.domain.TitleAcquireService;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
@@ -72,6 +73,7 @@ public class ConcertCommandService {
     private final MailPuzzleResultCommandRepository mailPuzzleResultCommandRepository;
     private final MemberSeatQueryRepository memberSeatQueryRepository;
     private final MemberSeatCommandRepository memberSeatCommandRepository;
+    private final TitleAcquireService titleAcquireService;
 
     /*
         공연장 정보 조회
@@ -142,7 +144,7 @@ public class ConcertCommandService {
         Concert concert = getConcert(concertId);
 
         // Title 할당
-        Title title = titleQueryService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
+        Title title = titleAcquireService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
         // Sticker 할당
         Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
 
@@ -150,7 +152,7 @@ public class ConcertCommandService {
         PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId(), requestDTO.rank());
 
         // Mail 저장
-        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getNickname(), concert.getName(), requestDTO.rank(), title.getTitleName(), sticker.getStickerName());
+        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getMemberInfo().getNickname(), concert.getName(), requestDTO.rank(), title.getTitleName(), sticker.getStickerName());
 
         // MailPuzzleResult 저장
         newMailPuzzleResult(mail.getId(), puzzleResult.getId());
@@ -254,12 +256,12 @@ public class ConcertCommandService {
     }
 
     // PuzzleResult 생성
-    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId, int rank) {
+    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId, int ranking) {
         PuzzleResult puzzleResult = PuzzleResult.builder()
                 .concertId(concertId)
                 .titleId(titleId)
                 .stickerId(stickerId)
-                .rank(rank)
+                .ranking(ranking)
                 .build();
         return puzzleResultCommandRepository.save(puzzleResult);
     }
@@ -308,8 +310,8 @@ public class ConcertCommandService {
 
     // 연령 확인
     private void checkMemberAge(Member member, Concert concert) {
-        int memberAge = LocalDate.now().getYear() - member.getBirth().getYear();
-        if (LocalDate.now().getDayOfYear() < member.getBirth().getDayOfYear()) {
+        int memberAge = LocalDate.now().getYear() - member.getMemberInfo().getBirth().getYear();
+        if (LocalDate.now().getDayOfYear() < member.getMemberInfo().getBirth().getDayOfYear()) {
             memberAge--; // 올해 생일이 아직 안 지났으면 1년을 뺀다
         }
 

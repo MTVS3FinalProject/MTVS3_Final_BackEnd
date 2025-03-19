@@ -67,7 +67,7 @@ public class QRCommandService {
     public byte[] generateSignUpQR(QRRequestDTO.generateSignUpQRDTO requestDTO) {
 
         // 이메일 중복 확인
-        memberRepository.findByEmail(requestDTO.email())
+        memberRepository.findByMemberInfo_Email(requestDTO.email())
                 .ifPresent(member -> { throw new Exception400("이미 가입된 이메일입니다."); });
 
         String targetUrlWithEmail = QR_FOR_SIGNUP + "?email=" + requestDTO.email();

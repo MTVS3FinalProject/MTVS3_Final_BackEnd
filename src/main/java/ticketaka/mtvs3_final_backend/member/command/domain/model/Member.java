@@ -7,8 +7,6 @@ import ticketaka.mtvs3_final_backend.BaseTimeEntity;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 
-import java.time.LocalDate;
-
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,16 +17,18 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
-    private String secondPwd;
-    @Column
-    private LocalDate birth;
+    @Embedded
+    private MemberInfo memberInfo;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "password"))
+    })
+    private MemberPwd password;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "second_password"))
+    })
+    private MemberPwd secondPassword;
     @Column
     private Integer avatarData;
 
@@ -45,19 +45,29 @@ public class Member extends BaseTimeEntity {
     @Column
     private Integer coin;
     @Column
+    @ColumnDefault("false")
     private Boolean bIsHost;
 
     @Builder
-    public Member(String nickname, String email, String password, String secondPwd, LocalDate birth, Integer avatarData, Authority authority, Status status, Boolean host) {
-        this.nickname = nickname;
-        this.email = email;
+    private Member(MemberInfo memberInfo, MemberPwd password, MemberPwd secondPassword, Integer avatarData, Authority authority, Status status, Boolean host) {
+        this.memberInfo = memberInfo;
         this.password = password;
-        this.secondPwd = secondPwd;
-        this.birth = birth;
+        this.secondPassword = secondPassword;
         this.avatarData = avatarData;
         this.authority = authority;
-        this.status = status;
-        this.coin = 100000;
-        this.bIsHost = host;
+        this.status = Status.ACTIVE;
+        this.coin = 0;
+        this.bIsHost = false;
+    }
+
+    // Member 생성
+    public static Member createMember(MemberInfo memberInfo, MemberPwd password, MemberPwd secondPassword, Integer avatarData, Authority authority) {
+        return Member.builder()
+                .memberInfo(memberInfo)
+                .password(password)
+                .secondPassword(secondPassword)
+                .avatarData(avatarData)
+                .authority(authority)
+                .build();
     }
 }

@@ -19,6 +19,8 @@ import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthDT
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthRequestDTO;
 import ticketaka.mtvs3_final_backend.member.command.application.dto.MemberAuthResponseDTO;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.Member;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberInfo;
+import ticketaka.mtvs3_final_backend.member.command.domain.model.MemberPwd;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Authority;
 import ticketaka.mtvs3_final_backend.member.command.domain.model.property.Status;
 import ticketaka.mtvs3_final_backend.member.command.domain.repository.MemberRepository;
@@ -28,7 +30,6 @@ import ticketaka.mtvs3_final_backend.redis.FileUpload.repository.FileUploadForAu
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.domain.RefreshToken;
 import ticketaka.mtvs3_final_backend.redis.refreshtoken.repository.RefreshTokenRedisRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
-import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.time.LocalDate;
@@ -81,14 +82,14 @@ public class MemberAuthService {
     private void checkDuplicatedEmail(String email) {
 
         // 이메일 중복 확인
-        memberRepository.findByEmail(email)
+        memberRepository.findByMemberInfo_Email(email)
                 .ifPresent(member -> { throw new Exception400("이미 가입된 이메일입니다."); });
     }
 
     // 닉네임 중복 확인
     private void checkDuplicatedNickname(String nickname) {
 
-        Optional<Member> member = memberRepository.findByNickname(nickname);
+        Optional<Member> member = memberRepository.findByMemberInfo_Nickname(nickname);
 
         if(member.isPresent()) {
             throw new Exception400("이미 사용 중인 이름입니다.");
@@ -96,9 +97,9 @@ public class MemberAuthService {
     }
 
     // 비밀번호 확인
-    private void checkValidPassword(String rawPassword, String encodedPassword) {
+    private void checkValidPassword(String rawPassword, MemberPwd memberPwd) {
 
-        if(!passwordEncoder.matches(rawPassword, encodedPassword)) {
+        if(!memberPwd.matchPassword(rawPassword, passwordEncoder)) {
             throw new Exception400("비밀번호가 유효하지 않습니다.");
         }
     }
@@ -121,31 +122,31 @@ public class MemberAuthService {
         return new MemberAuthDTO.FileUploadDTO(imgUrl, secondPwd);
     }
 
-    // 생일 포맷 변환
-    private LocalDate getLocalDateBirth(String birth) {
-
-        System.out.println("birth = " + birth);
-
-        // 변환할 날짜 포맷 지정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-
-        // String 을 LocalDate 로 변환
-        return LocalDate.parse(birth, formatter);
-    }
-
     // 회원 생성
     protected Member newMember(MemberAuthRequestDTO.signUpDTO requestDTO, String secondPwd) {
-        return Member.builder()
-                .nickname(requestDTO.nickname())
-                .email(requestDTO.email())
-                .password(passwordEncoder.encode(requestDTO.password()))
-                .secondPwd(passwordEncoder.encode(secondPwd))
-                .birth(getLocalDateBirth(requestDTO.birth()))
-                .avatarData(requestDTO.avatarData())
-                .authority(Authority.fromInt(requestDTO.isHost()))
-                .status(Status.ACTIVE)
-                .host(requestDTO.bisHost())
-                .build();
+
+        String encodedPassword = passwordEncoder.encode(requestDTO.password());
+        String encodedSecondPassword = passwordEncoder.encode(secondPwd);
+
+        return Member.createMember(
+                new MemberInfo(
+                        requestDTO.nickname(),
+                        requestDTO.email(),
+                        getLocalDateBirth(requestDTO.birth())
+                ),
+                new MemberPwd(encodedPassword),
+                new MemberPwd(encodedSecondPassword),
+                requestDTO.avatarData(),
+                Authority.FAN
+        );
+    }
+
+    // 생일 포맷 변환
+    private LocalDate getLocalDateBirth(String birth) {
+        // 변환할 날짜 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        // String 을 LocalDate 로 변환
+        return LocalDate.parse(birth, formatter);
     }
 
     /*
@@ -155,7 +156,7 @@ public class MemberAuthService {
     public MemberAuthResponseDTO.loginDTO login(MemberAuthRequestDTO.authDTO requestDTO) {
 
         // 1. 이메일 확인
-        Member member = memberRepository.findByEmail(requestDTO.email())
+        Member member = memberRepository.findByMemberInfo_Email(requestDTO.email())
                 .orElseThrow(() -> new Exception400("가입 되지 않은 이메일입니다."));
 
         // 2. 비밀번호 확인
@@ -179,8 +180,8 @@ public class MemberAuthService {
 
         return new MemberAuthResponseDTO.memberInfoDTO(
                 member.getBIsHost(),
-                member.getNickname(),
-                member.getBirth().toString(),
+                member.getMemberInfo().getNickname(),
+                member.getMemberInfo().getBirth().toString(),
                 member.getCoin(),
                 member.getAvatarData(),
                 title != null ? title.getId().intValue() : -1,

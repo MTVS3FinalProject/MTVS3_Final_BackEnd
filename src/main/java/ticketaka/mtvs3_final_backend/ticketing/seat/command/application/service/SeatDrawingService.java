@@ -23,7 +23,7 @@ public class SeatDrawingService {
      */
     public List<String> drawingNotification(Long concertId, Long seatId) {
         return getMembersForDrawing(concertId, seatId).stream()
-                .map(Member::getNickname)
+                .map(member -> member.getMemberInfo().getNickname())
                 .toList();
     }
 

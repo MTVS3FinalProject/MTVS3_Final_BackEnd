@@ -39,7 +39,8 @@ public class SecurityConfig {
             "/api/swagger-ui/**",
             "/api/health/**",
             "/api/actuator/**",
-            "/h2-console/**"  // h2-console 경로 추가
+            "/h2-console/**",  // h2-console 경로 추가
+            "/favicon.ico",
     };
 
     private static final String[] ADMIN_LIST = {

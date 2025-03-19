@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test;MODE=MySQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: ${COMMAND.DATABASE.URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${COMMAND.DATABASE.USERNAME}
+    password: ${COMMAND.DATABASE.PASSWORD}
 
-  h2:
-    console:
-      enabled: true
+  data:
+    mongodb:
+      uri: ${QUERY.DATABASE.URI}
 
   application:
     name: ticketaka
@@ -20,6 +20,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA.BOOTSTRAP.SERVERS} # Kafka 브로커 주소
+    consumer:
+      group-id: ${KAFKA.CONSUMER.GROUP.ID}       # Consumer 그룹 ID
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"        # 역직렬화할 패키지 설정
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    template:
+      default-topic: ${KAFKA.DEFAULT.TOPIC}      # 기본 Kafka 토픽 (옵션)
 
   servlet:
     multipart:

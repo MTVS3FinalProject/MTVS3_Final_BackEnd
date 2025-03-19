@@ -1,9 +1,7 @@
 package ticketaka.mtvs3_final_backend.mail.command.application.service;
 
-import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ticketaka.mtvs3_final_backend._core.error.exception.Exception400;
@@ -248,7 +246,7 @@ public class MailCommandService {
                 mail.getSubject(),
                 mail.getContent(),
                 mail.getMailCategory().toString(),
-                puzzleResult.getRank(),
+                puzzleResult.getRanking(),
                 titleInfo,
                 stickerInfo
         );
