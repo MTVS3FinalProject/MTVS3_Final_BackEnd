@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: ${COMMAND.DATABASE.URL}
+    url: ${COMMAND_DATABASE_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${COMMAND.DATABASE.USERNAME}
-    password: ${COMMAND.DATABASE.PASSWORD}
+    username: ${COMMAND_DATABASE_USERNAME}
+    password: ${COMMAND_DATABASE_PASSWORD}
 
   data:
     mongodb:
-      uri: ${QUERY.DATABASE.URI}
+      uri: ${QUERY_DATABASE_URI}
 
   application:
     name: ticketaka
