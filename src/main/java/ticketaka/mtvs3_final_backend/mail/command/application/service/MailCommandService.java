@@ -40,7 +40,6 @@ public class MailCommandService {
     private final TitleQueryRepository titleQueryRepository;
     private final StickerQueryRepository stickerQueryRepository;
     private final FileQueryRepository fileQueryRepository;
-    private final MailQueryRepository mailQueryRepository;
     private final MailIndexRedisRepository mailIndexRedisRepository;
 
     // 좌석 접수 Mail
@@ -233,7 +232,7 @@ public class MailCommandService {
                 sticker.getId(),
                 sticker.getStickerName(),
                 sticker.getStickerScript(),
-                sticker.getStickerRarity(),
+                sticker.getStickerRarity().toString(),
                 stickerImg.getFileUrl()
         );
 

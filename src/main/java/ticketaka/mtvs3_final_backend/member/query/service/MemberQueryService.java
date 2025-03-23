@@ -31,11 +31,11 @@ import java.util.List;
 public class MemberQueryService {
 
     private final MemberTitleQueryService memberTitleQueryService;
+    private final MemberStickerQueryService memberStickerQueryService;
     private final MemberQueryRepository memberQueryRepository;
 
     private final TicketQueryRepository ticketQueryRepository;
     private final AddressRepository addressRepository;
-    private final StickerQueryRepository stickerQueryRepository;
     private final TicketUsableRedisRepository ticketUsableRedisRepository;
 
     /*
@@ -75,8 +75,7 @@ public class MemberQueryService {
         List<getMemberTitleDTO> memberTitleDTOList = memberTitleQueryService.getMemberTitleDTOList(memberId);
 
         // Sticker List 조회
-        List<getMemberStickerDTO> memberStickerDTOList =
-                stickerQueryRepository.findAllByMemberIdAndStickerTypeAndRelationType(memberId, StickerType.COLLECTION, RelationType.STICKER);
+        List<getMemberStickerDTO> memberStickerDTOList = memberStickerQueryService.getMemberStickerDTOList(memberId);
         
         // Custom Ticket List 조회
         List<getMemberTicketDTO> memberTicketDTOList =
