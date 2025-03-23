@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.member.query.infrastructure.event;
+package ticketaka.mtvs3_final_backend.member.query.infrastructure.event.title;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

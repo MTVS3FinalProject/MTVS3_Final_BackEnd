@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import ticketaka.mtvs3_final_backend.member.query.infrastructure.event.TitleAcquiredEvent;
+import ticketaka.mtvs3_final_backend.member.query.infrastructure.event.title.TitleAcquiredEvent;
 
 @Slf4j
 @RequiredArgsConstructor
