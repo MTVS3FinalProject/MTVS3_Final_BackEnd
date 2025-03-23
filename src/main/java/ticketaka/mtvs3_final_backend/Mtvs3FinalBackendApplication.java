@@ -68,6 +68,7 @@ public class Mtvs3FinalBackendApplication {
             truncateTable(jdbcTemplate, "member_sticker_tb");
 
             mongoTemplate.dropCollection("member_title");
+            mongoTemplate.dropCollection("member_sticker");
         };
     }
 

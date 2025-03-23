@@ -21,7 +21,7 @@ public class MemberTitleData {
     @Indexed
     private Long memberId;
 
-    private List<Title> titleList;
+    private List<Title> titleList = new ArrayList<>();
 
     @Getter
     @NoArgsConstructor
