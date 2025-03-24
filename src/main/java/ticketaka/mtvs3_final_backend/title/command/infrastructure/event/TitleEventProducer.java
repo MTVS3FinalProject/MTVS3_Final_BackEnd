@@ -18,6 +18,6 @@ public class TitleEventProducer {
         String messageKey = titleAcquiredEvent.getMemberId().toString();
         kafkaTemplate.send("title-acquired-event", messageKey, titleAcquiredEvent);
 
-        log.info("Produced Kafka event: key={}, event={}", messageKey, titleAcquiredEvent);
+        log.info("Produced TitleAcquiredEvent: key={}, event={}", messageKey, titleAcquiredEvent);
     }
 }

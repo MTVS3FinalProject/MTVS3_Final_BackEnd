@@ -19,13 +19,20 @@ public class TitleAcquireService {
     private final TitleEventProducer titleEventProducer;
 
     // Title 할당
-    public Title getPuzzleResult(Long memberId, Long concertId, TitleRarity titleRarity) {
+    public Title getTitleByPuzzleResult(Long memberId, Long concertId, TitleRarity titleRarity) {
 
         Title title =  titleCommandRepository.getPuzzleResultByMemberIdAndConcertId(memberId, concertId, titleRarity)
                 .orElse(null);
 
         if (title != null) {
-            titleEventProducer.produceTitleAcquiredEvent(new TitleAcquiredEvent(memberId, title.getId(), title.getTitleName(), title.getTitleScript(), title.getTitleRarity().toString()));
+            titleEventProducer.produceTitleAcquiredEvent(
+                    new TitleAcquiredEvent(
+                            memberId,
+                            title.getId(),
+                            title.getTitleName(),
+                            title.getTitleScript(),
+                            title.getTitleRarity().toString()
+                    ));
         }
         return title;
     }

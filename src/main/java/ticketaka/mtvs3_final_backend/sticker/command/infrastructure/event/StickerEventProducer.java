@@ -13,5 +13,11 @@ public class StickerEventProducer {
 
     private final KafkaTemplate<String, StickerAcquiredEvent> kafkaTemplate;
 
+    public void produceStickerAcquiredEvent(StickerAcquiredEvent stickerAcquiredEvent) {
 
+        String messageKey = stickerAcquiredEvent.getMemberId().toString();
+        kafkaTemplate.send("sticker-acquired-event", messageKey, stickerAcquiredEvent);
+
+        log.info("Produced StickerAcquiredEvent: key={}, event={}", messageKey, stickerAcquiredEvent);
+    }
 }
