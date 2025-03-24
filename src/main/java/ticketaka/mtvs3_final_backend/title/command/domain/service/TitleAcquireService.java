@@ -1,4 +1,4 @@
-package ticketaka.mtvs3_final_backend.title.command.domain;
+package ticketaka.mtvs3_final_backend.title.command.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

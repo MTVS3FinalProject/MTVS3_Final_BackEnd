@@ -38,7 +38,7 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.SeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.SeatCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
-import ticketaka.mtvs3_final_backend.title.command.domain.TitleAcquireService;
+import ticketaka.mtvs3_final_backend.title.command.domain.service.TitleAcquireService;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
