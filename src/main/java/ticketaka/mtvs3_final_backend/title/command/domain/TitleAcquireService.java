@@ -25,7 +25,7 @@ public class TitleAcquireService {
                 .orElse(null);
 
         if (title != null) {
-            titleEventProducer.produceTitleAcquiredEvent(new TitleAcquiredEvent(memberId, title));
+            titleEventProducer.produceTitleAcquiredEvent(new TitleAcquiredEvent(memberId, title.getId(), title.getTitleName(), title.getTitleScript(), title.getTitleRarity().toString()));
         }
         return title;
     }

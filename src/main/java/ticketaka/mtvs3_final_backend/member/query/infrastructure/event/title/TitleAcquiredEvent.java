@@ -14,11 +14,15 @@ public class TitleAcquiredEvent {
     private String titleScript;
     private String titleRarity;
 
-    public TitleAcquiredEvent(Long memberId, Title title) {
+    public TitleAcquiredEvent(Long memberId,
+                              Long titleId,
+                              String titleName,
+                              String titleScript,
+                              String titleRarity) {
         this.memberId = memberId;
-        this.titleId = title.getId();
-        this.titleName = title.getTitleName();
-        this.titleScript = title.getTitleScript();
-        this.titleRarity = title.getTitleRarity().toString();
+        this.titleId = titleId;
+        this.titleName = titleName;
+        this.titleScript = titleScript;
+        this.titleRarity = titleRarity;
     }
 }
