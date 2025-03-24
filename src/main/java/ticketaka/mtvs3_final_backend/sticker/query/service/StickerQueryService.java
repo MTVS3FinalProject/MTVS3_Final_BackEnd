@@ -28,8 +28,6 @@ import java.util.Random;
 @Service
 public class StickerQueryService {
 
-    private final MemberQueryRepository memberQueryRepository;
-    private final ConcertQueryRepository concertQueryRepository;
     private final StickerQueryRepository stickerQueryRepository;
     private final MemberStickerQueryRepository memberStickerQueryRepository;
 
