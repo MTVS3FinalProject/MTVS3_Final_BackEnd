@@ -16,7 +16,7 @@ import ticketaka.mtvs3_final_backend.mail.puzzle.command.domain.repository.MailP
 import ticketaka.mtvs3_final_backend.redis.ticket.address.domain.TicketAddress;
 import ticketaka.mtvs3_final_backend.redis.ticket.address.repository.TicketAddressRedisRepository;
 import ticketaka.mtvs3_final_backend.sticker.command.domain.model.Sticker;
-import ticketaka.mtvs3_final_backend.sticker.command.domain.model.StickerRarity;
+import ticketaka.mtvs3_final_backend.sticker.command.domain.service.StickerAcquireService;
 import ticketaka.mtvs3_final_backend.sticker.member.command.domain.model.MemberSticker;
 import ticketaka.mtvs3_final_backend.sticker.member.command.domain.repository.MemberStickerCommandRepository;
 import ticketaka.mtvs3_final_backend.sticker.query.service.StickerQueryService;
@@ -31,7 +31,6 @@ import ticketaka.mtvs3_final_backend.redis.drawing.domain.PaymentStatus;
 import ticketaka.mtvs3_final_backend.redis.drawing.repository.DrawResultRedisRepository;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.model.MemberSeatStatus;
 import ticketaka.mtvs3_final_backend.ticketing.memberseat.command.domain.repository.MemberSeatCommandRepository;
-import ticketaka.mtvs3_final_backend.ticketing.memberseat.query.repository.MemberSeatQueryRepository;
 import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.model.PuzzleResult;
 import ticketaka.mtvs3_final_backend.ticketing.puzzle.command.domain.repository.PuzzleResultCommandRepository;
 import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.model.Seat;
@@ -40,14 +39,13 @@ import ticketaka.mtvs3_final_backend.ticketing.seat.command.domain.repository.Se
 import ticketaka.mtvs3_final_backend.ticketing.seat.query.repository.SeatQueryRepository;
 import ticketaka.mtvs3_final_backend.title.command.domain.service.TitleAcquireService;
 import ticketaka.mtvs3_final_backend.title.command.domain.model.Title;
-import ticketaka.mtvs3_final_backend.title.command.domain.model.TitleRarity;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.model.MemberTitle;
 import ticketaka.mtvs3_final_backend.title.member.command.domain.repository.MemberTitleCommandRepository;
-import ticketaka.mtvs3_final_backend.title.query.service.TitleQueryService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -66,14 +64,14 @@ public class ConcertCommandService {
 
     private final DrawResultRedisRepository drawResultRedisRepository;
     private final TicketAddressRedisRepository ticketAddressRedisRepository;
-    private final TitleQueryService titleQueryService;
     private final MemberTitleCommandRepository memberTitleCommandRepository;
     private final PuzzleResultCommandRepository puzzleResultCommandRepository;
     private final MailCommandService mailCommandService;
     private final MailPuzzleResultCommandRepository mailPuzzleResultCommandRepository;
-    private final MemberSeatQueryRepository memberSeatQueryRepository;
     private final MemberSeatCommandRepository memberSeatCommandRepository;
+
     private final TitleAcquireService titleAcquireService;
+    private final StickerAcquireService stickerAcquireService;
 
     /*
         공연장 정보 조회
@@ -144,21 +142,29 @@ public class ConcertCommandService {
         Concert concert = getConcert(concertId);
 
         // Title 할당
-        Title title = titleAcquireService.getPuzzleResult(memberId, concertId, TitleRarity.fromInt(requestDTO.rank()));
+        Optional<Title> optionalTitle = titleAcquireService.getTitleByPuzzleResult(memberId, concertId, requestDTO.rank());
         // Sticker 할당
-        Sticker sticker = stickerQueryService.getPuzzleResult(memberId, concertId, StickerRarity.fromInt(requestDTO.rank()));
+        Sticker sticker = stickerAcquireService.getStickerByPuzzleResult(memberId, concertId, requestDTO.rank());
 
+        Long titleId = optionalTitle.map(Title::getId).orElse(null);
         // PuzzleResult 저장
-        PuzzleResult puzzleResult = newPuzzleResult(concertId, title.getId(), sticker.getId(), requestDTO.rank());
+        PuzzleResult puzzleResult = PuzzleResult.newPuzzleResult(memberId, concertId, titleId, sticker.getId(), requestDTO.rank());
 
         // Mail 저장
-        Mail mail = mailCommandService.mailForPuzzleResult(memberId, member.getMemberInfo().getNickname(), concert.getName(), requestDTO.rank(), title.getTitleName(), sticker.getStickerName());
+        Mail mail = mailCommandService.mailForPuzzleResult(
+                memberId,
+                member.getMemberInfo().getNickname(),
+                concert.getName(),
+                requestDTO.rank(),
+                optionalTitle.map(Title::getTitleName).orElse(null),
+                sticker.getStickerName()
+        );
 
         // MailPuzzleResult 저장
         newMailPuzzleResult(mail.getId(), puzzleResult.getId());
 
         // Member Title 할당
-        MemberTitle memberTitle = newMemberTitle(memberId, title.getId());
+        MemberTitle memberTitle = newMemberTitle(memberId, titleId);
         memberTitleCommandRepository.save(memberTitle);
         // Member Sticker 생성
         MemberSticker memberSticker = newMemberSticker(memberId, sticker.getId());
@@ -168,12 +174,12 @@ public class ConcertCommandService {
         String stickerImage = fileQueryService.getFileImage(RelationType.STICKER, sticker.getId());
 
         return new ConcertCommandResponseDTO.acquireStickerFromPuzzleResultDTO(
-                new ConcertCommandResponseDTO.titleInfoDTO(
+                optionalTitle.map(title -> new ConcertCommandResponseDTO.titleInfoDTO(
                         title.getId().intValue(),
                         title.getTitleName(),
                         title.getTitleScript(),
                         title.getTitleRarity().toString()
-                ),
+                )).orElse(null),
                 new ConcertCommandResponseDTO.stickerInfoDTO(
                         sticker.getId().intValue(),
                         sticker.getStickerName(),
@@ -253,17 +259,6 @@ public class ConcertCommandService {
         String id = memberId + "-" + concertId + "-" + seatId;
         return drawResultRedisRepository.findById(id)
                 .orElseThrow(() -> new Exception403("좌석 결제 권한이 없습니다."));
-    }
-
-    // PuzzleResult 생성
-    private PuzzleResult newPuzzleResult(Long concertId, Long titleId, Long stickerId, int ranking) {
-        PuzzleResult puzzleResult = PuzzleResult.builder()
-                .concertId(concertId)
-                .titleId(titleId)
-                .stickerId(stickerId)
-                .ranking(ranking)
-                .build();
-        return puzzleResultCommandRepository.save(puzzleResult);
     }
 
     // MemberTitle 생성
