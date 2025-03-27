@@ -244,7 +244,7 @@ public class MailCommandService {
                 mail.getSubject(),
                 mail.getContent(),
                 mail.getMailCategory().toString(),
-                puzzleResult.getRank(),
+                puzzleResult.getRanking(),
                 titleInfo,
                 stickerInfo
         );

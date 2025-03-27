@@ -148,7 +148,11 @@ public class ConcertCommandService {
 
         Long titleId = optionalTitle.map(Title::getId).orElse(null);
         // PuzzleResult 저장
-        PuzzleResult puzzleResult = PuzzleResult.newPuzzleResult(memberId, concertId, titleId, sticker.getId(), requestDTO.rank());
+        PuzzleResult puzzleResult = puzzleResultCommandRepository.save(
+                PuzzleResult.newPuzzleResult(
+                        memberId, concertId, titleId, sticker.getId(), requestDTO.rank()
+                )
+        );
 
         // Mail 저장
         Mail mail = mailCommandService.mailForPuzzleResult(
