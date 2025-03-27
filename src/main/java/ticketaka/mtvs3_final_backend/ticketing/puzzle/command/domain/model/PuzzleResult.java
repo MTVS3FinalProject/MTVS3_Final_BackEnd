@@ -18,6 +18,8 @@ public class PuzzleResult extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
+    private Long memberId;
+    @Column(nullable = false)
     private Long concertId;
     @Column
     private Long titleId;
@@ -25,13 +27,24 @@ public class PuzzleResult extends BaseTimeEntity {
     private Long stickerId;
 
     @Column
-    private Integer ranking;
+    private Integer rank;
 
     @Builder
-    public PuzzleResult(Long concertId, Long titleId, Long stickerId, Integer ranking) {
+    private PuzzleResult(Long memberId, Long concertId, Long titleId, Long stickerId, Integer rank) {
+        this.memberId = memberId;
         this.concertId = concertId;
         this.titleId = titleId;
         this.stickerId = stickerId;
-        this.ranking = ranking;
+        this.rank = rank;
+    }
+
+    public static PuzzleResult newPuzzleResult(Long memberId, Long concertId, Long titleId, Long stickerId, int rank) {
+        return PuzzleResult.builder()
+                .memberId(memberId)
+                .concertId(concertId)
+                .titleId(titleId)
+                .stickerId(stickerId)
+                .rank(rank)
+                .build();
     }
 }

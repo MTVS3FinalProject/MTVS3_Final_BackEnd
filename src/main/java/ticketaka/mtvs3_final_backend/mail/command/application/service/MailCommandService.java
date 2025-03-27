@@ -13,7 +13,6 @@ import ticketaka.mtvs3_final_backend.mail.command.application.dto.MailCommandRes
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.Mail;
 import ticketaka.mtvs3_final_backend.mail.command.domain.model.MailCategory;
 import ticketaka.mtvs3_final_backend.mail.command.domain.repository.MailCommandRepository;
-import ticketaka.mtvs3_final_backend.mail.query.repository.MailQueryRepository;
 import ticketaka.mtvs3_final_backend.member.query.dto.getMemberStickerDTO;
 import ticketaka.mtvs3_final_backend.redis.mailindex.domain.MailIndex;
 import ticketaka.mtvs3_final_backend.redis.mailindex.repository.MailIndexRedisRepository;
@@ -245,7 +244,7 @@ public class MailCommandService {
                 mail.getSubject(),
                 mail.getContent(),
                 mail.getMailCategory().toString(),
-                puzzleResult.getRanking(),
+                puzzleResult.getRank(),
                 titleInfo,
                 stickerInfo
         );
