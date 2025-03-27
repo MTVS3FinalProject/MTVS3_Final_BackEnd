@@ -24,17 +24,32 @@ public class TitleAcquireService {
     public Optional<Title> getTitleByPuzzleResult(Long memberId, Long concertId, int rank) {
         TitleRarity rarity = TitleRarity.fromInt(rank);
 
-        return titleCommandRepository.getPuzzleResultByMemberIdAndConcertId(memberId, concertId, rarity)
-                .map(title -> {
-                    titleEventProducer.produceTitleAcquiredEvent(
-                            new TitleAcquiredEvent(
-                                    memberId,
-                                    title.getId(),
-                                    title.getTitleName(),
-                                    title.getTitleScript(),
-                                    title.getTitleRarity().toString()
-                            ));
-                    return title;
-                });
+        Optional<Title> optionalTitle = getAvailableTitle(memberId, concertId, rarity);
+
+        if (optionalTitle.isEmpty()) {
+            TitleRarity lowerRarity = rarity.getLowerRarity();
+            if (lowerRarity != null) {
+                optionalTitle = getAvailableTitle(memberId, concertId, lowerRarity);
+            }
+        }
+
+        optionalTitle.ifPresent(title -> publishTitleAcquiredEvent(memberId, title));
+
+        return optionalTitle;
+    }
+
+    private Optional<Title> getAvailableTitle(Long memberId, Long concertId, TitleRarity rarity) {
+        return titleCommandRepository.getPuzzleResultByMemberIdAndConcertId(memberId, concertId, rarity);
+    }
+
+    private void publishTitleAcquiredEvent(Long memberId, Title title) {
+        titleEventProducer.produceTitleAcquiredEvent(
+                new TitleAcquiredEvent(
+                        memberId,
+                        title.getId(),
+                        title.getTitleName(),
+                        title.getTitleScript(),
+                        title.getTitleRarity().toString()
+                ));
     }
 }
